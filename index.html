@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Htut Khaing – Scholar, Sportsman, Innovator, Environmental Advocate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020204; color: #fff; overflow-x: hidden; }
+ 
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020204; }
+        ::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.3); border-radius: 3px; }
+ 
+        /* Hero Gradient */
+        .hero-gradient {
+            background: transparent;
+        }
+ 
+        /* Text Fade In */
+        .fade-in-up {
+            opacity: 0; transform: translateY(40px);
+            animation: fadeInUp 1s ease forwards;
+        }
+        .fade-in-up-delay-1 { animation-delay: 0.3s; }
+        .fade-in-up-delay-2 { animation-delay: 0.6s; }
+        .fade-in-up-delay-3 { animation-delay: 0.9s; }
+        .fade-in-up-delay-4 { animation-delay: 1.2s; }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+ 
+        /* Floating Icons */
+        .float-icon {
+            position: absolute;
+            animation: floatBounce 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(34,211,238,0.3));
+        }
+        .float-icon:nth-child(2) { animation-delay: -1s; }
+        .float-icon:nth-child(3) { animation-delay: -2s; }
+        .float-icon:nth-child(4) { animation-delay: -3s; }
+        @keyframes floatBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(5deg); }
+        }
+ 
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0; transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1; transform: translateY(0);
+        }
+        .reveal-bounce {
+            opacity: 0; transform: translateY(60px) scale(0.95);
+            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .reveal-bounce.active {
+            opacity: 1; transform: translateY(0) scale(1);
+        }
+ 
+        /* Card wrapper (kept for layout/positioning of inner effects like scan-lines & terminal scroll) */
+        .shine-card {
+            position: relative; overflow: hidden;
+        }
+ 
+        /* Glow Hover */
+        .glow-hover {
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .glow-hover:hover {
+            border-color: rgba(34,211,238,0.3);
+            box-shadow: 0 0 30px rgba(34,211,238,0.15), inset 0 0 20px rgba(34,211,238,0.05);
+            transform: translateY(-4px);
+        }
+ 
+        /* Circuit Lines */
+        .circuit-line {
+            position: absolute; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(34,211,238,0.3), transparent);
+            opacity: 0.5;
+        }
+ 
+        /* Terminal Scroll */
+        .terminal-scroll {
+            font-family: 'Courier New', monospace;
+            animation: typeScroll 8s linear infinite;
+        }
+        @keyframes typeScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+ 
+        /* Globe Rotate */
+        .globe-rotate { animation: globeSpin 10s linear infinite; }
+        @keyframes globeSpin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+ 
+        /* Feather Write */
+        .feather-write { animation: featherMove 4s ease-in-out infinite; }
+        @keyframes featherMove {
+            0%, 100% { transform: translateX(0) rotate(-5deg); }
+            50% { transform: translateX(30px) rotate(5deg); }
+        }
+ 
+        /* Basketball Bounce */
+        .basketball-bounce { animation: bbBounce 1.5s ease-in-out infinite; }
+        @keyframes bbBounce {
+            0%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-30px); }
+            80% { transform: translateY(0) scale(1.05, 0.95); }
+        }
+ 
+        /* Gear Spin */
+        .gear-spin { animation: gearRotate 6s linear infinite; }
+        @keyframes gearRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+ 
+        /* Medal Unfurl */
+        .medal-unfurl {
+            animation: unfurl 2s ease-out forwards;
+            transform-origin: top center;
+        }
+        @keyframes unfurl {
+            0% { transform: scaleY(0); opacity: 0; }
+            100% { transform: scaleY(1); opacity: 1; }
+        }
+ 
+        /* Puzzle Fit */
+        .puzzle-fit { animation: puzzleSlide 3s ease-in-out infinite; }
+        @keyframes puzzleSlide {
+            0%, 100% { transform: translate(0,0); }
+            33% { transform: translate(3px,-3px); }
+            66% { transform: translate(-3px,3px); }
+        }
+ 
+        /* Lightbulb Glow */
+        .lightbulb-glow { animation: lbGlow 2s ease-in-out infinite; }
+        @keyframes lbGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(250,204,21,0.3)); }
+            50% { filter: drop-shadow(0 0 25px rgba(250,204,21,0.8)); }
+        }
+ 
+        /* Chart Rise */
+        .chart-rise {
+            animation: chartUp 2s ease-out forwards;
+            transform-origin: bottom;
+        }
+        @keyframes chartUp {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+ 
+        /* Leaf Transform */
+        .leaf-transform {
+            transition: all 0.5s ease;
+        }
+        .leaf-transform:hover {
+            filter: drop-shadow(0 0 20px rgba(16,185,129,0.6));
+            transform: scale(1.2) rotate(10deg);
+        }
+ 
+        /* Word Cloud Pulse */
+        .word-pulse {
+            animation: wordPulse 3s ease-in-out infinite;
+        }
+        @keyframes wordPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+ 
+        /* Glowing Input */
+        .glow-input {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10,15,30,0.6);
+        }
+        .glow-input:focus {
+            border-color: rgba(34,211,238,0.5);
+            box-shadow: 0 0 20px rgba(34,211,238,0.15);
+            outline: none;
+        }
+ 
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(to right, #22d3ee, #10b981, #22d3ee);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShimmer 4s linear infinite;
+        }
+        @keyframes textShimmer {
+            to { background-position: 200% center; }
+        }
+ 
+        /* Timeline */
+        .timeline-line {
+            position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(34,211,238,0.3), rgba(16,185,129,0.3), transparent);
+        }
+        .timeline-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: #22d3ee; border: 3px solid #020204;
+            box-shadow: 0 0 15px rgba(34,211,238,0.5);
+            transition: all 0.3s ease;
+        }
+        .timeline-dot.active-dot {
+            transform: scale(1.5);
+            box-shadow: 0 0 25px rgba(34,211,238,0.8);
+        }
+ 
+        /* Navbar */
+        .nav-glass {
+            background: rgba(3,5,8,0.7);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+ 
+        /* Particle canvas */
+        #particles-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+        }
+ 
+        /* No scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+ 
+        /* Trophy morph */
+        .trophy-morph {
+            animation: morphTrophy 3s ease-in-out infinite;
+        }
+        @keyframes morphTrophy {
+            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+        }
+ 
+        /* Flipping book */
+        .book-flip {
+            perspective: 800px;
+        }
+        .book-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .book-flip:hover .book-inner {
+            transform: rotateY(-15deg);
+        }
+ 
+        /* Section divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(34,211,238,0.2), rgba(16,185,129,0.2), transparent);
+        }
+ 
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+            padding: 16px 24px; border-radius: 12px;
+            background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);
+            backdrop-filter: blur(12px);
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+ 
+        /* Piano keys */
+        .piano-key {
+            transition: all 0.3s ease;
+        }
+        .piano-keys:hover .piano-key {
+            transform: translateY(2px);
+        }
+ 
+        /* Belt stripe shimmer */
+        .belt-shimmer {
+            background: linear-gradient(90deg, #dc2626 0%, #f87171 50%, #dc2626 100%);
+            background-size: 200% auto;
+            animation: textShimmer 3s linear infinite;
+        }
+ 
+        /* Vinyl spin */
+        .vinyl-spin { animation: vinylSpin 4s linear infinite; }
+        @keyframes vinylSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+ 
+        /* Film reel spin */
+        .reel-spin { animation: gearRotate 5s linear infinite; }
+ 
+        /* Joystick wiggle */
+        .joystick-wiggle { animation: joystickMove 2.5s ease-in-out infinite; }
+        @keyframes joystickMove {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg); }
+            75% { transform: rotate(8deg); }
+        }
+ 
+        /* Rocket launch */
+        .rocket-launch { animation: rocketBob 3s ease-in-out infinite; }
+        @keyframes rocketBob {
+            0%, 100% { transform: translateY(0) rotate(-45deg); }
+            50% { transform: translateY(-10px) rotate(-45deg); }
+        }
+ 
+        /* Signal bars pulse */
+        .signal-bar {
+            animation: signalPulse 1.6s ease-in-out infinite;
+        }
+        @keyframes signalPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+ 
+        /* Cyber scan line */
+        .scan-line {
+            position: absolute; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(34,211,238,0.6), transparent);
+            animation: scanMove 3s ease-in-out infinite;
+        }
+        @keyframes scanMove {
+            0%, 100% { top: 10%; opacity: 0; }
+            50% { top: 90%; opacity: 1; }
+        }
+ 
+        /* Cinematic Hero Styles */
+        .gsap-reveal { visibility: hidden; }
+
+        .film-grain-hero {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 5; opacity: 0.03; mix-blend-mode: overlay;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+        }
+
+        .text-cinematic-hero {
+            background: linear-gradient(180deg, #22d3ee 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0px 10px 30px rgba(34,211,238,0.4)) drop-shadow(0px 2px 8px rgba(16,185,129,0.3));
+        }
+
+        .premium-depth-card {
+            background: linear-gradient(145deg, #0a1628 0%, #020815 100%);
+            box-shadow:
+                0 40px 100px -20px rgba(0, 0, 0, 0.9),
+                0 20px 40px -20px rgba(0, 0, 0, 0.8),
+                inset 0 1px 2px rgba(34,211,238,0.1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(34,211,238,0.1);
+        }
+
+        .card-sheen-hero {
+            position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 50;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(34,211,238,0.08) 0%, transparent 40%);
+            mix-blend-mode: screen;
+        }
+
+        .iphone-bezel-hero {
+            background-color: #0a0a0a;
+            box-shadow:
+                inset 0 0 0 2px #3a3a3a,
+                inset 0 0 0 7px #000,
+                0 40px 80px -15px rgba(0,0,0,0.9),
+                0 15px 25px -5px rgba(0,0,0,0.7);
+        }
+
+        .screen-glare-hero {
+            background: linear-gradient(110deg, rgba(34,211,238,0.06) 0%, rgba(255,255,255,0) 45%);
+        }
+
+        .widget-depth-hero {
+            background: linear-gradient(180deg, rgba(34,211,238,0.04) 0%, rgba(16,185,129,0.02) 100%);
+            box-shadow:
+                0 10px 20px rgba(0,0,0,0.3),
+                inset 0 1px 1px rgba(34,211,238,0.05),
+                inset 0 -1px 1px rgba(0,0,0,0.5);
+            border: 1px solid rgba(34,211,238,0.05);
+        }
+
+        .floating-ui-badge-hero {
+            background: linear-gradient(135deg, rgba(34,211,238,0.1) 0%, rgba(16,185,129,0.05) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow:
+                0 0 0 1px rgba(34,211,238,0.15),
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                inset 0 1px 1px rgba(34,211,238,0.2),
+                inset 0 -1px 1px rgba(0,0,0,0.5);
+        }
+
+        .progress-ring-hero {
+            transform: rotate(-90deg);
+            transform-origin: center;
+            stroke-dasharray: 402;
+            stroke-dashoffset: 402;
+            stroke-linecap: round;
+        }
+
+        .btn-hero-primary {
+            background: linear-gradient(to right, #0891b2, #059669);
+            box-shadow: 0 0 30px rgba(34,211,238,0.3), 0 10px 25px -5px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .btn-hero-primary:hover {
+            box-shadow: 0 0 40px rgba(34,211,238,0.5), 0 15px 35px -5px rgba(0,0,0,0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-hero-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(34,211,238,0.2);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .btn-hero-secondary:hover {
+            background: rgba(34,211,238,0.1);
+            border-color: rgba(34,211,238,0.4);
+            transform: translateY(-3px);
+        }
+
+        /* Fixed Background Paths Layer */
+        #bg-paths {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+            background: linear-gradient(180deg, #020204 0%, #03110f 45%, #06151c 75%, #020204 100%);
+        }
+        #bg-paths svg {
+            display: block;
+            width: 100%; height: 100%;
+        }
+        .bg-flow-path {
+            fill: none;
+            opacity: var(--base-op, 0.08);
+        }
+    </style>
+</head>
+<body class="no-scrollbar">
+ 
+<!-- Fixed animated background (sits behind hero & all sections, stays put while scrolling) -->
+<div id="bg-paths" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <g id="bgPathsA"></g>
+        <g id="bgPathsB"></g>
+    </svg>
+</div>
+ 
+ 
+<!-- Navigation -->
+<nav class="nav-glass fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="#hero" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                 style="background: linear-gradient(to bottom right, #22d3ee, #10b981);">MK</div>
+            <span class="text-sm font-semibold tracking-wide hidden sm:inline">Min Htut Khaing</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+            <a href="#awards" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Awards</a>
+            <a href="#academics" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Academics</a>
+            <a href="#cca" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">CCA</a>
+            <a href="#leadership" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Leadership</a>
+            <a href="#projects" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Projects</a>
+            <a href="#community" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Community</a>
+            <a href="#hobbies" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Hobbies</a>
+            <a href="#contact" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Contact</a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-slate-400 hover:text-white transition-colors">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden px-6 pb-4">
+        <div class="flex flex-col gap-3">
+            <a href="#awards" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Awards</a>
+            <a href="#academics" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Academics</a>
+            <a href="#cca" class="text-sm text-slate-400 hover:text-white transition-colors py-2">CCA</a>
+            <a href="#leadership" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Leadership</a>
+            <a href="#projects" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Projects</a>
+            <a href="#community" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Community</a>
+            <a href="#hobbies" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Hobbies</a>
+            <a href="#contact" class="text-sm text-slate-400 hover:text-white transition-colors py-2">Contact</a>
+        </div>
+    </div>
+</nav>
+ 
+<!-- Cinematic Text Hero Section -->
+<section id="hero" class="relative w-screen h-screen overflow-hidden flex items-center justify-center" style="perspective: 1500px;">
+    <div class="film-grain-hero" aria-hidden="true"></div>
+
+    <!-- Stage 1: Name Introduction -->
+    <div class="hero-stage-1 absolute inset-0 z-10 flex flex-col items-center justify-center text-center w-screen px-4">
+        <div class="name-intro gsap-reveal mb-8">
+            <div class="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-cyan-400/60 mb-4">Presenting</div>
+            <h1 class="hero-name text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none">
+                <span class="block text-cinematic-hero name-first">MIN</span>
+                <span class="block text-cinematic-hero name-middle mt-2">HTUT</span>
+                <span class="block text-cinematic-hero name-last mt-2">KHAING</span>
+            </h1>
+        </div>
+    </div>
+
+    <!-- Stage 2: Role Reveals -->
+    <div class="hero-stage-2 absolute inset-0 z-10 flex flex-col items-center justify-center text-center w-screen px-4 gsap-reveal">
+        <div class="space-y-4 sm:space-y-6 md:space-y-8">
+            <div class="role-line role-1 flex items-center justify-center gap-2 sm:gap-4">
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-r from-transparent to-cyan-500/50"></div>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-cinematic-hero">SCHOLAR</h2>
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-l from-transparent to-cyan-500/50"></div>
+            </div>
+            <div class="role-line role-2 flex items-center justify-center gap-2 sm:gap-4">
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-r from-transparent to-emerald-500/50"></div>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-cinematic-hero">SPORTSMAN</h2>
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-l from-transparent to-emerald-500/50"></div>
+            </div>
+            <div class="role-line role-3 flex items-center justify-center gap-2 sm:gap-4">
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-r from-transparent to-cyan-500/50"></div>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-cinematic-hero">INNOVATOR</h2>
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-l from-transparent to-cyan-500/50"></div>
+            </div>
+            <div class="role-line role-4 flex items-center justify-center gap-2 sm:gap-4">
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-r from-transparent to-emerald-500/50"></div>
+                <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-cinematic-hero">ADVOCATE</h2>
+                <div class="w-8 sm:w-16 h-[2px] bg-gradient-to-l from-transparent to-emerald-500/50"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stage 3: Stats Grid -->
+    <div class="hero-stage-3 absolute inset-0 z-10 flex items-center justify-center w-screen px-4 gsap-reveal">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-6xl w-full">
+            <div class="stat-card stat-1 text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20">
+                <div class="stat-number text-4xl md:text-6xl font-black text-cinematic-hero mb-2">20+</div>
+                <div class="stat-label text-[10px] md:text-sm font-semibold uppercase tracking-wider text-cyan-400/70">Awards & Certs</div>
+            </div>
+            <div class="stat-card stat-2 text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
+                <div class="stat-number text-4xl md:text-6xl font-black text-cinematic-hero mb-2">6</div>
+                <div class="stat-label text-[10px] md:text-sm font-semibold uppercase tracking-wider text-emerald-400/70">Coding Languages</div>
+            </div>
+            <div class="stat-card stat-3 text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20">
+                <div class="stat-number text-4xl md:text-6xl font-black text-cinematic-hero mb-2">3</div>
+                <div class="stat-label text-[10px] md:text-sm font-semibold uppercase tracking-wider text-cyan-400/70">Languages Fluent</div>
+                <div class="text-[8px] md:text-[10px] font-semibold uppercase tracking-wide text-cyan-400/50 mt-1">(Trilingual)</div>
+            </div>
+            <div class="stat-card stat-4 text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
+                <div class="stat-number text-4xl md:text-6xl font-black text-cinematic-hero mb-2">15+</div>
+                <div class="stat-label text-[10px] md:text-sm font-semibold uppercase tracking-wider text-emerald-400/70">Projects Built</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stage 4: Final CTA -->
+    <div class="hero-stage-4 absolute inset-0 z-10 flex flex-col items-center justify-center text-center w-screen px-4 gsap-reveal pointer-events-auto">
+        <h2 class="cta-heading text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight text-cinematic-hero">
+            Explore the Journey
+        </h2>
+        <p class="cta-text text-slate-400 text-base sm:text-lg md:text-xl mb-8 sm:mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+            Dive into my portfolio of achievements, projects, and passions that shape who I am and the impact I strive to make.
+        </p>
+        <div class="cta-buttons flex flex-col sm:flex-row gap-4 sm:gap-6">
+            <a href="#awards" class="btn-hero-primary flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-white text-sm sm:text-base">
+                <i data-lucide="trophy" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                View Achievements
+            </a>
+            <a href="#contact" class="btn-hero-secondary flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-white text-sm sm:text-base">
+                <i data-lucide="mail" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                Get In Touch
+            </a>
+        </div>
+    </div>
+</section>
+ 
+<!-- Awards Section -->
+<section id="awards" class="relative py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-semibold tracking-widest uppercase text-cyan-400 mb-4">
+                <i data-lucide="trophy" class="w-3 h-3"></i> Achievements
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Awards & <span class="gradient-text">Recognition</span></h2>
+            <p class="mt-4 text-slate-400 font-light max-w-lg mx-auto">A collection of milestones reflecting dedication across academics, technology, and community.</p>
+        </div>
+ 
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ 
+            <!-- CSIT Scholarship -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+                <div class="relative">
+                    <div class="circuit-line" style="top:10px; left:0; width:60%;"></div>
+                    <div class="circuit-line" style="top:30px; left:20%; width:80%; animation-delay: 1.5s;"></div>
+                </div>
+                <div class="flex items-start gap-4 mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-cyan-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">Scholarship</span>
+                        <h3 class="text-base font-semibold mt-1">CSIT Scholarship Nominee</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2 relative z-10">
+                    <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><span>Nominated by YIJC for bond-free CSIT Computing Scholarship (2025)</span></li>
+                    <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><span>Recognition for cybersecurity, data analytics & software engineering aptitude</span></li>
+                    <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><span>Hands-on experiential programme with CSIT engineers</span></li>
+                </ul>
+            </div>
+ 
+            <!-- Intel AI -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="brain" class="w-6 h-6 text-purple-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-purple-400">International</span>
+                        <h3 class="text-base font-semibold mt-1">Intel Global AI Impact Festival 2026</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><span>International AI Changemakers competition with dozens of countries</span></li>
+                    <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><span>Produced cinematic presentation video for submission</span></li>
+                    <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><span>Multi-stage judging: AI innovation, responsible tech & social impact</span></li>
+                </ul>
+                <div class="mt-4 flex gap-1">
+                    <div class="h-1 w-8 rounded-full bg-purple-500/40 circuit-line" style="animation-delay:0s;"></div>
+                    <div class="h-1 w-12 rounded-full bg-purple-500/30 circuit-line" style="animation-delay:0.5s;"></div>
+                    <div class="h-1 w-6 rounded-full bg-purple-500/20 circuit-line" style="animation-delay:1s;"></div>
+                </div>
+            </div>
+ 
+            <!-- DSTA Brainhack -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="terminal" class="w-6 h-6 text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">National</span>
+                        <h3 class="text-base font-semibold mt-1">DSTA Brainhack 2026 (CODE_EXP)</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span><span>Singapore's flagship student technology festival by DSTA</span></li>
+                    <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span><span>CODE_EXP: Design & build mobile app prototypes</span></li>
+                    <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span><span>Pitched solutions to judging panel</span></li>
+                </ul>
+                <div class="mt-4 p-3 rounded-lg bg-black/40 border border-emerald-500/10 overflow-hidden h-16">
+                    <div class="terminal-scroll text-[10px] font-mono text-emerald-400/70">
+                        <div>> initializing CODE_EXP...</div>
+                        <div>> loading cybersecurity modules...</div>
+                        <div>> scanning network vulnerabilities...</div>
+                        <div>> deploying defense protocols...</div>
+                        <div>> system secured ✓</div>
+                        <div>> initializing CODE_EXP...</div>
+                        <div>> loading cybersecurity modules...</div>
+                        <div>> scanning network vulnerabilities...</div>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- NUS Humanity Challenge -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.4s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="globe" class="w-6 h-6 text-blue-400 globe-rotate" style="animation-duration:8s;"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-blue-400">Humanities</span>
+                        <h3 class="text-base font-semibold mt-1">NUS Humanity Challenge 2025</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">•</span><span>Multidisciplinary challenge by NUS</span></li>
+                    <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">•</span><span>Applied social sciences, ethics & policy to real-world issues</span></li>
+                    <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">•</span><span>Team research, solution design & presentation to academic judges</span></li>
+                </ul>
+            </div>
+ 
+            <!-- Queens Commonwealth -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.5s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0 feather-write">
+                        <i data-lucide="pen-tool" class="w-6 h-6 text-amber-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-amber-400">Writing</span>
+                        <h3 class="text-base font-semibold mt-1">Queens Commonwealth Essay Competition</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">•</span><span>World's oldest international writing competition (since 1883)</span></li>
+                    <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">•</span><span>Competed against tens of thousands globally</span></li>
+                    <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">•</span><span>Bronze 2023, Silver 2024</span></li>
+                </ul>
+                <div class="mt-4 flex gap-3">
+                    <span class="px-2 py-1 rounded-md bg-amber-900/30 border border-amber-500/20 text-[10px] font-semibold text-amber-400">🥉 Bronze 2023</span>
+                    <span class="px-2 py-1 rounded-md bg-amber-900/30 border border-amber-500/20 text-[10px] font-semibold text-amber-300">🥈 Silver 2024</span>
+                </div>
+            </div>
+ 
+            <!-- NP Math Challenge -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.6s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0 trophy-morph">
+                        <i data-lucide="trophy" class="w-6 h-6 text-teal-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-teal-400">Mathematics</span>
+                        <h3 class="text-base font-semibold mt-1">Ngee Ann Polytechnic Math Challenge 2024</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-teal-400 mt-0.5">•</span><span>Inter-school mathematics competition by Ngee Ann Polytechnic</span></li>
+                    <li class="flex items-start gap-2"><span class="text-teal-400 mt-0.5">•</span><span>Multiple rounds of problem-solving & logical reasoning</span></li>
+                    <li class="flex items-start gap-2"><span class="text-teal-400 mt-0.5">•</span><span>Silver Trophy (Team Event)</span></li>
+                </ul>
+                <div class="mt-4 flex items-center gap-2">
+                    <span class="px-2 py-1 rounded-md bg-teal-900/30 border border-teal-500/20 text-[10px] font-semibold text-teal-300">🥈 Silver Trophy</span>
+                    <span class="text-[10px] text-slate-600">Team Event</span>
+                </div>
+            </div>
+ 
+            <!-- NYAA -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0 medal-unfurl">
+                        <i data-lucide="award" class="w-6 h-6 text-yellow-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-yellow-400">National</span>
+                        <h3 class="text-base font-semibold mt-1">National Youth Achievement Award 2024</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">•</span><span>Singapore's premier youth development programme (since 1992)</span></li>
+                    <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">•</span><span>12+ months: Community Service, Skills, Physical Recreation & Adventurous Journey</span></li>
+                    <li class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">•</span><span>Completed Award Record Book & reflective diary</span></li>
+                </ul>
+                <div class="mt-4 flex items-center gap-2">
+                    <span class="px-2 py-1 rounded-md bg-yellow-900/30 border border-yellow-500/20 text-[10px] font-semibold text-yellow-300">🥈 Silver Award</span>
+                </div>
+            </div>
+ 
+            <!-- Bebras Challenge -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 puzzle-fit">
+                        <i data-lucide="puzzle" class="w-6 h-6 text-indigo-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-indigo-400">Computing</span>
+                        <h3 class="text-base font-semibold mt-1">Bebras Challenge Singapore</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-indigo-400 mt-0.5">•</span><span>International informatics & computational thinking challenge</span></li>
+                    <li class="flex items-start gap-2"><span class="text-indigo-400 mt-0.5">•</span><span>Organised by NIE (NTU), NUS Computing & SIMCC</span></li>
+                    <li class="flex items-start gap-2"><span class="text-indigo-400 mt-0.5">•</span><span>Bronze (JC Elite): 2025 & 2026</span></li>
+                </ul>
+                <div class="mt-4 flex gap-2">
+                    <span class="px-2 py-1 rounded-md bg-indigo-900/30 border border-indigo-500/20 text-[10px] font-semibold text-indigo-300">🥉 2025</span>
+                    <span class="px-2 py-1 rounded-md bg-indigo-900/30 border border-indigo-500/20 text-[10px] font-semibold text-indigo-300">🥉 2026</span>
+                </div>
+            </div>
+ 
+            <!-- ICDL -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-rose-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-rose-400">Digital Literacy</span>
+                        <h3 class="text-base font-semibold mt-1">ICDL National Digital Explorer 2025–2026</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light mb-3">National Digital Explorer is a nationwide digital literacy initiative jointly organised by Crescent Girls' School and ICDL Asia. Completed all 3 ICDL eLearning modules and certification tests — Spreadsheets, Presentation, and Big Data — earning internationally recognised ICDL Profile Certificates and eBadges.</p>
+                <div class="flex items-end gap-1.5 h-10">
+                    <div class="w-6 rounded-t bg-rose-500/50 chart-rise" style="height:60%; animation-delay:0.2s;"></div>
+                    <div class="w-6 rounded-t bg-rose-500/60 chart-rise" style="height:80%; animation-delay:0.4s;"></div>
+                    <div class="w-6 rounded-t bg-rose-500/80 chart-rise" style="height:100%; animation-delay:0.6s;"></div>
+                </div>
+                <div class="flex gap-1.5 mt-1">
+                    <span class="w-6 text-[8px] text-center text-slate-600">SS</span>
+                    <span class="w-6 text-[8px] text-center text-slate-600">Pres</span>
+                    <span class="w-6 text-[8px] text-center text-slate-600">BD</span>
+                </div>
+            </div>
+ 
+            <!-- BuildingBloCS Conference -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.4s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="code-2" class="w-6 h-6 text-cyan-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">Computing Conference</span>
+                        <h3 class="text-base font-semibold mt-1">BuildingBloCS Conference (March 2025)</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><span>NUS School of Computing conference</span></li>
+                    <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><span>Learned NumPy & Pandas for data analysis</span></li>
+                    <li class="flex items-start gap-2"><span class="text-cyan-400 mt-0.5">•</span><span>Hands-on Python programming workshop</span></li>
+                </ul>
+            </div>
+
+            <!-- Singapore Junior Chemistry Olympiad -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.5s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="flask-conical" class="w-6 h-6 text-purple-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-purple-400">Chemistry</span>
+                        <h3 class="text-base font-semibold mt-1">Singapore Junior Chemistry Olympiad 2024</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><span>National chemistry competition for secondary students</span></li>
+                    <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><span>Advanced problem-solving & chemical concepts</span></li>
+                    <li class="flex items-start gap-2"><span class="text-purple-400 mt-0.5">•</span><span>Competed nationally in 2024</span></li>
+                </ul>
+            </div>
+
+            <!-- Live On Festival Essay -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.6s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="file-text" class="w-6 h-6 text-green-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-green-400">Writing Competition</span>
+                        <h3 class="text-base font-semibold mt-1">Live On Festival 2022 - Essay Competition</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">•</span><span>National organ donation awareness campaign</span></li>
+                    <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">•</span><span>Essay on life-saving importance of organ donation</span></li>
+                    <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">•</span><span>Participated in 2022 competition</span></li>
+                </ul>
+            </div>
+
+            <!-- CDC Education Merit Award - FULL WIDTH PREMIUM -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-amber-500/5 border-2 border-amber-500/20 lg:col-span-3 reveal-bounce" style="transition-delay: 0.7s;">
+                <div class="scan-line"></div>
+                <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
+                    <div class="flex items-start gap-4 flex-1">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-2 border-amber-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
+                            <i data-lucide="award" class="w-8 h-8 text-amber-300 lightbulb-glow"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[11px] font-bold tracking-widest uppercase text-amber-300">🏆 PRESTIGIOUS MERIT AWARD</span>
+                                <span class="px-2 py-0.5 rounded-md bg-amber-400/20 border border-amber-400/30 text-[9px] font-bold text-amber-200">2022</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mt-1 mb-2 tracking-tight">CCC - CDC Education Merit Award</h3>
+                            <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Awarded in Secondary 2 for outstanding academic excellence</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Recognition by Citizens' Consultative Committee & Community Development Council</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Distinguished achievement in academics and character</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 md:max-w-xs md:justify-end">
+                        <span class="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-300">Academic Excellence</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-xs font-semibold text-orange-300">Community Recognition</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nee Soon AI -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.8s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0 lightbulb-glow">
+                        <i data-lucide="lightbulb" class="w-6 h-6 text-amber-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-amber-400">Community AI</span>
+                        <h3 class="text-base font-semibold mt-1">Nee Soon AI & Innovation Challenge 2026</h3>
+                    </div>
+                </div>
+                <ul class="text-sm text-slate-400 font-light space-y-2">
+                    <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">•</span><span>Grassroots innovation challenge at Nee Soon CC</span></li>
+                    <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">•</span><span>AI solutions for community needs & sustainability</span></li>
+                    <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">•</span><span>Presented to grassroots leaders</span></li>
+                </ul>
+            </div>
+ 
+            <!-- Google AI Professional Certificate -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 border-2 border-blue-500/20 lg:col-span-3 reveal-bounce" style="transition-delay: 0.9s;">
+                <div class="scan-line"></div>
+                <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
+                    <div class="flex items-start gap-4 flex-1">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/20">
+                            <i data-lucide="award" class="w-8 h-8 text-blue-300 lightbulb-glow"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[11px] font-bold tracking-widest uppercase text-blue-300">🏆 Professional Certification</span>
+                                <span class="px-2 py-0.5 rounded-md bg-blue-400/20 border border-blue-400/30 text-[9px] font-bold text-blue-200">VERIFIED</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mt-1 mb-2">Google AI Professional Certificate</h3>
+                            <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Completed 7-course specialization by Google</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Built 20+ AI-assisted artifacts portfolio</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Custom AI solution development ("vibe-coded")</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Advanced prompting, AI evaluation & responsible AI usage</span></li>
+                            </ul>
+                            <a href="https://coursera.org/share/657c14ff35e14610afc7705017bc31d9" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-400/30 text-xs font-bold text-blue-300 hover:bg-blue-500/30 hover:text-blue-200 transition-all">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                                View Official Certificate on Coursera
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 md:max-w-xs md:justify-end">
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">AI Fundamentals</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">Brainstorming & Planning</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">Research & Insights</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">Writing & Communicating</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">Content Creation</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">Data Analysis</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-300">App Building</span>
+                    </div>
+                </div>
+            </div>
+ 
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Academic Journey -->
+<section id="academics" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-semibold tracking-widest uppercase text-emerald-400 mb-4">
+                <i data-lucide="graduation-cap" class="w-3 h-3"></i> Education
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Academic <span class="gradient-text">Journey</span></h2>
+        </div>
+ 
+        <!-- Timeline -->
+        <div class="relative">
+            <div class="timeline-line hidden md:block"></div>
+ 
+            <!-- YIJC -->
+            <div class="relative flex flex-col md:flex-row items-center gap-8 mb-16 reveal-bounce">
+                <div class="md:w-1/2 md:text-right md:pr-12">
+                    <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03]">
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">2025 – 2026</span>
+                        <h3 class="text-xl font-bold mt-2">Yishun Innova Junior College</h3>
+                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Proactive, self-motivated learner with strong aptitude for technology and analytical thinking. Engaged in thoughtful discussions, synthesizing complex ideas and offering creative solutions. Currently preparing for GCE A-Level Examination 2026.</p>
+                        <div class="mt-4 grid grid-cols-2 gap-2 md:justify-end">
+                            <div class="text-center p-2 rounded-lg bg-cyan-500/5 border border-cyan-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-cyan-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-cyan-300 mt-0.5">Proactive</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-purple-500/5 border border-purple-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-purple-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-purple-300 mt-0.5">Analytical</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-emerald-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-emerald-300 mt-0.5">Creative</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-blue-500/5 border border-blue-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-blue-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-blue-300 mt-0.5">Engaged</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-right">
+                            <span class="px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20 text-[10px] font-bold text-violet-300">🏆 CSIT Scholarship Nominee</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center justify-center z-10">
+                    <div class="timeline-dot active-dot"></div>
+                </div>
+                <div class="md:w-1/2 md:pl-12"></div>
+            </div>
+ 
+            <!-- Yuan Ching -->
+            <div class="relative flex flex-col md:flex-row items-center gap-8 mb-16 reveal-bounce" style="transition-delay: 0.2s;">
+                <div class="md:w-1/2 md:pr-12"></div>
+                <div class="hidden md:flex items-center justify-center z-10">
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="md:w-1/2 md:pl-12">
+                    <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03]">
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">2021 – 2024</span>
+                        <h3 class="text-xl font-bold mt-2">Yuan Ching Secondary School</h3>
+                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Friendly, helpful team player who stayed attentive and showed resilience through steadily improving grades. Completed GCE O-Level Examination in 2024.</p>
+
+                        <!-- O Level Results -->
+                        <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-cyan-500/5 border border-emerald-500/20">
+                            <div class="text-[10px] font-bold tracking-widest uppercase text-emerald-300 mb-3">📊 GCE O-Level Results 2024</div>
+                            <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+                                <div><span class="text-slate-500">Mathematics:</span> <span class="font-bold text-emerald-300">A1</span></div>
+                                <div><span class="text-slate-500">English:</span> <span class="font-bold text-white">B3</span></div>
+                                <div><span class="text-slate-500">Add. Maths:</span> <span class="font-bold text-white">B3</span></div>
+                                <div><span class="text-slate-500">Chinese:</span> <span class="font-bold text-white">B4</span></div>
+                                <div><span class="text-slate-500">Pure Physics:</span> <span class="font-bold text-white">B3</span></div>
+                                <div><span class="text-slate-500">Pure Chemistry:</span> <span class="font-bold text-white">B3</span></div>
+                                <div class="col-span-2"><span class="text-slate-500">Humanities (SS & History):</span> <span class="font-bold text-white">B3</span></div>
+                            </div>
+                            <div class="pt-3 border-t border-emerald-500/20 flex justify-between text-xs">
+                                <div><span class="text-slate-500">L1R5:</span> <span class="text-lg font-black text-emerald-300">14</span></div>
+                                <div><span class="text-slate-500">L1R4:</span> <span class="text-lg font-black text-cyan-300">13</span></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <div class="text-center p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-emerald-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-emerald-300 mt-0.5">Teamwork</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-green-500/5 border border-green-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-green-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-green-300 mt-0.5">Resilience</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-teal-500/5 border border-teal-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-teal-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-teal-300 mt-0.5">Attentive</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-cyan-500/5 border border-cyan-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-cyan-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-cyan-300 mt-0.5">Growth</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Jurong West Primary -->
+            <div class="relative flex flex-col md:flex-row items-center gap-8 reveal-bounce" style="transition-delay: 0.3s;">
+                <div class="md:w-1/2 md:text-right md:pr-12">
+                    <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03]">
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-orange-400">2014 – 2020</span>
+                        <h3 class="text-xl font-bold mt-2">Jurong West Primary School</h3>
+                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Represented school in National School Games Basketball (P3–P6), building perseverance and teamwork. Active in performing arts, music, and sports ECAs.</p>
+
+                        <!-- PSLE Results -->
+                        <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/5 border border-orange-500/20">
+                            <div class="text-[10px] font-bold tracking-widest uppercase text-orange-300 mb-3">📊 PSLE Results 2020</div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div><span class="text-slate-500">English:</span> <span class="font-bold text-white">A</span></div>
+                                <div><span class="text-slate-500">Mathematics:</span> <span class="font-bold text-white">A</span></div>
+                                <div><span class="text-slate-500">Chinese:</span> <span class="font-bold text-white">B</span></div>
+                                <div><span class="text-slate-500">Science:</span> <span class="font-bold text-white">A</span></div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-orange-500/20">
+                                <span class="text-xs text-slate-400">Total Score:</span> <span class="text-lg font-black text-orange-300">224</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-2 md:justify-end">
+                            <div class="text-center p-2 rounded-lg bg-orange-500/5 border border-orange-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-orange-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-orange-300 mt-0.5">Perseverance</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-red-500/5 border border-red-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-red-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-red-300 mt-0.5">Teamwork</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-amber-500/5 border border-amber-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-amber-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-amber-300 mt-0.5">Discipline</div>
+                            </div>
+                            <div class="text-center p-2 rounded-lg bg-yellow-500/5 border border-yellow-500/15">
+                                <div class="text-[9px] font-semibold tracking-wide uppercase text-yellow-400/70">Core Value</div>
+                                <div class="text-xs font-bold text-yellow-300 mt-0.5">Excellence</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-2 md:justify-end">
+                            <span class="px-3 py-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-[10px] font-bold text-orange-300">🏀 NSG Basketball</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-violet-500/10 border border-violet-500/20 text-[10px] font-bold text-violet-300">🎭 Performing Arts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center justify-center z-10">
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="md:w-1/2 md:pl-12"></div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- CCA Section -->
+<section id="cca" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-orange-500/20 bg-orange-500/5 text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-4">
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                Sports
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Co-Curricular <span class="gradient-text">Activities</span></h2>
+        </div>
+ 
+        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce">
+            <div class="flex flex-col md:flex-row items-start gap-8">
+                <div class="w-20 h-20 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 basketball-bounce">
+                    <svg class="w-10 h-10 text-orange-400" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2C12 2 14 6 14 12C14 18 12 22 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2C12 2 10 6 10 12C10 18 12 22 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold">Basketball</h3>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Represented school basketball teams for eight consecutive years (2017–2024), competing in the National School Games (NSG) – West Zone Championships throughout. Began at Jurong West Primary School (2017–2020), then continued at Yuan Ching Secondary School (2021–2024) — playing in the C Division as a Junior (2021–2022) and the B Division as a Senior (2023–2024), alongside friendly matches against other schools. Served as Upper-Executive Exco within the secondary school CCA, mentoring juniors and instilling "Scholar Sportsman" values.</p>
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
+                            <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2017 – 2020</div>
+                            <div class="text-sm font-medium">Jurong West Primary · NSG – West Zone</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
+                            <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2021 – 2022 · Junior</div>
+                            <div class="text-sm font-medium">NSG – West Zone, C Division</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
+                            <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2023 – 2024 · Senior</div>
+                            <div class="text-sm font-medium">NSG – West Zone, B Division</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
+                        <div class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400 mb-1">Leadership</div>
+                        <div class="text-sm font-medium">Upper-Executive Exco (Yuan Ching Secondary CCA) · Mentoring Juniors · "Scholar Sportsman" Values</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Leadership Section -->
+<section id="leadership" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/5 text-[10px] font-semibold tracking-widest uppercase text-violet-400 mb-4">
+                <i data-lucide="users" class="w-3 h-3"></i> Leadership
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Leadership <span class="gradient-text">Roles</span></h2>
+        </div>
+ 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Basketball Upper Executive -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-orange-400" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2C12 2 14 6 14 12C14 18 12 22 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2C12 2 10 6 10 12C10 18 12 22 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-orange-400">CCA Leadership</span>
+                        <h3 class="text-lg font-bold mt-1">Upper-Executive Exco · Basketball CCA</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light leading-relaxed mb-3">Led and mentored junior basketball team members at Yuan Ching Secondary School, fostering "Scholar Sportsman" values and building team cohesion. Coordinated training schedules, organized friendly matches, and served as a bridge between coaches and team members.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="px-2 py-1 rounded-md bg-orange-500/10 border border-orange-500/20 text-[10px] font-semibold text-orange-400">Team Leadership</span>
+                    <span class="px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-[10px] font-semibold text-red-400">Mentorship</span>
+                    <span class="px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10px] font-semibold text-amber-400">Scholar Sportsman</span>
+                </div>
+                <div class="mt-3 flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-orange-400/60"></i>
+                    <span class="text-[10px] text-slate-600">Yuan Ching Secondary School (2023–2024)</span>
+                </div>
+            </div>
+
+            <!-- YIJC Orientation -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="compass" class="w-6 h-6 text-violet-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-violet-400">Orientation</span>
+                        <h3 class="text-lg font-bold mt-1">YIJC Orientation Programme (2026)</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light leading-relaxed">Facilitated the Literacy Games Station for the College Race, guiding JC1 students through digital literacy challenges in a Jeopardy-style format.</p>
+                <div class="mt-4 flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-violet-400/60"></i>
+                    <span class="text-[10px] text-slate-600">Yishun Innova Junior College</span>
+                </div>
+            </div>
+
+            <!-- Makers' Academy -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="settings" class="w-6 h-6 text-cyan-400 gear-spin" style="animation-duration:8s;"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">Innovation</span>
+                        <h3 class="text-lg font-bold mt-1">Makers' Academy</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light leading-relaxed">Active participant in YI Makers' Faire and YI Festival. Represented YIJC in external hackathons and showcases.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">Makers' Faire</span>
+                    <span class="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400">YI Festival</span>
+                    <span class="px-2 py-1 rounded-md bg-violet-500/10 border border-violet-500/20 text-[10px] font-semibold text-violet-400">Hackathons</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Side Projects -->
+<section id="projects" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-semibold tracking-widest uppercase text-cyan-400 mb-4">
+                <i data-lucide="rocket" class="w-3 h-3"></i> Side Projects
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">External <span class="gradient-text">Side Projects</span></h2>
+            <p class="mt-4 text-slate-400 font-light max-w-lg mx-auto">Building beyond the classroom — exploring AI, data, and software development through independent projects.</p>
+        </div>
+ 
+        <!-- Starlytics -->
+        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce mb-6">
+            <div class="scan-line"></div>
+            <div class="flex flex-col md:flex-row items-start gap-8 relative z-10">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="rocket" class="w-8 h-8 text-cyan-400 rocket-launch"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h3 class="text-2xl font-bold">Starlytics</h3>
+                        <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">v3.1</span>
+                    </div>
+                    <a href="https://starlytics.app" target="_blank" rel="noopener" class="text-xs text-cyan-400/70 hover:text-cyan-400 transition-colors break-all">starlytics.app</a>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">An AI-powered intelligence platform tracking real growth signals and identifying breakout creators on YouTube. Trusted by marketing teams, agencies, and startups to spot undervalued creators early.</p>
+ 
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-cyan-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">Growth Velocity</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Track momentum changes before they're obvious.</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="heart-handshake" class="w-4 h-4 text-emerald-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">Engagement Depth</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Measure true fan engagement beyond vanity metrics.</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="zap" class="w-4 h-4 text-purple-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-purple-400">Virality Patterns</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Detect resonance early across new uploads.</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="repeat" class="w-4 h-4 text-amber-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-amber-400">Content Consistency</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Identify sustainable growth trajectories.</div>
+                        </div>
+                    </div>
+ 
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Real-time Prediction Engine</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Momentum Detection</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Exponential Projection</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Growth Forecasting</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Discover by Niche</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Creator Comparison</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- GitHub -->
+        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 0.5C5.65 0.5 0.5 5.65 0.5 12c0 5.08 3.29 9.39 7.86 10.91 0.57 0.1 0.78-0.25 0.78-0.55 0-0.27-0.01-1.17-0.02-2.12-3.2 0.7-3.88-1.36-3.88-1.36-0.52-1.33-1.28-1.68-1.28-1.68-1.04-0.71 0.08-0.7 0.08-0.7 1.16 0.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36 0.96 0.1-0.74 0.4-1.25 0.73-1.54-2.55-0.29-5.24-1.28-5.24-5.69 0-1.26 0.45-2.29 1.19-3.09-0.12-0.29-0.52-1.46 0.11-3.05 0 0 0.97-0.31 3.18 1.18 0.92-0.26 1.91-0.39 2.89-0.39 0.98 0 1.97 0.13 2.89 0.39 2.21-1.49 3.18-1.18 3.18-1.18 0.63 1.59 0.23 2.76 0.11 3.05 0.74 0.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.4-5.25 5.68 0.41 0.36 0.78 1.07 0.78 2.15 0 1.56-0.01 2.81-0.01 3.19 0 0.31 0.21 0.66 0.79 0.55C20.21 21.39 23.5 17.08 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold">GitHub Profile</h3>
+                    <p class="text-sm text-slate-400 font-light mt-2 leading-relaxed">A growing collection of coding projects, experiments, and development work.</p>
+                </div>
+                <a href="https://github.com/minuttt" target="_blank" rel="noopener" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 border border-white/10 hover:border-cyan-500/30 hover:text-white transition-all flex items-center gap-2 flex-shrink-0">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    github.com/minuttt
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Work-Learn Scheme -->
+<section id="work-learn" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-semibold tracking-widest uppercase text-emerald-400 mb-4">
+                <i data-lucide="shield" class="w-3 h-3"></i> Work-Learn Scheme
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Cyber & Digital <span class="gradient-text">Work-Learn Scheme</span></h2>
+        </div>
+ 
+        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce">
+            <div class="scan-line"></div>
+            <div class="flex flex-col md:flex-row items-start gap-8 relative z-10">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-emerald-400"></i>
+                </div>
+                <div class="flex-1">
+                    <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">MINDEF · 2024 onwards</span>
+                    <h3 class="text-xl font-bold mt-1">Cyber Specialist (CySpec) Track</h3>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Part of the Cyber & Digital Work-Learn Schemes, providing NSFs with advanced operational roles in cybersecurity, software development, AI, and data science — while equipping participants with academic credits toward relevant university degrees.</p>
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400">Cybersecurity</span>
+                        <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">Software Development</span>
+                        <span class="px-2 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 text-[10px] font-semibold text-purple-400">AI</span>
+                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-400">Data Science</span>
+                        <span class="px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10px] font-semibold text-amber-400">University Academic Credits</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Community Service -->
+<section id="community" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-green-500/20 bg-green-500/5 text-[10px] font-semibold tracking-widest uppercase text-green-400 mb-4">
+                <i data-lucide="heart" class="w-3 h-3"></i> Service
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Community <span class="gradient-text">Service</span></h2>
+        </div>
+ 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- VIA Project -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="transition-delay: 0.1s;">
+                <div class="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-5 leaf-transform cursor-pointer">
+                    <i data-lucide="trees" class="w-8 h-8 text-green-400"></i>
+                </div>
+                <h3 class="text-lg font-bold">VIA Project</h3>
+                <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Weekly park clean-ups with peers. Keeping the community green and clean.</p>
+                <div class="mt-4 flex justify-center">
+                    <div class="flex items-center gap-1.5 text-green-400/60">
+                        <i data-lucide="recycle" class="w-4 h-4"></i>
+                        <span class="text-[10px] font-semibold tracking-wide uppercase">Sustainability</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Reading Ambassador -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="transition-delay: 0.2s;">
+                <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-5 book-flip cursor-pointer">
+                    <div class="book-inner">
+                        <i data-lucide="book-open" class="w-8 h-8 text-amber-400"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold">Reading Ambassador</h3>
+                <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Organized book donations, enriched the class reading corner, and fostered literacy.</p>
+                <div class="mt-4 flex justify-center">
+                    <div class="flex items-center gap-1.5 text-amber-400/60">
+                        <i data-lucide="book-marked" class="w-4 h-4"></i>
+                        <span class="text-[10px] font-semibold tracking-wide uppercase">Literacy</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Coding Outreach -->
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="transition-delay: 0.3s;">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 cursor-pointer">
+                    <i data-lucide="code" class="w-8 h-8 text-cyan-400"></i>
+                </div>
+                <h3 class="text-lg font-bold">Coding Outreach</h3>
+                <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Introduced primary school students to simple programming.</p>
+                <div class="mt-4 flex justify-center">
+                    <div class="flex items-center gap-1.5 text-cyan-400/60">
+                        <i data-lucide="terminal" class="w-4 h-4"></i>
+                        <span class="text-[10px] font-semibold tracking-wide uppercase">Outreach</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Personal Qualities -->
+<section id="qualities" class="relative py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-pink-500/20 bg-pink-500/5 text-[10px] font-semibold tracking-widest uppercase text-pink-400 mb-4">
+                <i data-lucide="sparkles" class="w-3 h-3"></i> Character
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Personal <span class="gradient-text">Qualities</span></h2>
+        </div>
+ 
+        <!-- Word Cloud -->
+        <div class="flex flex-wrap items-center justify-center gap-4 reveal-bounce">
+            <span class="word-pulse px-6 py-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-semibold text-lg" style="animation-delay: 0s;">Resilient</span>
+            <span class="word-pulse px-5 py-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-semibold text-base" style="animation-delay: 0.3s;">Helpful</span>
+            <span class="word-pulse px-7 py-3.5 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-300 font-bold text-xl" style="animation-delay: 0.6s;">Humble</span>
+            <span class="word-pulse px-5 py-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 font-semibold text-base" style="animation-delay: 0.9s;">Friendly</span>
+            <span class="word-pulse px-6 py-3 rounded-2xl bg-pink-500/10 border border-pink-500/20 text-pink-300 font-semibold text-lg" style="animation-delay: 1.2s;">Conscientious</span>
+            <span class="word-pulse px-5 py-2.5 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-300 font-semibold text-base" style="animation-delay: 0.4s;">Reliable</span>
+            <span class="word-pulse px-6 py-3 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-300 font-semibold text-lg" style="animation-delay: 0.7s;">Growth Mindset</span>
+            <span class="word-pulse px-5 py-2.5 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-300 font-semibold text-base" style="animation-delay: 1s;">Quiet Leader</span>
+            <span class="word-pulse px-7 py-3.5 rounded-2xl bg-green-500/10 border border-green-500/20 text-green-300 font-bold text-xl" style="animation-delay: 1.4s;">Positive Influence</span>
+        </div>
+ 
+        <p class="text-center text-sm text-slate-500 font-light mt-8 max-w-lg mx-auto reveal">A positive influence among peers and tutors — balancing achievement with humility, and ambition with care. Mature in outlook, and able to stay positive even when faced with challenges.</p>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Hobbies & Interests -->
+<section id="hobbies" class="relative py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-fuchsia-500/20 bg-fuchsia-500/5 text-[10px] font-semibold tracking-widest uppercase text-fuchsia-400 mb-4">
+                <i data-lucide="music" class="w-3 h-3"></i> Beyond the Classroom
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Hobbies & <span class="gradient-text">Interests</span></h2>
+        </div>
+ 
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ 
+            <!-- Piano -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+                <div class="flex items-start gap-4 mb-4 piano-keys">
+                    <div class="w-12 h-12 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="music" class="w-6 h-6 text-fuchsia-400 piano-key"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-fuchsia-400">Music</span>
+                        <h3 class="text-base font-semibold mt-1">Piano</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light mb-3">7 years of experience with Aureus Academy Music School (4 years). Favorite piece: <span class="text-fuchsia-300">La Campanella</span>.</p>
+                <div class="mt-3">
+                    <span class="px-2 py-1 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/20 text-[10px] font-semibold text-fuchsia-400">🎹 Student Recital 2024</span>
+                </div>
+            </div>
+ 
+            <!-- Roblox Coding -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="blocks" class="w-6 h-6 text-red-400 puzzle-fit"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-red-400">Game Dev</span>
+                        <h3 class="text-base font-semibold mt-1">Coding</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light">Developed multiple Roblox games with over <span class="text-red-300 font-semibold">1,000 total visits</span>.</p>
+            </div>
+ 
+            <!-- Gaming -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="gamepad-2" class="w-6 h-6 text-indigo-400 joystick-wiggle"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-indigo-400">Entertainment</span>
+                        <h3 class="text-base font-semibold mt-1">Gaming</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light">Passionate about interactive entertainment of all kinds.</p>
+            </div>
+ 
+            <!-- Taekwondo -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.4s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="swords" class="w-6 h-6 text-red-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-red-400">Martial Arts</span>
+                        <h3 class="text-base font-semibold mt-1">Taekwondo</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light mb-3">Practiced for 3 years, achieving Red Belt (2nd Geup).</p>
+                <div class="h-2 rounded-full belt-shimmer w-2/3"></div>
+            </div>
+ 
+            <!-- Editing & Cinematography -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.5s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="clapperboard" class="w-6 h-6 text-purple-400 reel-spin"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-purple-400">Visual Media</span>
+                        <h3 class="text-base font-semibold mt-1">Editing & Cinematography</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light">Edited and produced the cinematic presentation video for the Intel Global AI Impact Festival 2026.</p>
+            </div>
+ 
+            <!-- Producing Music -->
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.6s;">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="disc-3" class="w-6 h-6 text-teal-400 vinyl-spin"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-semibold tracking-widest uppercase text-teal-400">Production</span>
+                        <h3 class="text-base font-semibold mt-1">Producing Music</h3>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-400 font-light mb-3">Created original local beats and grew a social media following of 100 people in one month.</p>
+                <div class="flex items-end gap-1 h-6">
+                    <div class="w-1.5 rounded-full bg-teal-400/60 signal-bar" style="height:40%; animation-delay:0s;"></div>
+                    <div class="w-1.5 rounded-full bg-teal-400/70 signal-bar" style="height:70%; animation-delay:0.2s;"></div>
+                    <div class="w-1.5 rounded-full bg-teal-400/80 signal-bar" style="height:100%; animation-delay:0.4s;"></div>
+                    <div class="w-1.5 rounded-full bg-teal-400/70 signal-bar" style="height:60%; animation-delay:0.6s;"></div>
+                    <div class="w-1.5 rounded-full bg-teal-400/60 signal-bar" style="height:80%; animation-delay:0.8s;"></div>
+                </div>
+            </div>
+ 
+        </div>
+    </div>
+</section>
+ 
+<div class="section-divider max-w-5xl mx-auto"></div>
+ 
+<!-- Closing Section -->
+<section id="contact" class="relative py-24 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+        <div class="reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-semibold tracking-widest uppercase text-cyan-400 mb-6">
+                <i data-lucide="mail" class="w-3 h-3"></i> Connect
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Let's Build the <span class="gradient-text">Future</span></h2>
+ 
+            <!-- Quote -->
+            <div class="mt-8 mb-12 p-8 rounded-2xl border border-white/5 bg-white/[0.02]">
+                <i data-lucide="quote" class="w-8 h-8 text-cyan-400/30 mx-auto mb-3"></i>
+                <p class="text-xl md:text-2xl font-light text-slate-300 italic leading-relaxed">"Balance, resilience, and character define success."</p>
+                <p class="mt-3 text-sm text-slate-600">— Min Htut Khaing</p>
+            </div>
+        </div>
+ 
+        <!-- Contact Form -->
+        <form id="contact-form" action="https://formspree.io/f/xanyegye" method="POST" class="space-y-5 text-left reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <label class="text-[10px] font-semibold tracking-widest uppercase text-slate-500 mb-2 block">Name</label>
+                    <input type="text" name="name" class="glow-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600" placeholder="Your name" required>
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold tracking-widest uppercase text-slate-500 mb-2 block">Email</label>
+                    <input type="email" name="email" class="glow-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600" placeholder="you@email.com" required>
+                </div>
+            </div>
+            <div>
+                <label class="text-[10px] font-semibold tracking-widest uppercase text-slate-500 mb-2 block">Message</label>
+                <textarea name="message" class="glow-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 h-32 resize-none" placeholder="Say hello..." required></textarea>
+            </div>
+            <input type="hidden" name="_subject" value="New Portfolio Contact from Website">
+            <input type="hidden" name="_replyto" value="minuteistime@gmail.com">
+            <div class="text-center">
+                <button type="submit" class="px-8 py-3.5 rounded-xl text-sm font-semibold text-white transition-all inline-flex items-center gap-2"
+                        style="background: linear-gradient(to right, #0891b2, #059669); box-shadow: 0 0 30px rgba(34,211,238,0.3);"
+                        onmouseover="this.style.boxShadow='0 0 40px rgba(34,211,238,0.5)'" onmouseout="this.style.boxShadow='0 0 30px rgba(34,211,238,0.3)'">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    Send Message
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+ 
+<!-- Footer -->
+<footer class="border-t border-white/5 py-10 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
+                 style="background: linear-gradient(to bottom right, #22d3ee, #10b981);">MK</div>
+            <span class="text-sm text-slate-500 font-light">© 2025 Min Htut Khaing. All rights reserved.</span>
+        </div>
+        <div class="flex items-center gap-5">
+            <a href="mailto:minuteistime@gmail.com" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all group">
+                <i data-lucide="mail" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition-colors"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/min-khaing-2b17603a9" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all group">
+                <i data-lucide="linkedin" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition-colors"></i>
+            </a>
+            <a href="https://github.com/minuttt" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all group">
+                <svg class="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition-colors" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 0.5C5.65 0.5 0.5 5.65 0.5 12c0 5.08 3.29 9.39 7.86 10.91 0.57 0.1 0.78-0.25 0.78-0.55 0-0.27-0.01-1.17-0.02-2.12-3.2 0.7-3.88-1.36-3.88-1.36-0.52-1.33-1.28-1.68-1.28-1.68-1.04-0.71 0.08-0.7 0.08-0.7 1.16 0.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36 0.96 0.1-0.74 0.4-1.25 0.73-1.54-2.55-0.29-5.24-1.28-5.24-5.69 0-1.26 0.45-2.29 1.19-3.09-0.12-0.29-0.52-1.46 0.11-3.05 0 0 0.97-0.31 3.18 1.18 0.92-0.26 1.91-0.39 2.89-0.39 0.98 0 1.97 0.13 2.89 0.39 2.21-1.49 3.18-1.18 3.18-1.18 0.63 1.59 0.23 2.76 0.11 3.05 0.74 0.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.4-5.25 5.68 0.41 0.36 0.78 1.07 0.78 2.15 0 1.56-0.01 2.81-0.01 3.19 0 0.31 0.21 0.66 0.79 0.55C20.21 21.39 23.5 17.08 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</footer>
+ 
+<!-- Toast -->
+<div id="toast" class="toast">
+    <div class="flex items-center gap-3">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+        <span class="text-sm font-medium text-emerald-300">Message sent successfully!</span>
+    </div>
+</div>
+ 
+<script>
+    // Initialize Lucide Icons (guarded so the rest of the script always runs)
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    } else {
+        console.warn('Lucide icons failed to load from CDN.');
+    }
+
+    // ===== CINEMATIC TEXT HERO GSAP ANIMATION =====
+    if (typeof gsap !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const heroSection = document.getElementById('hero');
+
+        // Set initial states for all stages
+        gsap.set(".hero-stage-1", { autoAlpha: 1 });
+        gsap.set(".hero-stage-2", { autoAlpha: 0 });
+        gsap.set(".hero-stage-3", { autoAlpha: 0 });
+        gsap.set(".hero-stage-4", { autoAlpha: 0 });
+
+        // Stage 1: Name entrance
+        gsap.set(".name-intro", { autoAlpha: 0 });
+        gsap.set(".name-first", { y: 100, autoAlpha: 0, rotationX: -45, scale: 0.8 });
+        gsap.set(".name-middle", { y: 100, autoAlpha: 0, rotationX: -45, scale: 0.8 });
+        gsap.set(".name-last", { y: 100, autoAlpha: 0, rotationX: -45, scale: 0.8 });
+
+        // Stage 2: Role lines
+        gsap.set(".role-line", { autoAlpha: 0, x: -100, scale: 0.9 });
+
+        // Stage 3: Stat cards
+        gsap.set(".stat-card", { autoAlpha: 0, y: 80, scale: 0.8, rotationY: -30 });
+
+        // Stage 4: CTA
+        gsap.set(".cta-heading", { autoAlpha: 0, y: 50, scale: 0.9 });
+        gsap.set(".cta-text", { autoAlpha: 0, y: 30 });
+        gsap.set(".cta-buttons", { autoAlpha: 0, y: 40, scale: 0.9 });
+
+        // Intro timeline (before scroll)
+        const introTl = gsap.timeline({ delay: 0.5 });
+        introTl
+            .to(".name-intro", { autoAlpha: 1, duration: 0.6, ease: "power2.out" })
+            .to(".name-first", {
+                y: 0, autoAlpha: 1, rotationX: 0, scale: 1,
+                duration: 1.2, ease: "expo.out"
+            }, "-=0.3")
+            .to(".name-middle", {
+                y: 0, autoAlpha: 1, rotationX: 0, scale: 1,
+                duration: 1.2, ease: "expo.out"
+            }, "-=0.9")
+            .to(".name-last", {
+                y: 0, autoAlpha: 1, rotationX: 0, scale: 1,
+                duration: 1.2, ease: "expo.out"
+            }, "-=0.9");
+
+        // Scroll timeline
+        const scrollTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: heroSection,
+                start: "top top",
+                end: "+=6000",
+                pin: true,
+                scrub: 1,
+                anticipatePin: 1,
+            },
+        });
+
+        scrollTl
+            // Fade out Stage 1 (Name)
+            .to(".hero-stage-1", {
+                autoAlpha: 0,
+                scale: 0.8,
+                y: -100,
+                filter: "blur(20px)",
+                duration: 1.5,
+                ease: "power2.in"
+            }, 0)
+
+            // Fade in Stage 2 (Roles)
+            .to(".hero-stage-2", { autoAlpha: 1, duration: 0.5 }, 1)
+            .to(".role-1", {
+                autoAlpha: 1, x: 0, scale: 1,
+                duration: 1, ease: "expo.out"
+            }, 1.2)
+            .to(".role-2", {
+                autoAlpha: 1, x: 0, scale: 1,
+                duration: 1, ease: "expo.out"
+            }, 1.4)
+            .to(".role-3", {
+                autoAlpha: 1, x: 0, scale: 1,
+                duration: 1, ease: "expo.out"
+            }, 1.6)
+            .to(".role-4", {
+                autoAlpha: 1, x: 0, scale: 1,
+                duration: 1, ease: "expo.out"
+            }, 1.8)
+            .to({}, { duration: 1.5 })
+
+            // Fade out Stage 2, Fade in Stage 3 (Stats)
+            .to(".hero-stage-2", {
+                autoAlpha: 0,
+                scale: 1.2,
+                filter: "blur(30px)",
+                duration: 1.5,
+                ease: "power2.in"
+            }, 4)
+            .to(".hero-stage-3", { autoAlpha: 1, duration: 0.5 }, 4.5)
+            .to(".stat-1", {
+                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                duration: 1, ease: "back.out(1.5)"
+            }, 4.7)
+            .to(".stat-2", {
+                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                duration: 1, ease: "back.out(1.5)"
+            }, 4.85)
+            .to(".stat-3", {
+                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                duration: 1, ease: "back.out(1.5)"
+            }, 5)
+            .to(".stat-4", {
+                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                duration: 1, ease: "back.out(1.5)"
+            }, 5.15)
+            .to({}, { duration: 2 })
+
+            // Fade out Stage 3, Fade in Stage 4 (CTA)
+            .to(".hero-stage-3", {
+                autoAlpha: 0,
+                y: -80,
+                scale: 0.9,
+                duration: 1.2,
+                ease: "power2.in"
+            }, 7.5)
+            .to(".hero-stage-4", { autoAlpha: 1, duration: 0.5 }, 8)
+            .to(".cta-heading", {
+                autoAlpha: 1, y: 0, scale: 1,
+                duration: 1.5, ease: "expo.out"
+            }, 8.2)
+            .to(".cta-text", {
+                autoAlpha: 1, y: 0,
+                duration: 1.2, ease: "power3.out"
+            }, 8.5)
+            .to(".cta-buttons", {
+                autoAlpha: 1, y: 0, scale: 1,
+                duration: 1.2, ease: "back.out(1.3)"
+            }, 8.7)
+            .to({}, { duration: 2 });
+
+    } else {
+        console.warn('GSAP not loaded - cinematic animations disabled');
+    }
+    // ===== END CINEMATIC ANIMATION =====
+
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+ 
+    // Scroll Reveal (Intersection Observer)
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+ 
+    document.querySelectorAll('.reveal, .reveal-bounce').forEach(el => observer.observe(el));
+
+    // Timeline dot animation on scroll
+    const timelineDots = document.querySelectorAll('.timeline-dot');
+    const timelineObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active-dot');
+            } else {
+                entry.target.classList.remove('active-dot');
+            }
+        });
+    }, { threshold: 0.5 });
+    timelineDots.forEach(dot => timelineObserver.observe(dot));
+
+    // Contact Form (Formspree Integration)
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = this;
+        const toast = document.getElementById('toast');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+
+        // Show loading state
+        submitBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Sending...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                // Success
+                toast.classList.add('show');
+                form.reset();
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            } else {
+                // Error
+                alert('Oops! There was a problem sending your message. Please try emailing minuteistime@gmail.com directly.');
+            }
+        } catch (error) {
+            alert('Oops! There was a problem sending your message. Please try emailing minuteistime@gmail.com directly.');
+        } finally {
+            // Restore button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    });
+ 
+    // Navbar scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
+        } else {
+            nav.style.borderBottomColor = 'rgba(255,255,255,0.05)';
+        }
+    });
+ 
+    // Active nav link highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 120;
+            if (window.scrollY >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('text-white');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('text-white');
+            }
+        });
+    });
+ 
+    // Animated Background Paths (fixed layer behind hero & all sections)
+    (function() {
+        const svg = document.querySelector('#bg-paths svg');
+        const groupA = document.getElementById('bgPathsA');
+        const groupB = document.getElementById('bgPathsB');
+        if (!svg || !groupA || !groupB) return;
+ 
+        const NUM_PATHS = 12; // per direction (24 lines total)
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+ 
+        // Generates a flowing diagonal curve, fanned out by index `i`,
+        // mirrored by `position` (1 or -1), scaled to the viewport.
+        function buildPathD(i, position, scale) {
+            const a = (380 - i * 5 * position) * scale;
+            const b = (189 + i * 6) * scale;
+            const c = (312 - i * 5 * position) * scale;
+            const d = (216 - i * 6) * scale;
+            const e = (152 - i * 5 * position) * scale;
+            const f = (343 - i * 6) * scale;
+            const g = (616 - i * 5 * position) * scale;
+            const h = (470 - i * 6) * scale;
+            const j = (684 - i * 5 * position) * scale;
+            const k = (875 - i * 6) * scale;
+            return `M-${a} -${b} C-${a} -${b} -${c} ${d} ${e} ${f} C${g} ${h} ${j} ${k} ${j} ${k}`;
+        }
+ 
+        function renderPaths() {
+            const w = Math.max(window.innerWidth, 1);
+            const h = Math.max(window.innerHeight, 1);
+            svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+ 
+            const scale = h / 316;
+            groupA.innerHTML = '';
+            groupB.innerHTML = '';
+            groupA.setAttribute('stroke', '#22d3ee');
+            groupB.setAttribute('stroke', '#10b981');
+ 
+            const groups = [[groupA, 1], [groupB, -1]];
+            for (let i = 0; i < NUM_PATHS; i++) {
+                groups.forEach(([group, position]) => {
+                    const path = document.createElementNS(SVG_NS, 'path');
+                    path.setAttribute('d', buildPathD(i, position, scale));
+                    const strokeWidth = (0.5 + i * 0.035) * Math.max(scale * 0.35, 0.6);
+                    path.setAttribute('stroke-width', strokeWidth.toFixed(2));
+                    path.classList.add('bg-flow-path');
+                    const baseOp = (0.04 + i * 0.006).toFixed(3);
+                    path.style.setProperty('--base-op', baseOp);
+                    group.appendChild(path);
+                });
+            }
+        }
+ 
+        renderPaths();
+ 
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(renderPaths, 300);
+        });
+    })();
+</script>
+</body>
+</html>
+ 
