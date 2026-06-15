@@ -203,6 +203,28 @@
             box-shadow: 0 0 20px rgba(34,211,238,0.15);
             outline: none;
         }
+
+        /* Animated Underline for Project Links */
+        .animated-underline {
+            position: relative;
+            display: inline-block;
+        }
+        .animated-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: currentColor;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-in-out;
+        }
+        .animated-underline:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
  
         /* Gradient Text */
         .gradient-text {
@@ -1263,7 +1285,7 @@
                         <h3 class="text-2xl font-bold">Starlytics</h3>
                         <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">v3.1</span>
                     </div>
-                    <a href="https://starlytics.app" target="_blank" rel="noopener" class="text-xs text-cyan-400/70 hover:text-cyan-400 transition-colors break-all">starlytics.app</a>
+                    <a href="https://starlytics.app" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-cyan-400 hover:text-cyan-300 transition-colors break-all">starlytics.app</a>
                     <p class="text-slate-400 font-light mt-3 leading-relaxed">An AI-powered intelligence platform tracking real growth signals and identifying breakout creators on YouTube. Trusted by marketing teams, agencies, and startups to spot undervalued creators early.</p>
  
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1309,8 +1331,75 @@
             </div>
         </div>
  
+        <!-- Cognivis -->
+        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce mb-6" style="transition-delay: 0.1s;">
+            <div class="scan-line"></div>
+            <div class="flex flex-col md:flex-row items-start gap-8 relative z-10">
+                <div class="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="brain" class="w-8 h-8 text-purple-400 lightbulb-glow"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h3 class="text-2xl font-bold">Cognivis</h3>
+                        <span class="px-2 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 text-[10px] font-semibold text-purple-400">Intel AI Impact Festival 2026</span>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap mt-2">
+                        <a href="https://cognivis.vercel.app" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-purple-400 hover:text-purple-300 transition-colors break-all">cognivis.vercel.app</a>
+                        <span class="text-slate-600">•</span>
+                        <a href="https://youtu.be/eD0TdExSLRE" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-purple-400 hover:text-purple-300 transition-colors inline-flex items-center gap-1.5">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i>
+                            Presentation Video
+                        </a>
+                    </div>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">AI-powered student burnout prediction system using Intel OpenVINO for on-device inference. Predicts burnout 3-7 days in advance with explainable AI, processing sensitive data locally while delivering sub-10ms predictions. Features adaptive behavioral intelligence, continuous feedback learning, and real-time pattern analysis.</p>
+
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="zap" class="w-4 h-4 text-purple-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-purple-400">Intel OpenVINO Runtime</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Millisecond-level inference on CPU with complete privacy.</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-blue-400">Predictive Intelligence</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Detects burnout patterns before symptoms appear.</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="eye" class="w-4 h-4 text-emerald-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">Explainable AI (XAI)</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Weighted factors show why recommendations are made.</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-amber-400"></i>
+                                <span class="text-[10px] font-semibold tracking-widest uppercase text-amber-400">Adaptive Learning</span>
+                            </div>
+                            <div class="text-sm font-medium text-slate-300">Continuous feedback loop improves predictions over time.</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Intel OpenVINO</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Neural Network</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Behavioral Intelligence</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Real-time Prediction</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">On-Device ML</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Privacy-First</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Flask API</span>
+                        <span class="px-2 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] font-semibold text-slate-300">Cinematography</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- GitHub -->
-        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
             <div class="flex flex-col md:flex-row items-center gap-6">
                 <div class="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center flex-shrink-0">
                     <svg class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
