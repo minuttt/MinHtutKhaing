@@ -738,7 +738,7 @@
             pointer-events: none;
         }
 
-        /* Close button for mobile */
+        /* Close/Minimize button */
         .close-player-btn {
             position: absolute;
             top: 8px;
@@ -746,8 +746,8 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(100, 100, 100, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             display: none;
             align-items: center;
             justify-content: center;
@@ -757,18 +757,12 @@
         }
 
         .close-player-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(100, 100, 100, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         #music-player.expanded .close-player-btn {
             display: flex;
-        }
-
-        @media (max-width: 768px) {
-            #music-player.collapsed .close-player-btn {
-                display: flex;
-            }
         }
 
         /* Fix icon sizing */
@@ -2051,9 +2045,9 @@
 
 <!-- Music Player -->
 <div id="music-player" class="collapsed overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); opacity: 0; position: relative; display: none;">
-    <!-- Close Button (Mobile) -->
-    <div class="close-player-btn" id="close-player-btn">
-        <i data-lucide="x" class="w-4 h-4 text-red-400"></i>
+    <!-- Minimize Button -->
+    <div class="close-player-btn" id="close-player-btn" title="Minimize">
+        <i data-lucide="minimize-2" class="w-3.5 h-3.5 text-white opacity-70"></i>
     </div>
 
     <!-- Collapsed View: Album Cover -->
@@ -2097,7 +2091,9 @@
                 <i data-lucide="skip-back" class="w-4 h-4 text-cyan-400"></i>
             </div>
             <div class="control-btn play-pause" id="play-pause-btn" title="Play/Pause">
-                <i data-lucide="play" class="w-5 h-5 text-cyan-400" id="play-icon"></i>
+                <svg id="play-icon" class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
             </div>
             <div class="control-btn" id="next-btn" title="Next">
                 <i data-lucide="skip-forward" class="w-4 h-4 text-cyan-400"></i>
@@ -2704,10 +2700,18 @@
         }
 
         function updatePlayPauseIcon(isPaused) {
-            playIcon.setAttribute('data-lucide', isPaused ? 'play' : 'pause');
+            const iconName = isPaused ? 'play' : 'pause';
+            playIcon.setAttribute('data-lucide', iconName);
+
+            // Force re-render the icon
+            const iconSize = 'w-5 h-5 text-cyan-400';
+            playIcon.className = iconSize;
+
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+
+            console.log(`🎵 Icon updated to: ${iconName}`);
         }
 
         function pauseAudio() {
@@ -2778,9 +2782,9 @@
             musicPlayer.classList.add('collapsed');
         }
 
-        function closePlayer() {
-            musicPlayer.style.display = 'none';
-            pauseAudio();
+        function minimizePlayer() {
+            // Just collapse, don't hide or stop music
+            collapsePlayer();
         }
 
         // Event Listeners
@@ -2788,7 +2792,7 @@
         musicPlayer.addEventListener('mouseleave', collapsePlayer);
         closePlayerBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            closePlayer();
+            minimizePlayer();
         });
         playPauseBtn.addEventListener('click', togglePlayPause);
         nextBtn.addEventListener('click', playNext);
