@@ -2441,19 +2441,21 @@
             volumePercent.textContent = volumeSlider.value + '%';
         }
 
-        function toggleExpanded() {
-            isExpanded = !isExpanded;
-            if (isExpanded) {
-                musicPlayer.classList.remove('collapsed');
-                musicPlayer.classList.add('expanded');
-            } else {
-                musicPlayer.classList.remove('expanded');
-                musicPlayer.classList.add('collapsed');
-            }
+        function expandPlayer() {
+            isExpanded = true;
+            musicPlayer.classList.remove('collapsed');
+            musicPlayer.classList.add('expanded');
+        }
+
+        function collapsePlayer() {
+            isExpanded = false;
+            musicPlayer.classList.remove('expanded');
+            musicPlayer.classList.add('collapsed');
         }
 
         // Event Listeners
-        albumCoverContainer.addEventListener('click', toggleExpanded);
+        musicPlayer.addEventListener('mouseenter', expandPlayer);
+        musicPlayer.addEventListener('mouseleave', collapsePlayer);
         playPauseBtn.addEventListener('click', togglePlayPause);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
