@@ -2700,18 +2700,14 @@
         }
 
         function updatePlayPauseIcon(isPaused) {
-            const iconName = isPaused ? 'play' : 'pause';
-            playIcon.setAttribute('data-lucide', iconName);
-
-            // Force re-render the icon
-            const iconSize = 'w-5 h-5 text-cyan-400';
-            playIcon.className = iconSize;
-
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            if (isPaused) {
+                // Play icon (triangle)
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            } else {
+                // Pause icon (two bars)
+                playIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
             }
-
-            console.log(`🎵 Icon updated to: ${iconName}`);
+            console.log(`🎵 Icon updated to: ${isPaused ? 'play' : 'pause'}`);
         }
 
         function pauseAudio() {
