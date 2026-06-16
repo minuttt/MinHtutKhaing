@@ -2307,6 +2307,8 @@
 
     // ===== MUSIC PLAYER =====
     (function() {
+        console.log('🎵 Music Player: Initializing...');
+
         const openingMusic = [
             { file: 'opening music/1.02 Opening.mp3', name: 'Opening', composer: 'The Legend of Zelda: Breath of the Wild', album: 'opening music/zelda-botw.jpg' },
             { file: 'opening music/11 - Mice on Venus.mp3', name: 'Mice on Venus', composer: 'C418', album: 'opening music/minecraft.jpg' },
@@ -2365,10 +2367,14 @@
 
         // Initialize
         function init() {
+            console.log('🎵 Music Player: init() called');
+
             // Select random opening music
             const randomOpening = openingMusic[Math.floor(Math.random() * openingMusic.length)];
             currentPlaylist = [randomOpening, ...shuffleArray([...playlist])];
             currentIndex = 0;
+
+            console.log('🎵 First track:', currentPlaylist[0].name);
 
             // Set initial volume
             audio.volume = 0.7;
@@ -2378,8 +2384,12 @@
 
             // Show player after a moment
             setTimeout(() => {
+                console.log('🎵 Showing player...');
                 musicPlayer.style.display = 'block';
-                setTimeout(() => musicPlayer.classList.add('show'), 100);
+                setTimeout(() => {
+                    musicPlayer.classList.add('show');
+                    console.log('🎵 Player visible');
+                }, 100);
             }, 1500);
 
             // AGGRESSIVE AUTOPLAY: Start muted, then unmute on interaction
@@ -2389,15 +2399,16 @@
             // Start playing muted immediately (browsers usually allow this)
             setTimeout(() => {
                 if (!hasStartedMusic) {
+                    console.log('🎵 Attempting muted autoplay...');
                     audio.muted = true;
                     audio.play().then(() => {
-                        console.log('Playing muted - waiting for interaction to unmute');
+                        console.log('✅ Playing muted - waiting for interaction to unmute');
                         hasStartedMusic = true;
                         updatePlayPauseIcon(false);
                         albumArt.classList.add('spinning');
                         hasStarted = true;
                     }).catch(err => {
-                        console.log('Even muted autoplay blocked');
+                        console.warn('❌ Even muted autoplay blocked:', err);
                     });
                 }
             }, 300);
@@ -2405,11 +2416,13 @@
             // Unmute on first interaction
             const unmuteMusic = () => {
                 if (isCurrentlyMuted) {
+                    console.log('🔊 Unmuting audio on user interaction');
                     isCurrentlyMuted = false;
                     audio.muted = false;
 
                     // If not playing yet, start playing
                     if (!hasStartedMusic) {
+                        console.log('🎵 Starting playback...');
                         hasStartedMusic = true;
                         playAudio();
                     }
