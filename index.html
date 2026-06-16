@@ -712,7 +712,12 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.75rem;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(34, 211, 238, 0.6) 50%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
             text-transform: uppercase;
             letter-spacing: 0.15em;
             opacity: 0;
@@ -720,8 +725,14 @@
         }
 
         @keyframes pulseHint {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
+            0%, 100% {
+                opacity: 0.6;
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            }
+            50% {
+                opacity: 0.9;
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+            }
         }
 
         .landing-vignette {
@@ -2464,12 +2475,12 @@
                     const dx = x - canvas.width / 2;
                     const dy = y - canvas.height / 2;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    const delay = distance * 0.5;
+                    const delay = distance * 0.3; // Faster spread (was 0.5)
 
                     particles.push({
                         x, y, size: 0,
                         maxSize: Math.random() * 2 + 0.8,
-                        speed: Math.random() * 0.025 + 0.012,
+                        speed: Math.random() * 0.03 + 0.015, // Faster animation
                         delay, counter: 0, growing: true,
                         color: colors[Math.floor(Math.random() * colors.length)]
                     });
