@@ -614,36 +614,6 @@
         #music-player.show {
             animation: fadeInPlayer 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-
-        /* Music Start Overlay */
-        #music-start-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(2, 2, 4, 0.95);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        #music-start-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .music-start-prompt {
-            text-align: center;
-            animation: pulsePrompt 2s ease-in-out infinite;
-        }
-
-        @keyframes pulsePrompt {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
     </style>
 </head>
 <body class="no-scrollbar">
@@ -1902,16 +1872,6 @@
     </div>
 </div>
 
-<!-- Music Start Overlay -->
-<div id="music-start-overlay">
-    <div class="music-start-prompt">
-        <i data-lucide="music" class="w-20 h-20 text-cyan-400 mx-auto mb-6"></i>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">🎵 Welcome</h2>
-        <p class="text-lg text-slate-300 mb-2">Click anywhere to start the experience</p>
-        <p class="text-sm text-slate-500">Music will begin playing</p>
-    </div>
-</div>
-
 <!-- Music Player -->
 <div id="music-player" class="collapsed rounded-2xl overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.1); display: none;">
     <!-- Collapsed View: Album Cover -->
@@ -2293,8 +2253,6 @@
 
     // ===== MUSIC PLAYER =====
     (function() {
-        const musicStartOverlay = document.getElementById('music-start-overlay');
-
         const openingMusic = [
             { file: 'opening music/1.02 Opening.mp3', name: 'Opening', composer: 'The Legend of Zelda: Breath of the Wild', album: 'opening music/zelda-botw.jpg' },
             { file: 'opening music/11 - Mice on Venus.mp3', name: 'Mice on Venus', composer: 'C418', album: 'opening music/minecraft.jpg' },
@@ -2363,40 +2321,27 @@
             // Load first track
             loadTrack(currentIndex);
 
-            // Show player (hidden initially)
-            musicPlayer.style.display = 'block';
+            // Show player after a moment
+            setTimeout(() => {
+                musicPlayer.style.display = 'block';
+                setTimeout(() => musicPlayer.classList.add('show'), 100);
+            }, 2000);
 
-            // Handle overlay click to start music
+            // Auto-start music on ANY user interaction
             let hasStartedMusic = false;
             const startMusic = () => {
                 if (!hasStartedMusic) {
                     hasStartedMusic = true;
-
-                    // Hide overlay
-                    musicStartOverlay.classList.add('hidden');
-
-                    // Show and animate player
-                    setTimeout(() => musicPlayer.classList.add('show'), 100);
-
-                    // Start playing
-                    setTimeout(() => {
-                        playAudio();
-                    }, 300);
+                    playAudio();
                 }
             };
 
-            // Click anywhere on overlay to start
-            musicStartOverlay.addEventListener('click', startMusic);
-
-            // Also listen for any interaction on the document as backup
-            const handleInteraction = (e) => {
-                if (!hasStartedMusic && !musicStartOverlay.classList.contains('hidden')) {
-                    startMusic();
-                }
-            };
-
-            document.addEventListener('keydown', handleInteraction, { once: true });
-            document.addEventListener('touchstart', handleInteraction, { once: true });
+            // Listen for any interaction to start music
+            document.addEventListener('click', startMusic, { once: true });
+            document.addEventListener('scroll', startMusic, { once: true });
+            document.addEventListener('keydown', startMusic, { once: true });
+            document.addEventListener('touchstart', startMusic, { once: true });
+            document.addEventListener('mousemove', startMusic, { once: true });
         }
 
         function shuffleArray(array) {
