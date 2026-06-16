@@ -2321,11 +2321,38 @@
             // Load first track
             loadTrack(currentIndex);
 
-            // Start playing automatically
+            // Show player immediately
+            musicPlayer.style.display = 'block';
+            setTimeout(() => musicPlayer.classList.add('show'), 100);
+
+            // Auto-play on first user interaction
+            let hasInteracted = false;
+            const startPlayback = () => {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    playAudio();
+                    // Remove listeners after first interaction
+                    document.removeEventListener('click', startPlayback);
+                    document.removeEventListener('scroll', startPlayback);
+                    document.removeEventListener('keydown', startPlayback);
+                    document.removeEventListener('touchstart', startPlayback);
+                }
+            };
+
+            // Listen for any user interaction
+            document.addEventListener('click', startPlayback);
+            document.addEventListener('scroll', startPlayback);
+            document.addEventListener('keydown', startPlayback);
+            document.addEventListener('touchstart', startPlayback);
+
+            // Fallback: try to autoplay after 1.5s (will work if browser allows)
             setTimeout(() => {
-                playAudio();
-                musicPlayer.style.display = 'block';
-                setTimeout(() => musicPlayer.classList.add('show'), 100);
+                if (!hasInteracted) {
+                    playAudio().catch(() => {
+                        // Autoplay blocked - wait for user interaction
+                        console.log('Autoplay blocked - waiting for user interaction');
+                    });
+                }
             }, 1500);
         }
 
@@ -2354,14 +2381,19 @@
         }
 
         function playAudio() {
-            audio.play().then(() => {
-                playIcon.setAttribute('data-lucide', 'pause');
-                albumArt.classList.add('spinning');
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-                hasStarted = true;
-            }).catch(err => {
-                console.warn('Playback prevented:', err);
-            });
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    playIcon.setAttribute('data-lucide', 'pause');
+                    albumArt.classList.add('spinning');
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    hasStarted = true;
+                }).catch(err => {
+                    console.warn('Playback prevented:', err);
+                    // Keep play icon visible so user knows they can click
+                });
+            }
+            return playPromise;
         }
 
         function pauseAudio() {
