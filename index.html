@@ -533,12 +533,29 @@
             transform: translateY(10px);
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
+            position: relative;
         }
 
         #music-player.expanded .player-content {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
+        }
+
+        #music-player.expanded::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: rgba(2, 2, 4, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            animation: fadeInBackdrop 0.3s ease forwards;
+        }
+
+        @keyframes fadeInBackdrop {
+            to { opacity: 1; }
         }
 
         .progress-bar {
@@ -666,58 +683,45 @@
         .landing-title {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: clamp(2.5rem, 8vw, 6rem);
-            font-weight: 900;
-            letter-spacing: -0.02em;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            color: #fff;
-            text-shadow: 0 0 40px rgba(34, 211, 238, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #22d3ee 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(34, 211, 238, 0.4));
             opacity: 0;
-            filter: blur(10px);
             transform: translateY(20px);
         }
 
         .landing-subtitle {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: clamp(1rem, 2.5vw, 1.25rem);
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             font-weight: 300;
             max-width: 600px;
             margin: 0 auto 2.5rem;
             line-height: 1.6;
             opacity: 0;
-            filter: blur(10px);
             transform: translateY(20px);
-            text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         }
 
         .press-key-hint {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: rgba(34, 211, 238, 0.9);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             opacity: 0;
-            filter: blur(10px);
             transform: translateY(20px);
-            padding: 0.75rem 1.5rem;
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            border-radius: 8px;
-            background: rgba(2, 2, 4, 0.6);
-            backdrop-filter: blur(12px);
-            display: inline-block;
         }
 
         @keyframes pulseHint {
-            0%, 100% {
-                transform: translateY(0) scale(1);
-                box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
-            }
-            50% {
-                transform: translateY(-2px) scale(1.02);
-                box-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
-            }
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
         }
 
         .landing-vignette {
@@ -2456,8 +2460,8 @@
 
         function initParticles() {
             particles = [];
-            const gap = 8;
-            const colors = ['rgba(34, 211, 238, 0.2)', 'rgba(16, 185, 129, 0.2)', 'rgba(255, 255, 255, 0.15)'];
+            const gap = 6;
+            const colors = ['rgba(34, 211, 238, 0.4)', 'rgba(16, 185, 129, 0.4)', 'rgba(255, 255, 255, 0.3)'];
 
             for (let x = 0; x < canvas.width; x += gap) {
                 for (let y = 0; y < canvas.height; y += gap) {
@@ -2468,8 +2472,8 @@
 
                     particles.push({
                         x, y, size: 0,
-                        maxSize: Math.random() * 1.5 + 0.5,
-                        speed: Math.random() * 0.02 + 0.01,
+                        maxSize: Math.random() * 2 + 0.8,
+                        speed: Math.random() * 0.025 + 0.012,
                         delay, counter: 0, growing: true,
                         color: colors[Math.floor(Math.random() * colors.length)]
                     });
@@ -2507,27 +2511,24 @@
         const subtitle = document.getElementById('landing-subtitle');
         const hint = document.getElementById('press-hint');
 
-        // Title - blur fade in
+        // Title - fade in
         setTimeout(() => {
-            title.style.transition = 'all 0.4s ease-out';
+            title.style.transition = 'all 0.6s ease-out';
             title.style.opacity = '1';
-            title.style.filter = 'blur(0px)';
             title.style.transform = 'translateY(0)';
         }, 200);
 
-        // Subtitle - blur fade in
+        // Subtitle - fade in
         setTimeout(() => {
-            subtitle.style.transition = 'all 0.4s ease-out';
+            subtitle.style.transition = 'all 0.6s ease-out';
             subtitle.style.opacity = '1';
-            subtitle.style.filter = 'blur(0px)';
             subtitle.style.transform = 'translateY(0)';
         }, 400);
 
-        // Press key hint - blur fade in + pulse
+        // Press key hint - fade in + pulse
         setTimeout(() => {
-            hint.style.transition = 'all 0.4s ease-out';
-            hint.style.opacity = '1';
-            hint.style.filter = 'blur(0px)';
+            hint.style.transition = 'all 0.6s ease-out';
+            hint.style.opacity = '0.5';
             hint.style.transform = 'translateY(0)';
             setTimeout(() => {
                 hint.style.animation = 'pulseHint 2s ease-in-out infinite';
