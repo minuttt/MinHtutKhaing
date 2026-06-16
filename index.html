@@ -620,6 +620,13 @@
 
         #music-player.show {
             animation: fadeInPlayer 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        #music-player {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Close button for mobile */
@@ -2386,13 +2393,15 @@
             setTimeout(() => {
                 console.log('🎵 Showing player...');
                 musicPlayer.style.display = 'block';
+                musicPlayer.style.opacity = '1';
+                musicPlayer.style.visibility = 'visible';
                 setTimeout(() => {
                     musicPlayer.classList.add('show');
                     console.log('🎵 Player visible - waiting for user to start');
                 }, 100);
-            }, 1500);
+            }, 800);
 
-            // Start music on DIRECT user interaction
+            // Start music on SCROLL or other interactions
             let musicStarted = false;
 
             const startMusicDirectly = (e) => {
@@ -2412,7 +2421,9 @@
                 });
             };
 
-            // Add event listeners that call play() DIRECTLY
+            // SCROLL is the primary trigger
+            window.addEventListener('scroll', startMusicDirectly, { once: true, passive: true });
+            // Fallbacks for users who don't scroll
             document.addEventListener('click', startMusicDirectly, { once: true });
             document.addEventListener('keydown', startMusicDirectly, { once: true });
             document.addEventListener('touchstart', startMusicDirectly, { once: true });
