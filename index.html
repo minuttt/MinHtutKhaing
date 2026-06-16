@@ -1929,7 +1929,7 @@
 </div>
 
 <!-- Music Player -->
-<div id="music-player" class="collapsed overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); display: none; position: relative;">
+<div id="music-player" class="collapsed overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); opacity: 0; position: relative;">
     <!-- Close Button (Mobile) -->
     <div class="close-player-btn" id="close-player-btn">
         <i data-lucide="x" class="w-4 h-4 text-red-400"></i>
@@ -2389,26 +2389,21 @@
             // Load first track
             loadTrack(currentIndex);
 
-            // Show player immediately so users can see it
-            setTimeout(() => {
-                console.log('🎵 Showing player...');
-                musicPlayer.style.display = 'block';
-                musicPlayer.style.opacity = '1';
-                musicPlayer.style.visibility = 'visible';
-                setTimeout(() => {
-                    musicPlayer.classList.add('show');
-                    console.log('🎵 Player visible - waiting for user to start');
-                }, 100);
-            }, 800);
+            // Show player immediately
+            console.log('🎵 Showing player...');
+            musicPlayer.style.opacity = '1';
+            musicPlayer.classList.add('show');
+            console.log('🎵 Player is now visible');
 
-            // Start music on SCROLL or other interactions
+            // Start music on ANY valid user interaction
+            // NOTE: Scroll is NOT a valid trigger for audio - browsers block it
             let musicStarted = false;
 
             const startMusicDirectly = (e) => {
                 if (musicStarted) return;
                 musicStarted = true;
 
-                console.log('🎵 User interaction detected - starting music NOW');
+                console.log('🎵 VALID user interaction detected - starting music NOW');
 
                 // Play must be called DIRECTLY in event handler
                 audio.play().then(() => {
@@ -2421,12 +2416,13 @@
                 });
             };
 
-            // SCROLL is the primary trigger
-            window.addEventListener('scroll', startMusicDirectly, { once: true, passive: true });
-            // Fallbacks for users who don't scroll
+            // Valid triggers (browsers allow these for autoplay)
             document.addEventListener('click', startMusicDirectly, { once: true });
+            document.addEventListener('mousedown', startMusicDirectly, { once: true });
             document.addEventListener('keydown', startMusicDirectly, { once: true });
             document.addEventListener('touchstart', startMusicDirectly, { once: true });
+
+            console.log('🎵 Waiting for user interaction (click, mousedown, keypress, or touch)');
         }
 
         function shuffleArray(array) {
