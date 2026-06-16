@@ -492,43 +492,50 @@
             bottom: 30px;
             right: 30px;
             z-index: 100;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #music-player.collapsed {
-            width: 80px;
-            height: 80px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
         }
 
         #music-player.expanded {
-            width: 360px;
-            min-height: 240px;
+            width: 320px;
+            height: auto;
+            border-radius: 16px;
         }
 
         .album-cover {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
 
-        .album-cover:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(34,211,238,0.6);
+        #music-player.collapsed .album-cover {
+            opacity: 1;
         }
 
-        .album-cover.spinning {
+        #music-player.expanded .album-cover {
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .album-cover.spinning #album-art {
             animation: vinylSpin 3s linear infinite;
         }
 
         .player-content {
             opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.3s ease;
+            transform: translateY(10px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
         }
 
         #music-player.expanded .player-content {
             opacity: 1;
-            transform: scale(1);
+            transform: translateY(0);
             pointer-events: auto;
         }
 
@@ -549,8 +556,8 @@
         }
 
         .control-btn {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: rgba(34, 211, 238, 0.1);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -568,8 +575,8 @@
         }
 
         .control-btn.play-pause {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
         }
 
         .volume-slider {
@@ -1873,60 +1880,60 @@
 </div>
 
 <!-- Music Player -->
-<div id="music-player" class="collapsed rounded-2xl overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.1); display: none;">
+<div id="music-player" class="collapsed overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); display: none;">
     <!-- Collapsed View: Album Cover -->
-    <div id="album-cover-container" class="album-cover w-full h-full flex items-center justify-center p-3">
-        <div id="album-art" class="w-full h-full rounded-xl bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 flex items-center justify-center overflow-hidden">
-            <i data-lucide="music" class="w-8 h-8 text-cyan-400"></i>
+    <div id="album-cover-container" class="album-cover w-full h-full flex items-center justify-center p-2">
+        <div id="album-art" class="w-full h-full rounded-full bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 flex items-center justify-center overflow-hidden">
+            <i data-lucide="music" class="w-6 h-6 text-cyan-400"></i>
         </div>
     </div>
 
     <!-- Expanded View: Full Player -->
-    <div class="player-content p-6">
+    <div class="player-content p-5">
         <!-- Song Info -->
-        <div class="mb-4 text-center">
-            <div id="song-title" class="text-lg font-bold text-white truncate mb-1">Song Title</div>
-            <div id="song-composer" class="text-sm text-slate-400 truncate">Composer</div>
+        <div class="mb-3 text-center">
+            <div id="song-title" class="text-base font-bold text-white truncate mb-1">Song Title</div>
+            <div id="song-composer" class="text-xs text-slate-400 truncate">Composer</div>
         </div>
 
         <!-- Album Art in Expanded View -->
-        <div class="mb-4 flex justify-center">
-            <div id="album-art-expanded" class="w-40 h-40 rounded-xl bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 flex items-center justify-center overflow-hidden">
-                <i data-lucide="music" class="w-16 h-16 text-cyan-400"></i>
+        <div class="mb-3 flex justify-center">
+            <div id="album-art-expanded" class="w-24 h-24 rounded-xl bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 flex items-center justify-center overflow-hidden">
+                <i data-lucide="music" class="w-10 h-10 text-cyan-400"></i>
             </div>
         </div>
 
         <!-- Progress Bar -->
-        <div class="mb-2">
+        <div class="mb-1.5">
             <div class="progress-bar" id="progress-bar">
                 <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
             </div>
         </div>
 
         <!-- Time -->
-        <div class="flex justify-between text-xs text-slate-500 mb-4">
+        <div class="flex justify-between text-xs text-slate-500 mb-3">
             <span id="current-time">0:00</span>
             <span id="duration">0:00</span>
         </div>
 
         <!-- Controls -->
-        <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="flex items-center justify-center gap-2 mb-3">
             <div class="control-btn" id="prev-btn" title="Previous">
-                <i data-lucide="skip-back" class="w-5 h-5 text-cyan-400"></i>
+                <i data-lucide="skip-back" class="w-4 h-4 text-cyan-400"></i>
             </div>
             <div class="control-btn play-pause" id="play-pause-btn" title="Play/Pause">
-                <i data-lucide="play" class="w-6 h-6 text-cyan-400" id="play-icon"></i>
+                <i data-lucide="play" class="w-5 h-5 text-cyan-400" id="play-icon"></i>
             </div>
             <div class="control-btn" id="next-btn" title="Next">
-                <i data-lucide="skip-forward" class="w-5 h-5 text-cyan-400"></i>
+                <i data-lucide="skip-forward" class="w-4 h-4 text-cyan-400"></i>
             </div>
         </div>
 
         <!-- Volume Control -->
-        <div class="flex items-center gap-3">
-            <i data-lucide="volume-2" class="w-4 h-4 text-slate-400"></i>
+        <div class="flex items-center gap-2">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-400"></i>
             <input type="range" min="0" max="100" value="70" class="volume-slider" id="volume-slider">
-            <span class="text-xs text-slate-500" id="volume-percent">70%</span>
+            <span class="text-[10px] text-slate-500 w-8" id="volume-percent">70%</span>
         </div>
     </div>
 </div>
@@ -2325,10 +2332,25 @@
             setTimeout(() => {
                 musicPlayer.style.display = 'block';
                 setTimeout(() => musicPlayer.classList.add('show'), 100);
-            }, 2000);
+            }, 1500);
 
-            // Auto-start music on ANY user interaction
+            // Attempt immediate autoplay
             let hasStartedMusic = false;
+            const attemptAutoplay = () => {
+                if (!hasStartedMusic) {
+                    playAudio().then(() => {
+                        hasStartedMusic = true;
+                    }).catch(() => {
+                        // Autoplay blocked, wait for interaction
+                        console.log('Autoplay blocked - waiting for interaction');
+                    });
+                }
+            };
+
+            // Try to autoplay immediately
+            setTimeout(attemptAutoplay, 500);
+
+            // Also try on any user interaction as fallback
             const startMusic = () => {
                 if (!hasStartedMusic) {
                     hasStartedMusic = true;
@@ -2336,7 +2358,6 @@
                 }
             };
 
-            // Listen for any interaction to start music
             document.addEventListener('click', startMusic, { once: true });
             document.addEventListener('scroll', startMusic, { once: true });
             document.addEventListener('keydown', startMusic, { once: true });
@@ -2359,7 +2380,7 @@
             songComposer.textContent = track.composer;
 
             // Update album art
-            const artHTML = `<i data-lucide="music" class="w-${isExpanded ? '16' : '8'} h-${isExpanded ? '16' : '8'} text-cyan-400"></i>`;
+            const artHTML = `<i data-lucide="music" class="w-${isExpanded ? '10' : '6'} h-${isExpanded ? '10' : '6'} text-cyan-400"></i>`;
             albumArt.innerHTML = artHTML;
             albumArtExpanded.innerHTML = artHTML;
 
