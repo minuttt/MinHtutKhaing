@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Music Player Test</title>
+</head>
+<body>
+    <h1>Music Player Test</h1>
+    <div id="status">Initializing...</div>
+
+    <script>
+        console.log('Script loaded');
+        document.getElementById('status').textContent = 'Script is running!';
+
+        // Test audio
+        const audio = new Audio('opening music/1.02 Opening.mp3');
+        audio.volume = 0.7;
+
+        setTimeout(() => {
+            console.log('Attempting to play...');
+            audio.muted = true;
+            audio.play().then(() => {
+                console.log('Playing muted successfully!');
+                document.getElementById('status').textContent = 'Playing muted! Click to unmute.';
+
+                document.addEventListener('click', () => {
+                    audio.muted = false;
+                    document.getElementById('status').textContent = 'Unmuted! Should hear music now.';
+                }, { once: true });
+            }).catch(err => {
+                console.error('Failed to play:', err);
+                document.getElementById('status').textContent = 'Failed: ' + err.message;
+            });
+        }, 500);
+    </script>
+</body>
+</html>
