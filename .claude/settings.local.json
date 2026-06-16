@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(run)",
+      "Bash(python -m http.server 8765)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
+      "Bash(/c/Program Files/Google/Chrome/Application/chrome.exe *)",
+      "Bash(curl -s http://localhost:8765/)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git checkout *)",
+      "Bash(git ls-tree *)"
+    ]
+  }
+}
