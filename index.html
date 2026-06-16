@@ -2502,45 +2502,37 @@
         animate();
         window.addEventListener('resize', resizeCanvas);
 
-        // Text reveal animations
-        function splitTextToChars(element) {
-            const text = element.textContent;
-            element.textContent = '';
-            return text.split('').map((char, i) => {
-                const charWrap = document.createElement('span');
-                charWrap.className = 'char';
-                charWrap.style.display = 'inline-block';
-                charWrap.style.overflow = 'hidden';
-                charWrap.style.verticalAlign = 'bottom';
-
-                const charInner = document.createElement('span');
-                charInner.className = 'char-inner';
-                charInner.textContent = char === ' ' ? ' ' : char;
-                charInner.style.display = 'inline-block';
-                charInner.style.transform = 'translateY(100%)';
-                charInner.style.transition = `transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.02}s`;
-
-                charWrap.appendChild(charInner);
-                element.appendChild(charWrap);
-                return charInner;
-            });
-        }
-
-        const titleChars = splitTextToChars(document.getElementById('landing-title'));
-        const subtitleChars = splitTextToChars(document.getElementById('landing-subtitle'));
+        // BlurFade-style animations
+        const title = document.getElementById('landing-title');
+        const subtitle = document.getElementById('landing-subtitle');
         const hint = document.getElementById('press-hint');
 
+        // Title - blur fade in
         setTimeout(() => {
-            titleChars.forEach(char => char.style.transform = 'translateY(0)');
-        }, 100);
+            title.style.transition = 'all 0.4s ease-out';
+            title.style.opacity = '1';
+            title.style.filter = 'blur(0px)';
+            title.style.transform = 'translateY(0)';
+        }, 200);
 
+        // Subtitle - blur fade in
         setTimeout(() => {
-            subtitleChars.forEach(char => char.style.transform = 'translateY(0)');
+            subtitle.style.transition = 'all 0.4s ease-out';
+            subtitle.style.opacity = '1';
+            subtitle.style.filter = 'blur(0px)';
+            subtitle.style.transform = 'translateY(0)';
         }, 400);
 
+        // Press key hint - blur fade in + pulse
         setTimeout(() => {
-            hint.style.animation = 'fadeInHint 0.8s ease forwards, pulseHint 2s ease-in-out 1.5s infinite';
-        }, 800);
+            hint.style.transition = 'all 0.4s ease-out';
+            hint.style.opacity = '1';
+            hint.style.filter = 'blur(0px)';
+            hint.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                hint.style.animation = 'pulseHint 2s ease-in-out infinite';
+            }, 400);
+        }, 600);
 
         // Hide overlay on any interaction (this will also trigger music!)
         window.dismissLanding = function() {
