@@ -670,69 +670,67 @@
             letter-spacing: -0.02em;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(34, 211, 238, 0.8) 50%, rgba(16, 185, 129, 0.6) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 10px 30px rgba(34, 211, 238, 0.3));
-        }
-
-        .landing-title .char {
-            display: inline-block;
-            overflow: hidden;
-            vertical-align: bottom;
-        }
-
-        .landing-title .char-inner {
-            display: inline-block;
-            transform: translateY(100%);
+            color: #fff;
+            text-shadow: 0 0 40px rgba(34, 211, 238, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(20px);
         }
 
         .landing-subtitle {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: clamp(1rem, 2.5vw, 1.25rem);
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 300;
             max-width: 600px;
             margin: 0 auto 2.5rem;
             line-height: 1.6;
-        }
-
-        .landing-subtitle .char {
-            display: inline-block;
-            overflow: hidden;
-            vertical-align: bottom;
-        }
-
-        .landing-subtitle .char-inner {
-            display: inline-block;
-            transform: translateY(100%);
+            opacity: 0;
+            filter: blur(10px);
+            transform: translateY(20px);
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         }
 
         .press-key-hint {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.875rem;
-            font-weight: 500;
-            color: rgba(34, 211, 238, 0.7);
+            font-weight: 600;
+            color: rgba(34, 211, 238, 0.9);
             text-transform: uppercase;
             letter-spacing: 0.1em;
             opacity: 0;
-            animation: pulseHint 2s ease-in-out 1.5s infinite;
+            filter: blur(10px);
+            transform: translateY(20px);
+            padding: 0.75rem 1.5rem;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 8px;
+            background: rgba(2, 2, 4, 0.6);
+            backdrop-filter: blur(12px);
+            display: inline-block;
         }
 
         @keyframes pulseHint {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        @keyframes fadeInHint {
-            to { opacity: 0.7; }
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+            }
+            50% {
+                transform: translateY(-2px) scale(1.02);
+                box-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
+            }
         }
 
         .landing-vignette {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at center, transparent 0%, rgba(2, 2, 4, 0.8) 100%);
+            background: radial-gradient(circle at center, transparent 30%, rgba(2, 2, 4, 0.7) 100%);
+            pointer-events: none;
+        }
+
+        .text-backdrop {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 50% at center, rgba(2, 2, 4, 0.6) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -785,6 +783,7 @@
 <div id="landing-overlay">
     <canvas id="landing-canvas"></canvas>
     <div class="landing-vignette"></div>
+    <div class="text-backdrop"></div>
     <div class="landing-content">
         <h1 class="landing-title" id="landing-title">MIN HTUT KHAING</h1>
         <p class="landing-subtitle" id="landing-subtitle">A curated showcase of my projects, ambitions, and dreams.</p>
@@ -2457,20 +2456,20 @@
 
         function initParticles() {
             particles = [];
-            const gap = 5;
-            const colors = ['rgba(34, 211, 238, 0.6)', 'rgba(16, 185, 129, 0.6)', 'rgba(139, 92, 246, 0.5)'];
+            const gap = 8;
+            const colors = ['rgba(34, 211, 238, 0.2)', 'rgba(16, 185, 129, 0.2)', 'rgba(255, 255, 255, 0.15)'];
 
             for (let x = 0; x < canvas.width; x += gap) {
                 for (let y = 0; y < canvas.height; y += gap) {
                     const dx = x - canvas.width / 2;
                     const dy = y - canvas.height / 2;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    const delay = distance * 0.4;
+                    const delay = distance * 0.5;
 
                     particles.push({
                         x, y, size: 0,
-                        maxSize: Math.random() * 2 + 0.8,
-                        speed: Math.random() * 0.03 + 0.015,
+                        maxSize: Math.random() * 1.5 + 0.5,
+                        speed: Math.random() * 0.02 + 0.01,
                         delay, counter: 0, growing: true,
                         color: colors[Math.floor(Math.random() * colors.length)]
                     });
@@ -2633,12 +2632,11 @@
             // Load first track
             loadTrack(currentIndex);
 
-            // Show player immediately
+            // Show player immediately - FORCE VISIBILITY
             console.log('🎵 Showing player...');
-            musicPlayer.style.display = 'block';
-            musicPlayer.style.opacity = '1';
+            musicPlayer.style.cssText = 'display: block !important; opacity: 1 !important; visibility: visible !important; position: fixed !important; bottom: 30px !important; right: 30px !important; z-index: 100 !important;';
             musicPlayer.classList.add('show');
-            console.log('🎵 Player is now visible');
+            console.log('🎵 Player is now visible', musicPlayer.style.display, musicPlayer.style.opacity);
 
             // Start music on ANY valid user interaction
             let musicStarted = false;
