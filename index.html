@@ -653,12 +653,23 @@
             position: fixed;
             inset: 0;
             z-index: 10000;
-            background: #000;
+            background: linear-gradient(135deg, #020204 0%, #0a0a1e 50%, #020204 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: none;
             opacity: 1;
+        }
+
+        /* Fallback if video doesn't load */
+        #landing-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            background: #020204;
         }
 
         #landing-overlay.hidden {
@@ -732,6 +743,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background: #000;
         }
 
         #wormhole-overlay.fade-out {
@@ -972,7 +984,7 @@
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
-    <video id="landing-video" autoplay muted loop playsinline preload="auto">
+    <video id="landing-video" muted loop playsinline preload="auto" webkit-playsinline>
         <source src="landing.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
@@ -992,7 +1004,7 @@
 
 <!-- Wormhole Transition -->
 <div id="wormhole-overlay">
-    <video id="wormhole-video" muted playsinline preload="metadata">
+    <video id="wormhole-video" muted playsinline preload="metadata" webkit-playsinline>
         <source src="wormhole.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
@@ -2708,6 +2720,7 @@
         const wormholeVideo = document.getElementById('wormhole-video');
         const wormholeAudio = document.getElementById('wormhole-audio');
         const transitionBlocker = document.getElementById('transition-blocker');
+        const landingVideo = document.getElementById('landing-video');
         const title = document.getElementById('landing-title');
         const subtitle = document.getElementById('landing-subtitle');
         const hint = document.getElementById('press-hint');
@@ -2715,6 +2728,39 @@
 
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
+
+        // Mobile video autoplay fix - force play landing video
+        function ensureLandingVideoPlays() {
+            if (landingVideo) {
+                landingVideo.muted = true;
+                landingVideo.playsInline = true;
+
+                const playPromise = landingVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('✅ Landing video playing');
+                    }).catch(err => {
+                        console.warn('⚠️ Landing video autoplay failed, retrying...', err);
+                        // Retry after short delay
+                        setTimeout(() => {
+                            landingVideo.play().catch(e => {
+                                console.error('❌ Landing video failed completely:', e);
+                            });
+                        }, 100);
+                    });
+                }
+            }
+        }
+
+        // Ensure video plays on page load
+        ensureLandingVideoPlays();
+
+        // Retry on visibility change (mobile wake-up)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && !transitionStarted) {
+                ensureLandingVideoPlays();
+            }
+        });
 
         // Preload wormhole video for smooth playback
         if (wormholeVideo) {
@@ -2781,15 +2827,34 @@
                 // Small delay for display to register, then fade in wormhole
                 setTimeout(() => {
                     wormholeOverlay.classList.add('visible');
+
+                    // Ensure wormhole video plays on mobile
+                    wormholeVideo.muted = true;
+                    wormholeVideo.playsInline = true;
                     wormholeVideo.currentTime = 0;
-                    wormholeVideo.play().catch(err => console.warn('Wormhole video play failed:', err));
+
+                    const wormholePlayPromise = wormholeVideo.play();
+                    if (wormholePlayPromise !== undefined) {
+                        wormholePlayPromise.then(() => {
+                            console.log('✅ Wormhole video playing');
+                        }).catch(err => {
+                            console.error('❌ Wormhole video play failed:', err);
+                            // Retry mechanism
+                            setTimeout(() => {
+                                wormholeVideo.play().catch(e => console.error('❌ Wormhole retry failed:', e));
+                            }, 100);
+                        });
+                    }
 
                     // Play wormhole sound effect
                     if (wormholeAudio) {
                         wormholeAudio.volume = 0.6;
                         wormholeAudio.currentTime = 0;
-                        wormholeAudio.play().catch(err => console.warn('Wormhole audio play failed:', err));
-                        console.log('🔊 Wormhole sound effect playing');
+                        wormholeAudio.play().then(() => {
+                            console.log('🔊 Wormhole sound effect playing');
+                        }).catch(err => {
+                            console.warn('⚠️ Wormhole audio play failed (may be blocked on mobile):', err);
+                        });
                     }
                 }, 50);
 
