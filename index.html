@@ -744,6 +744,22 @@
             z-index: 10;
             text-align: center;
             padding: 2rem;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .landing-title {
+                font-size: clamp(2rem, 10vw, 4rem);
+            }
+            .landing-subtitle {
+                font-size: clamp(0.9rem, 3vw, 1.1rem);
+                max-width: 90%;
+            }
+            .press-key-hint {
+                font-size: 0.75rem;
+            }
         }
 
         .landing-title {
@@ -829,39 +845,52 @@
             filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
-        /* Arrival animation after wormhole */
+        /* Arrival animation after wormhole - PRIORITY FIX */
         #hero {
-            opacity: 0;
+            opacity: 1;
+            transform: scale(0.5) translateY(200px);
+            filter: blur(40px);
         }
 
         #hero.arrive {
-            animation: arriveFromSpace 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            animation: arriveFromSpace 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
         }
 
         @keyframes arriveFromSpace {
             0% {
                 opacity: 0;
-                transform: scale(0.7) translateY(80px);
-                filter: blur(30px);
+                transform: scale(0.5) translateY(200px);
+                filter: blur(40px);
             }
-            50% {
-                opacity: 0.8;
-                transform: scale(1.08) translateY(-15px);
-                filter: blur(8px);
+            40% {
+                opacity: 1;
+                transform: scale(1.15) translateY(-40px);
+                filter: blur(5px);
             }
-            70% {
-                transform: scale(0.96) translateY(8px);
-                filter: blur(2px);
+            65% {
+                transform: scale(0.92) translateY(15px);
+                filter: blur(1px);
             }
-            85% {
-                transform: scale(1.02) translateY(-3px);
+            80% {
+                transform: scale(1.05) translateY(-8px);
                 filter: blur(0px);
+            }
+            90% {
+                transform: scale(0.98) translateY(3px);
             }
             100% {
                 opacity: 1;
                 transform: scale(1) translateY(0);
                 filter: blur(0px);
             }
+        }
+
+        /* Prevent scroll during transitions */
+        body.no-scroll {
+            overflow: hidden !important;
+            height: 100vh !important;
+            position: fixed;
+            width: 100%;
         }
 
         .landing-vignette {
@@ -2644,6 +2673,10 @@
         const title = document.getElementById('landing-title');
         const subtitle = document.getElementById('landing-subtitle');
         const hint = document.getElementById('press-hint');
+        let transitionStarted = false;
+
+        // Lock scroll during transitions
+        document.body.classList.add('no-scroll');
 
         // Fade in text elements with smooth animations
         setTimeout(() => {
@@ -2675,6 +2708,9 @@
 
         // Transition sequence
         window.dismissLanding = function() {
+            if (transitionStarted) return; // Prevent multiple triggers
+            transitionStarted = true;
+
             console.log('🎭 Starting smooth transition sequence');
 
             // Activate transition blocker immediately to prevent UI flash
@@ -2715,22 +2751,40 @@
                         wormholeOverlay.classList.remove('active', 'visible', 'fade-out');
                         transitionBlocker.classList.remove('active');
 
-                        // Trigger arrival animation on hero section
+                        // Trigger arrival animation on hero section - PRIORITY
                         const heroSection = document.getElementById('hero');
                         if (heroSection) {
+                            console.log('🚀 TRIGGERING BOUNCE ANIMATION NOW');
                             heroSection.classList.add('arrive');
                         }
 
-                        // Start hero animations after arrival completes
-                        if (typeof startHeroAnimations === 'function') {
-                            setTimeout(startHeroAnimations, 1000);
-                        }
+                        // Start hero animations after arrival completes (1.4s bounce duration)
+                        setTimeout(() => {
+                            if (typeof startHeroAnimations === 'function') {
+                                startHeroAnimations();
+                            }
 
-                        console.log('🎭 Smooth transition complete - main page shown');
+                            // Unlock scroll after everything is ready
+                            document.body.classList.remove('no-scroll');
+                            console.log('🎭 Smooth transition complete - scroll unlocked');
+                        }, 1400);
                     }, 500);
                 }, 3500);
             }, 1200);
         };
+
+        // Prevent any scroll/wheel events during transition
+        const preventScroll = (e) => {
+            if (document.body.classList.contains('no-scroll')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        };
+
+        window.addEventListener('wheel', preventScroll, { passive: false });
+        window.addEventListener('touchmove', preventScroll, { passive: false });
+        window.addEventListener('scroll', preventScroll, { passive: false });
     })();
 
     // ===== MUSIC PLAYER =====
