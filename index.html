@@ -72,10 +72,14 @@
         }
         .reveal-bounce {
             opacity: 0; transform: translateY(60px) scale(0.95);
-            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .reveal-bounce.active {
-            opacity: 1; transform: translateY(0) scale(1);
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            /* Reset transition after reveal animation completes */
+            transition: none;
         }
  
         /* Card wrapper (kept for layout/positioning of inner effects like scan-lines & terminal scroll) */
@@ -85,13 +89,22 @@
  
         /* Glow Hover */
         .glow-hover {
-            transition: all 0.2s ease;
             border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.2s ease,
+                        border-color 0.2s ease,
+                        box-shadow 0.2s ease;
         }
         .glow-hover:hover {
             border-color: rgba(34,211,238,0.3);
             box-shadow: 0 0 30px rgba(34,211,238,0.15), inset 0 0 20px rgba(34,211,238,0.05);
             transform: translateY(-4px);
+        }
+
+        /* Override reveal-bounce transition after active */
+        .reveal-bounce.active.glow-hover {
+            transition: transform 0.2s ease,
+                        border-color 0.2s ease,
+                        box-shadow 0.2s ease;
         }
  
         /* Circuit Lines */
