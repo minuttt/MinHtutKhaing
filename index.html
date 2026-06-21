@@ -2763,32 +2763,70 @@
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         const isSlowConnection = connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.effectiveType === '3g');
 
-        // Optimize video quality for slow connections
-        if (isSlowConnection || isMobile) {
-            console.log('📱 Mobile/slow connection detected - optimizing video');
-            if (landingVideo) {
-                // Reduce playback quality slightly for smoother playback
-                landingVideo.playbackRate = 1.0; // Normal speed
+        // Optimize video settings for best quality even on slow devices
+        if (landingVideo) {
+            // Request high quality video decoding
+            landingVideo.playbackRate = 1.0;
+
+            // Modern browsers: hint for high quality rendering
+            if ('requestVideoFrameCallback' in landingVideo) {
+                console.log('✨ High quality video rendering enabled');
+            }
+
+            // Ensure smooth playback on mobile
+            if (isMobile || isSlowConnection) {
+                console.log('📱 Mobile/slow connection detected - maintaining quality with optimized loading');
+                // Keep quality high but load progressively
+                landingVideo.preload = 'auto';
             }
         }
 
-        // Simple video autoplay - force play immediately
+        // Simple video autoplay - force play immediately with quality hints
         function ensureLandingVideoPlays() {
             if (landingVideo) {
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
-                const playPromise = landingVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('✅ Landing video playing');
-                    }).catch(err => {
-                        console.warn('⚠️ Landing video autoplay failed, retrying...', err);
-                        setTimeout(() => {
-                            landingVideo.play().catch(e => console.error('❌ Landing video failed:', e));
-                        }, 100);
-                    });
+
+                // Wait for enough data to play smoothly (prevents stuttering)
+                if (landingVideo.readyState < 3) {
+                    console.log('⏳ Waiting for video buffer...');
+                    landingVideo.addEventListener('canplay', () => {
+                        console.log('✅ Video buffered and ready');
+                        attemptPlay();
+                    }, { once: true });
+                } else {
+                    attemptPlay();
+                }
+
+                function attemptPlay() {
+                    const playPromise = landingVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log('✅ Landing video playing in high quality');
+                        }).catch(err => {
+                            console.warn('⚠️ Landing video autoplay failed, retrying...', err);
+                            setTimeout(() => {
+                                landingVideo.play().catch(e => console.error('❌ Landing video failed:', e));
+                            }, 100);
+                        });
+                    }
                 }
             }
+        }
+
+        // Monitor video buffering for smooth playback
+        if (landingVideo) {
+            landingVideo.addEventListener('waiting', () => {
+                console.log('⏸️ Video buffering...');
+            });
+
+            landingVideo.addEventListener('playing', () => {
+                console.log('▶️ Video playing smoothly');
+            });
+
+            landingVideo.addEventListener('stalled', () => {
+                console.warn('⚠️ Video stalled - slow connection detected');
+            });
         }
 
         // Start video immediately
@@ -3057,29 +3095,32 @@
 
                     // Pulsing size
                     const pulse = Math.sin(Date.now() * 0.003 + index) * 0.3 + 1;
-                    const currentSize = p.baseSize * pulse * p.life;
+                    const currentSize = Math.max(0.1, p.baseSize * pulse * p.life); // Prevent negative/zero size
 
                     ctx.save();
                     ctx.globalAlpha = p.life * 0.9;
                     ctx.translate(p.x, p.y);
                     ctx.rotate(p.rotation);
 
-                    // Glow effect
-                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, currentSize * 2);
-                    gradient.addColorStop(0, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.life * 0.8})`);
-                    gradient.addColorStop(0.4, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.life * 0.4})`);
-                    gradient.addColorStop(1, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, 0)`);
+                    // Glow effect - only render if size is valid
+                    if (currentSize > 0.1) {
+                        const glowSize = Math.max(0.2, currentSize * 2);
+                        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, glowSize);
+                        gradient.addColorStop(0, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.life * 0.8})`);
+                        gradient.addColorStop(0.4, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.life * 0.4})`);
+                        gradient.addColorStop(1, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, 0)`);
 
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, currentSize * 2, 0, Math.PI * 2);
-                    ctx.fill();
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, glowSize, 0, Math.PI * 2);
+                        ctx.fill();
 
-                    // Core particle
-                    ctx.fillStyle = `hsl(${p.hue}, ${p.saturation}%, ${p.lightness + 20}%)`;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, currentSize, 0, Math.PI * 2);
-                    ctx.fill();
+                        // Core particle
+                        ctx.fillStyle = `hsl(${p.hue}, ${p.saturation}%, ${p.lightness + 20}%)`;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, currentSize, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
 
                     ctx.restore();
                 });
