@@ -845,9 +845,51 @@
             filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
-        /* Hero section initial state for GSAP landing effect */
+        /* Hero section */
         #hero {
             position: relative;
+            opacity: 0;
+        }
+
+        #hero.visible {
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        /* Landing dust overlay */
+        #landing-dust-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9997;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            display: none;
+        }
+
+        #landing-dust-overlay.active {
+            display: block;
+            animation: dustLanding 1.5s ease-out forwards;
+        }
+
+        @keyframes dustLanding {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        #landing-dust-overlay canvas {
+            width: 100%;
+            height: 100%;
         }
 
         /* Prevent scroll during transitions */
@@ -939,6 +981,11 @@
 
 <!-- Transition Blocker (prevents UI flash) -->
 <div id="transition-blocker"></div>
+
+<!-- Landing Dust Effect -->
+<div id="landing-dust-overlay">
+    <canvas id="dust-canvas"></canvas>
+</div>
 
 <!-- Fixed animated background (sits behind hero & all sections, stays put while scrolling) -->
 <div id="bg-paths" aria-hidden="true">
@@ -2311,43 +2358,17 @@
     // ===== CINEMATIC TEXT HERO GSAP ANIMATION =====
     let heroAnimationsReady = false;
     let startHeroAnimations = null;
-    let triggerLandingEffect = null;
 
     if (typeof gsap !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
         const heroSection = document.getElementById('hero');
 
-        // Set initial state - hero hidden for landing effect
-        gsap.set(heroSection, {
-            autoAlpha: 0,
-            scale: 0.5,
-            y: 200,
-            filter: "blur(40px)"
-        });
-
         // Set initial states for all stages
         gsap.set(".hero-stage-1", { autoAlpha: 1 });
         gsap.set(".hero-stage-2", { autoAlpha: 0 });
         gsap.set(".hero-stage-3", { autoAlpha: 0 });
         gsap.set(".hero-stage-4", { autoAlpha: 0 });
-
-        // Landing effect function - GSAP bounce animation
-        triggerLandingEffect = () => {
-            console.log('🎯 GSAP Landing Effect Starting');
-
-            gsap.to(heroSection, {
-                autoAlpha: 1,
-                scale: 1,
-                y: 0,
-                filter: "blur(0px)",
-                duration: 1.5,
-                ease: "back.out(1.7)",
-                onComplete: () => {
-                    console.log('✅ Landing Effect Complete');
-                }
-            });
-        };
 
         // Stage 1: Name entrance
         gsap.set(".name-intro", { autoAlpha: 0 });
@@ -2670,21 +2691,21 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Fade in text elements with smooth animations
+        // Fade in text elements with SLOWER animations
         setTimeout(() => {
-            title.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            title.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             title.style.opacity = '1';
             title.style.transform = 'translateY(0)';
-        }, 300);
+        }, 600);
 
         setTimeout(() => {
-            subtitle.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            subtitle.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             subtitle.style.opacity = '1';
             subtitle.style.transform = 'translateY(0)';
-        }, 500);
+        }, 1000);
 
         setTimeout(() => {
-            hint.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             hint.style.opacity = '0.7';
 
             // Trigger underline drawing animation
@@ -2696,7 +2717,7 @@
             setTimeout(() => {
                 hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
             }, 1500);
-        }, 700);
+        }, 1400);
 
         // Transition sequence
         window.dismissLanding = function() {
@@ -2738,18 +2759,32 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('fade-out');
 
-                    // Step 4: After fade completes, show main page with GSAP landing effect
+                    // Step 4: After fade completes, show main page with dust landing effect
                     setTimeout(() => {
                         wormholeOverlay.classList.remove('active', 'visible', 'fade-out');
                         transitionBlocker.classList.remove('active');
 
-                        // Trigger GSAP landing animation
-                        if (typeof triggerLandingEffect === 'function') {
-                            console.log('🚀 TRIGGERING GSAP LANDING EFFECT');
-                            triggerLandingEffect();
+                        // Show hero section
+                        const heroSection = document.getElementById('hero');
+                        if (heroSection) {
+                            heroSection.classList.add('visible');
                         }
 
-                        // Start hero animations after landing effect (1.5s)
+                        // Trigger dust landing effect
+                        const dustOverlay = document.getElementById('landing-dust-overlay');
+                        const dustCanvas = document.getElementById('dust-canvas');
+                        if (dustOverlay && dustCanvas) {
+                            console.log('💨 TRIGGERING DUST LANDING EFFECT');
+                            dustOverlay.classList.add('active');
+                            createDustEffect(dustCanvas);
+
+                            // Remove dust overlay after animation
+                            setTimeout(() => {
+                                dustOverlay.classList.remove('active');
+                            }, 1500);
+                        }
+
+                        // Start hero animations after dust effect
                         setTimeout(() => {
                             if (typeof startHeroAnimations === 'function') {
                                 startHeroAnimations();
@@ -2758,7 +2793,7 @@
                             // Unlock scroll after everything is ready
                             document.body.classList.remove('no-scroll');
                             console.log('🎭 Smooth transition complete - scroll unlocked');
-                        }, 1500);
+                        }, 800);
                     }, 500);
                 }, 3500);
             }, 1200);
@@ -2776,6 +2811,62 @@
         window.addEventListener('wheel', preventScroll, { passive: false });
         window.addEventListener('touchmove', preventScroll, { passive: false });
         window.addEventListener('scroll', preventScroll, { passive: false });
+
+        // Dust landing effect
+        function createDustEffect(canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 150;
+
+            // Create particles from center
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 * i) / particleCount;
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: Math.cos(angle) * (Math.random() * 8 + 4),
+                    vy: Math.sin(angle) * (Math.random() * 8 + 4),
+                    life: 1,
+                    decay: Math.random() * 0.02 + 0.015,
+                    size: Math.random() * 4 + 2,
+                    color: `rgba(${200 + Math.random() * 55}, ${200 + Math.random() * 55}, ${255}, ${Math.random() * 0.5 + 0.5})`
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach((p, index) => {
+                    if (p.life <= 0) {
+                        particles.splice(index, 1);
+                        return;
+                    }
+
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3; // Gravity
+                    p.vx *= 0.98; // Friction
+                    p.life -= p.decay;
+
+                    ctx.save();
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                if (particles.length > 0) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
     })();
 
     // ===== MUSIC PLAYER =====
