@@ -72,8 +72,8 @@
         }
         .reveal-bounce {
             opacity: 0; transform: translateY(60px) scale(0.95);
-            transition: opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .reveal-bounce.active {
             opacity: 1;
@@ -2680,8 +2680,11 @@
         link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
     });
  
-    // Scroll Reveal (Intersection Observer)
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    // Scroll Reveal (Intersection Observer) - Instant trigger, no delay
+    const observerOptions = {
+        threshold: 0.05,  // Trigger when only 5% is visible (faster)
+        rootMargin: '50px 0px 0px 0px'  // Start animation 50px before entering viewport (anticipate)
+    };
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -2689,7 +2692,7 @@
             }
         });
     }, observerOptions);
- 
+
     document.querySelectorAll('.reveal, .reveal-bounce').forEach(el => observer.observe(el));
 
     // Timeline dot animation on scroll
