@@ -1033,7 +1033,7 @@
 
 <!-- Wormhole Transition -->
 <div id="wormhole-overlay">
-    <video id="wormhole-video" muted playsinline preload="metadata" webkit-playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect width='1920' height='1080' fill='%23000000'/%3E%3C/svg%3E">
+    <video id="wormhole-video" muted playsinline preload="auto" webkit-playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect width='1920' height='1080' fill='%23000000'/%3E%3C/svg%3E">
         <source src="wormhole.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
@@ -2758,67 +2758,28 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Connection detection - only slow down for REALLY slow connections
-        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        const isVerySlowConnection = connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g');
-        const isModerateSlow = connection && connection.effectiveType === '3g';
-
-        if (isVerySlowConnection) {
-            console.log('🐌 Very slow connection detected (2G) - will buffer before playing');
-        } else if (isModerateSlow) {
-            console.log('📶 3G connection detected - optimizing');
-        } else {
-            console.log('🚀 Fast connection detected - playing immediately');
-        }
-
-        // Simple video autoplay - play immediately unless very slow connection
+        // Simple video autoplay - play immediately, no delays
         function ensureLandingVideoPlays() {
             if (landingVideo) {
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
 
-                // Only wait for buffer on VERY slow connections (2G or slower)
-                if (isVerySlowConnection && landingVideo.readyState < 2) {
-                    console.log('⏳ Buffering for slow connection...');
-                    landingVideo.addEventListener('canplay', () => {
-                        console.log('✅ Buffer ready');
-                        attemptPlay();
-                    }, { once: true });
-                    // Timeout: play anyway after 2 seconds
-                    setTimeout(attemptPlay, 2000);
-                } else {
-                    // Fast devices and 3G+ play immediately
-                    attemptPlay();
-                }
-
-                function attemptPlay() {
-                    const playPromise = landingVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.then(() => {
-                            console.log('✅ Landing video playing');
-                        }).catch(err => {
-                            console.warn('⚠️ Autoplay failed, retrying...', err);
-                            setTimeout(() => {
-                                landingVideo.play().catch(e => console.error('❌ Failed:', e));
-                            }, 100);
-                        });
-                    }
+                // Play immediately - autoplay attribute should handle this
+                const playPromise = landingVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('✅ Landing video playing');
+                    }).catch(err => {
+                        console.warn('⚠️ Autoplay failed, retrying...', err);
+                        setTimeout(() => {
+                            landingVideo.play().catch(e => console.error('❌ Failed:', e));
+                        }, 100);
+                    });
                 }
             }
         }
 
-        // Monitor video performance (only log issues on slow connections)
-        if (landingVideo && isVerySlowConnection) {
-            landingVideo.addEventListener('waiting', () => {
-                console.log('⏸️ Video buffering...');
-            });
-
-            landingVideo.addEventListener('stalled', () => {
-                console.warn('⚠️ Video stalled');
-            });
-        }
-
-        // Start video immediately
+        // Start video immediately (autoplay attribute should handle it, this is backup)
         ensureLandingVideoPlays();
 
         // Retry on visibility change
@@ -2828,26 +2789,11 @@
             }
         });
 
-        // Smart wormhole video preloading - only load when user shows intent
-        let wormholePreloaded = false;
-        function preloadWormhole() {
-            if (!wormholePreloaded && wormholeVideo) {
-                wormholeVideo.load();
-                wormholePreloaded = true;
-                console.log('📦 Wormhole video preloading...');
-            }
+        // Preload wormhole video immediately for instant playback
+        if (wormholeVideo) {
+            wormholeVideo.load();
+            console.log('📦 Wormhole video preloading immediately');
         }
-
-        // Preload on first user interaction (saves bandwidth)
-        const triggerPreload = () => {
-            preloadWormhole();
-        };
-        document.addEventListener('mousemove', triggerPreload, { once: true, passive: true });
-        document.addEventListener('touchstart', triggerPreload, { once: true, passive: true });
-        document.addEventListener('keydown', triggerPreload, { once: true, passive: true });
-
-        // Also preload after 2 seconds if no interaction (fallback)
-        setTimeout(preloadWormhole, 2000);
 
         // Get portfolio text element
         const portfolio = document.getElementById('landing-portfolio');
@@ -2921,33 +2867,22 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('visible');
 
-                    // Ensure wormhole video plays on mobile with smart loading
+                    // Ensure wormhole video plays immediately (already preloaded)
                     wormholeVideo.muted = true;
                     wormholeVideo.playsInline = true;
                     wormholeVideo.currentTime = 0;
 
-                    // For slow connections, ensure video is loaded before playing
-                    const playWormhole = () => {
-                        const wormholePlayPromise = wormholeVideo.play();
-                        if (wormholePlayPromise !== undefined) {
-                            wormholePlayPromise.then(() => {
-                                console.log('✅ Wormhole video playing');
-                            }).catch(err => {
-                                console.warn('⚠️ Wormhole video play failed, trying again...', err);
-                                setTimeout(() => {
-                                    wormholeVideo.play().catch(e => console.log('ℹ️ Wormhole video skipped'));
-                                }, 100);
-                            });
-                        }
-                    };
-
-                    // If video is ready, play immediately, otherwise wait a bit
-                    if (wormholeVideo.readyState >= 2) {
-                        playWormhole();
-                    } else {
-                        wormholeVideo.addEventListener('loadeddata', playWormhole, { once: true });
-                        // Timeout fallback - play anyway after 500ms
-                        setTimeout(playWormhole, 500);
+                    // Play immediately - video is already preloaded
+                    const wormholePlayPromise = wormholeVideo.play();
+                    if (wormholePlayPromise !== undefined) {
+                        wormholePlayPromise.then(() => {
+                            console.log('✅ Wormhole video playing instantly');
+                        }).catch(err => {
+                            console.warn('⚠️ Wormhole play failed, retrying...', err);
+                            setTimeout(() => {
+                                wormholeVideo.play().catch(e => console.log('ℹ️ Wormhole skipped'));
+                            }, 50);
+                        });
                     }
 
                     // Play wormhole sound effect
