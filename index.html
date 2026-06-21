@@ -2758,43 +2758,36 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Mobile & slow connection optimization
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Connection detection - only slow down for REALLY slow connections
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        const isSlowConnection = connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.effectiveType === '3g');
+        const isVerySlowConnection = connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g');
+        const isModerateSlow = connection && connection.effectiveType === '3g';
 
-        // Optimize video settings for best quality even on slow devices
-        if (landingVideo) {
-            // Request high quality video decoding
-            landingVideo.playbackRate = 1.0;
-
-            // Modern browsers: hint for high quality rendering
-            if ('requestVideoFrameCallback' in landingVideo) {
-                console.log('✨ High quality video rendering enabled');
-            }
-
-            // Ensure smooth playback on mobile
-            if (isMobile || isSlowConnection) {
-                console.log('📱 Mobile/slow connection detected - maintaining quality with optimized loading');
-                // Keep quality high but load progressively
-                landingVideo.preload = 'auto';
-            }
+        if (isVerySlowConnection) {
+            console.log('🐌 Very slow connection detected (2G) - will buffer before playing');
+        } else if (isModerateSlow) {
+            console.log('📶 3G connection detected - optimizing');
+        } else {
+            console.log('🚀 Fast connection detected - playing immediately');
         }
 
-        // Simple video autoplay - force play immediately with quality hints
+        // Simple video autoplay - play immediately unless very slow connection
         function ensureLandingVideoPlays() {
             if (landingVideo) {
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
 
-                // Wait for enough data to play smoothly (prevents stuttering)
-                if (landingVideo.readyState < 3) {
-                    console.log('⏳ Waiting for video buffer...');
+                // Only wait for buffer on VERY slow connections (2G or slower)
+                if (isVerySlowConnection && landingVideo.readyState < 2) {
+                    console.log('⏳ Buffering for slow connection...');
                     landingVideo.addEventListener('canplay', () => {
-                        console.log('✅ Video buffered and ready');
+                        console.log('✅ Buffer ready');
                         attemptPlay();
                     }, { once: true });
+                    // Timeout: play anyway after 2 seconds
+                    setTimeout(attemptPlay, 2000);
                 } else {
+                    // Fast devices and 3G+ play immediately
                     attemptPlay();
                 }
 
@@ -2802,11 +2795,11 @@
                     const playPromise = landingVideo.play();
                     if (playPromise !== undefined) {
                         playPromise.then(() => {
-                            console.log('✅ Landing video playing in high quality');
+                            console.log('✅ Landing video playing');
                         }).catch(err => {
-                            console.warn('⚠️ Landing video autoplay failed, retrying...', err);
+                            console.warn('⚠️ Autoplay failed, retrying...', err);
                             setTimeout(() => {
-                                landingVideo.play().catch(e => console.error('❌ Landing video failed:', e));
+                                landingVideo.play().catch(e => console.error('❌ Failed:', e));
                             }, 100);
                         });
                     }
@@ -2814,18 +2807,14 @@
             }
         }
 
-        // Monitor video buffering for smooth playback
-        if (landingVideo) {
+        // Monitor video performance (only log issues on slow connections)
+        if (landingVideo && isVerySlowConnection) {
             landingVideo.addEventListener('waiting', () => {
                 console.log('⏸️ Video buffering...');
             });
 
-            landingVideo.addEventListener('playing', () => {
-                console.log('▶️ Video playing smoothly');
-            });
-
             landingVideo.addEventListener('stalled', () => {
-                console.warn('⚠️ Video stalled - slow connection detected');
+                console.warn('⚠️ Video stalled');
             });
         }
 
