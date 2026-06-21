@@ -997,17 +997,10 @@
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
-    <video id="landing-video" muted loop playsinline preload="metadata" webkit-playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
+    <video id="landing-video" muted loop playsinline preload="auto" webkit-playsinline autoplay>
         <source src="landing.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
-    <!-- Loading Spinner for Video -->
-    <div id="video-loading" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; background: #020204;">
-        <div style="width: 50px; height: 50px; border: 3px solid rgba(34,211,238,0.2); border-top-color: #22d3ee; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-    </div>
-    <style>
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <div class="landing-vignette"></div>
     <div class="text-backdrop"></div>
     <div class="landing-content">
@@ -1025,7 +1018,7 @@
 
 <!-- Wormhole Transition -->
 <div id="wormhole-overlay">
-    <video id="wormhole-video" muted playsinline preload="none" webkit-playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
+    <video id="wormhole-video" muted playsinline preload="auto" webkit-playsinline>
         <source src="wormhole.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
@@ -2750,94 +2743,38 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Video loading state management
-        const videoLoadingSpinner = document.getElementById('video-loading');
-        let landingVideoReady = false;
-        let wormholeVideoReady = false;
-
-        // Hide loading spinner when video can play
-        function hideVideoLoading() {
-            if (videoLoadingSpinner) {
-                videoLoadingSpinner.style.opacity = '0';
-                videoLoadingSpinner.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => {
-                    videoLoadingSpinner.style.display = 'none';
-                }, 500);
-            }
-        }
-
-        // Mobile video autoplay fix - force play landing video with better error handling
+        // Simple video autoplay - force play immediately
         function ensureLandingVideoPlays() {
-            if (landingVideo && !landingVideoReady) {
+            if (landingVideo) {
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
-
-                // Start loading the video
-                landingVideo.load();
-
                 const playPromise = landingVideo.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         console.log('✅ Landing video playing');
-                        landingVideoReady = true;
-                        hideVideoLoading();
                     }).catch(err => {
                         console.warn('⚠️ Landing video autoplay failed, retrying...', err);
-                        // Retry after short delay
                         setTimeout(() => {
-                            landingVideo.play().then(() => {
-                                landingVideoReady = true;
-                                hideVideoLoading();
-                            }).catch(e => {
-                                console.error('❌ Landing video failed completely:', e);
-                                // Hide spinner anyway and allow user interaction
-                                hideVideoLoading();
-                            });
-                        }, 200);
+                            landingVideo.play().catch(e => console.error('❌ Landing video failed:', e));
+                        }, 100);
                     });
                 }
             }
         }
 
-        // Wait for video to be ready before playing (better for slow connections)
-        landingVideo.addEventListener('canplay', () => {
-            console.log('✅ Landing video ready to play');
-            if (!landingVideoReady) {
-                ensureLandingVideoPlays();
-            }
-        });
-
-        // Handle video errors gracefully
-        landingVideo.addEventListener('error', (e) => {
-            console.error('❌ Landing video error:', e);
-            hideVideoLoading();
-        });
-
-        // Show content after a minimum buffer
-        landingVideo.addEventListener('loadeddata', () => {
-            console.log('✅ Landing video data loaded');
-            hideVideoLoading();
-        });
-
-        // Start loading immediately
+        // Start video immediately
         ensureLandingVideoPlays();
 
-        // Retry on visibility change (mobile wake-up)
+        // Retry on visibility change
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && !transitionStarted && !landingVideoReady) {
+            if (!document.hidden && !transitionStarted) {
                 ensureLandingVideoPlays();
             }
         });
 
-        // Lazy load wormhole video only when needed (not immediately)
-        function preloadWormholeVideo() {
-            if (wormholeVideo && !wormholeVideoReady) {
-                wormholeVideo.load();
-                wormholeVideo.addEventListener('canplay', () => {
-                    wormholeVideoReady = true;
-                    console.log('✅ Wormhole video preloaded');
-                }, { once: true });
-            }
+        // Preload wormhole video
+        if (wormholeVideo) {
+            wormholeVideo.load();
         }
 
         // Get portfolio text element
@@ -2877,26 +2814,10 @@
             }, 1500);
         }, 1400);
 
-        // Preload wormhole when user shows intent to interact
-        let wormholePreloaded = false;
-        function preloadWormholeOnIntent() {
-            if (!wormholePreloaded) {
-                preloadWormholeVideo();
-                wormholePreloaded = true;
-            }
-        }
-        // Preload on any interaction hint
-        document.addEventListener('mousemove', preloadWormholeOnIntent, { once: true });
-        document.addEventListener('touchstart', preloadWormholeOnIntent, { once: true });
-        document.addEventListener('keydown', preloadWormholeOnIntent, { once: true });
-
         // Transition sequence
         window.dismissLanding = function() {
             if (transitionStarted) return; // Prevent multiple triggers
             transitionStarted = true;
-
-            // Ensure wormhole is preloaded before starting transition
-            preloadWormholeVideo();
 
             console.log('🎭 Starting smooth transition sequence');
 
@@ -2928,24 +2849,20 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('visible');
 
-                    // Ensure wormhole video plays on mobile with comprehensive error handling
+                    // Ensure wormhole video plays on mobile
                     wormholeVideo.muted = true;
                     wormholeVideo.playsInline = true;
                     wormholeVideo.currentTime = 0;
 
-                    // Try to play, but don't block transition if video fails
                     const wormholePlayPromise = wormholeVideo.play();
                     if (wormholePlayPromise !== undefined) {
                         wormholePlayPromise.then(() => {
                             console.log('✅ Wormhole video playing');
                         }).catch(err => {
-                            console.warn('⚠️ Wormhole video play failed (slow connection?), continuing anyway:', err);
-                            // Single retry for slow connections
+                            console.error('❌ Wormhole video play failed:', err);
                             setTimeout(() => {
-                                wormholeVideo.play().catch(e => {
-                                    console.log('ℹ️ Wormhole video unavailable, transition continues');
-                                });
-                            }, 150);
+                                wormholeVideo.play().catch(e => console.error('❌ Wormhole retry failed:', e));
+                            }, 100);
                         });
                     }
 
