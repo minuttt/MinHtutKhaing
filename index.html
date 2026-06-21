@@ -957,6 +957,63 @@
             width: 100%;
         }
 
+        /* Scroll Indicator */
+        #scroll-indicator {
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #scroll-indicator.show {
+            opacity: 1;
+            pointer-events: auto;
+            animation: scrollIndicatorPulse 3s ease-in-out infinite;
+        }
+
+        #scroll-indicator.hide {
+            opacity: 0;
+            transform: translate(-50%, 20px);
+        }
+
+        @keyframes scrollIndicatorPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            50% {
+                opacity: 0.4;
+                transform: translate(-50%, 10px);
+            }
+        }
+
+        .scroll-arrow {
+            animation: scrollArrowBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
+        }
+
+        @keyframes scrollArrowBounce {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(8px);
+                opacity: 0.6;
+            }
+        }
+
+        .scroll-text {
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+            animation: scrollTextPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollTextPulse {
+            0%, 100% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
         .landing-vignette {
             position: absolute;
             inset: 0;
@@ -1101,6 +1158,16 @@
 <!-- Cinematic Text Hero Section -->
 <section id="hero" class="relative w-screen h-screen overflow-hidden flex items-center justify-center" style="perspective: 1500px;">
     <div class="film-grain-hero" aria-hidden="true"></div>
+
+    <!-- Scroll Indicator -->
+    <div id="scroll-indicator" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 opacity-0 pointer-events-none">
+        <span class="text-xs font-semibold tracking-widest uppercase text-cyan-400/80 scroll-text">Scroll</span>
+        <div class="scroll-arrow-container flex flex-col gap-1">
+            <svg class="scroll-arrow w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </div>
 
     <!-- Stage 1: Name Introduction -->
     <div class="hero-stage-1 absolute inset-0 z-10 flex flex-col items-center justify-center text-center w-screen px-4">
@@ -2459,6 +2526,15 @@
             if (!heroAnimationsReady) {
                 heroAnimationsReady = true;
                 introTl.play();
+
+                // Show scroll indicator after intro animation completes
+                setTimeout(() => {
+                    const scrollIndicator = document.getElementById('scroll-indicator');
+                    if (scrollIndicator) {
+                        scrollIndicator.classList.add('show');
+                        console.log('📜 Scroll indicator shown');
+                    }
+                }, 2500); // Show after name animation completes
             }
         };
 
@@ -2652,13 +2728,25 @@
         }
     });
  
-    // Navbar scroll effect
+    // Navbar scroll effect & scroll indicator
     const nav = document.querySelector('nav');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+    let hasScrolled = false;
+
     window.addEventListener('scroll', () => {
+        // Navbar effect
         if (window.scrollY > 100) {
             nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
         } else {
             nav.style.borderBottomColor = 'rgba(255,255,255,0.05)';
+        }
+
+        // Hide scroll indicator after user starts scrolling
+        if (!hasScrolled && window.scrollY > 50 && scrollIndicator) {
+            hasScrolled = true;
+            scrollIndicator.classList.remove('show');
+            scrollIndicator.classList.add('hide');
+            console.log('📜 Scroll indicator hidden - user is scrolling');
         }
     });
  
