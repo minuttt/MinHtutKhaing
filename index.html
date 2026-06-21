@@ -780,19 +780,20 @@
             text-transform: uppercase;
             letter-spacing: 0.15em;
             opacity: 0;
-            transform: translateY(20px);
             position: relative;
             display: inline-block;
-            padding-bottom: 8px;
+            padding-bottom: 10px;
         }
 
         .press-key-hint svg {
             position: absolute;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
             height: 8px;
             overflow: visible;
+            pointer-events: none;
         }
 
         .underline-path {
@@ -801,7 +802,10 @@
             fill: none;
             stroke-dasharray: 300;
             stroke-dashoffset: 300;
-            animation: drawUnderline 1.5s ease-out 1.2s forwards;
+        }
+
+        .underline-path.active {
+            animation: drawUnderline 1.5s ease-out forwards;
         }
 
         @keyframes drawUnderline {
@@ -813,49 +817,51 @@
         @keyframes pulseHint {
             0%, 100% {
                 opacity: 0.8;
-                transform: translateY(0);
             }
             50% {
                 opacity: 1;
-                transform: translateY(-2px);
             }
         }
 
         .press-key-hint:hover .underline-path {
-            animation: waveUnderline 0.8s ease-in-out infinite;
-        }
-
-        @keyframes waveUnderline {
-            0%, 100% {
-                d: path("M 0,4 Q 37.5,0 75,4 Q 112.5,8 150,4");
-            }
-            50% {
-                d: path("M 0,4 Q 37.5,8 75,4 Q 112.5,0 150,4");
-            }
+            stroke: rgba(255, 255, 255, 0.95);
+            stroke-width: 2.5;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
         /* Arrival animation after wormhole */
+        #hero {
+            opacity: 0;
+        }
+
+        #hero.arrive {
+            animation: arriveFromSpace 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
         @keyframes arriveFromSpace {
             0% {
                 opacity: 0;
-                transform: scale(0.8) translateY(60px);
-                filter: blur(20px);
+                transform: scale(0.7) translateY(80px);
+                filter: blur(30px);
             }
-            60% {
-                transform: scale(1.05) translateY(-10px);
+            50% {
+                opacity: 0.8;
+                transform: scale(1.08) translateY(-15px);
+                filter: blur(8px);
             }
-            80% {
-                transform: scale(0.98) translateY(5px);
+            70% {
+                transform: scale(0.96) translateY(8px);
+                filter: blur(2px);
+            }
+            85% {
+                transform: scale(1.02) translateY(-3px);
+                filter: blur(0px);
             }
             100% {
                 opacity: 1;
                 transform: scale(1) translateY(0);
                 filter: blur(0px);
             }
-        }
-
-        .hero-stage-1, .hero-stage-2, .hero-stage-3, .hero-stage-4 {
-            animation: arriveFromSpace 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         .landing-vignette {
@@ -2317,16 +2323,11 @@
 
         const heroSection = document.getElementById('hero');
 
-        // Set initial states for all stages (hidden and disabled animation initially)
-        gsap.set(".hero-stage-1", { autoAlpha: 0 });
+        // Set initial states for all stages
+        gsap.set(".hero-stage-1", { autoAlpha: 1 });
         gsap.set(".hero-stage-2", { autoAlpha: 0 });
         gsap.set(".hero-stage-3", { autoAlpha: 0 });
         gsap.set(".hero-stage-4", { autoAlpha: 0 });
-
-        // Disable arrival animation initially
-        document.querySelectorAll('.hero-stage-1, .hero-stage-2, .hero-stage-3, .hero-stage-4').forEach(el => {
-            el.style.animation = 'none';
-        });
 
         // Stage 1: Name entrance
         gsap.set(".name-intro", { autoAlpha: 0 });
@@ -2351,17 +2352,7 @@
         startHeroAnimations = () => {
             if (!heroAnimationsReady) {
                 heroAnimationsReady = true;
-
-                // Enable arrival animation
-                document.querySelectorAll('.hero-stage-1, .hero-stage-2, .hero-stage-3, .hero-stage-4').forEach(el => {
-                    el.style.animation = 'arriveFromSpace 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
-                });
-
-                // Show stage 1 and start GSAP timeline after arrival animation
-                gsap.set(".hero-stage-1", { autoAlpha: 1 });
-                setTimeout(() => {
-                    introTl.play();
-                }, 1200); // Wait for arrival animation to complete
+                introTl.play();
             }
         };
 
@@ -2670,10 +2661,16 @@
         setTimeout(() => {
             hint.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
             hint.style.opacity = '0.7';
-            hint.style.transform = 'translateY(0)';
+
+            // Trigger underline drawing animation
+            const underlinePath = hint.querySelector('.underline-path');
+            if (underlinePath) {
+                underlinePath.classList.add('active');
+            }
+
             setTimeout(() => {
                 hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
-            }, 500);
+            }, 1500);
         }, 700);
 
         // Transition sequence
@@ -2687,6 +2684,7 @@
             title.style.transition = 'all 0.4s ease-out';
             subtitle.style.transition = 'all 0.4s ease-out';
             hint.style.transition = 'all 0.4s ease-out';
+            hint.style.animation = 'none';
             title.style.opacity = '0';
             subtitle.style.opacity = '0';
             hint.style.opacity = '0';
@@ -2712,14 +2710,20 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('fade-out');
 
-                    // Step 4: After fade completes, show main page
+                    // Step 4: After fade completes, show main page with arrival animation
                     setTimeout(() => {
                         wormholeOverlay.classList.remove('active', 'visible', 'fade-out');
                         transitionBlocker.classList.remove('active');
 
-                        // Start hero animations
+                        // Trigger arrival animation on hero section
+                        const heroSection = document.getElementById('hero');
+                        if (heroSection) {
+                            heroSection.classList.add('arrive');
+                        }
+
+                        // Start hero animations after arrival completes
                         if (typeof startHeroAnimations === 'function') {
-                            setTimeout(startHeroAnimations, 100);
+                            setTimeout(startHeroAnimations, 1000);
                         }
 
                         console.log('🎭 Smooth transition complete - main page shown');
