@@ -845,53 +845,9 @@
             filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
-        /* Arrival animation wrapper - MUST work */
-        #hero-wrapper {
-            opacity: 0;
-            transform: scale(0.5) translateY(200px);
-            filter: blur(40px);
-            will-change: transform, opacity, filter;
-        }
-
-        #hero-wrapper.arrive {
-            animation: arriveFromSpace 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
-        }
-
-        @keyframes arriveFromSpace {
-            0% {
-                opacity: 0;
-                transform: scale(0.5) translateY(200px);
-                filter: blur(40px);
-            }
-            40% {
-                opacity: 1;
-                transform: scale(1.15) translateY(-40px);
-                filter: blur(5px);
-            }
-            65% {
-                transform: scale(0.92) translateY(15px);
-                filter: blur(1px);
-            }
-            80% {
-                transform: scale(1.05) translateY(-8px);
-                filter: blur(0px);
-            }
-            90% {
-                transform: scale(0.98) translateY(3px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-                filter: blur(0px);
-            }
-        }
-
-        /* Hero section reset */
+        /* Hero section initial state for GSAP landing effect */
         #hero {
             position: relative;
-            transform: none !important;
-            opacity: 1 !important;
-            filter: none !important;
         }
 
         /* Prevent scroll during transitions */
@@ -1030,8 +986,6 @@
     </div>
 </nav>
  
-<!-- Hero Wrapper for Bounce Animation -->
-<div id="hero-wrapper">
 <!-- Cinematic Text Hero Section -->
 <section id="hero" class="relative w-screen h-screen overflow-hidden flex items-center justify-center" style="perspective: 1500px;">
     <div class="film-grain-hero" aria-hidden="true"></div>
@@ -1117,8 +1071,6 @@
         </div>
     </div>
 </section>
-</div>
-<!-- End Hero Wrapper -->
 
 <!-- Awards Section -->
 <section id="awards" class="relative py-24 px-6">
@@ -2359,17 +2311,43 @@
     // ===== CINEMATIC TEXT HERO GSAP ANIMATION =====
     let heroAnimationsReady = false;
     let startHeroAnimations = null;
+    let triggerLandingEffect = null;
 
     if (typeof gsap !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
         const heroSection = document.getElementById('hero');
 
+        // Set initial state - hero hidden for landing effect
+        gsap.set(heroSection, {
+            autoAlpha: 0,
+            scale: 0.5,
+            y: 200,
+            filter: "blur(40px)"
+        });
+
         // Set initial states for all stages
         gsap.set(".hero-stage-1", { autoAlpha: 1 });
         gsap.set(".hero-stage-2", { autoAlpha: 0 });
         gsap.set(".hero-stage-3", { autoAlpha: 0 });
         gsap.set(".hero-stage-4", { autoAlpha: 0 });
+
+        // Landing effect function - GSAP bounce animation
+        triggerLandingEffect = () => {
+            console.log('🎯 GSAP Landing Effect Starting');
+
+            gsap.to(heroSection, {
+                autoAlpha: 1,
+                scale: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 1.5,
+                ease: "back.out(1.7)",
+                onComplete: () => {
+                    console.log('✅ Landing Effect Complete');
+                }
+            });
+        };
 
         // Stage 1: Name entrance
         gsap.set(".name-intro", { autoAlpha: 0 });
@@ -2413,11 +2391,10 @@
                 duration: 1.2, ease: "expo.out"
             }, "-=0.9");
 
-        // Scroll timeline - use wrapper as trigger
-        const heroWrapper = document.getElementById('hero-wrapper');
+        // Scroll timeline - fixed
         const scrollTl = gsap.timeline({
             scrollTrigger: {
-                trigger: heroWrapper,
+                trigger: heroSection,
                 start: "top top",
                 end: "+=6000",
                 pin: true,
@@ -2761,19 +2738,18 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('fade-out');
 
-                    // Step 4: After fade completes, show main page with arrival animation
+                    // Step 4: After fade completes, show main page with GSAP landing effect
                     setTimeout(() => {
                         wormholeOverlay.classList.remove('active', 'visible', 'fade-out');
                         transitionBlocker.classList.remove('active');
 
-                        // Trigger arrival animation on hero WRAPPER - PRIORITY
-                        const heroWrapper = document.getElementById('hero-wrapper');
-                        if (heroWrapper) {
-                            console.log('🚀 TRIGGERING BOUNCE ANIMATION NOW ON WRAPPER');
-                            heroWrapper.classList.add('arrive');
+                        // Trigger GSAP landing animation
+                        if (typeof triggerLandingEffect === 'function') {
+                            console.log('🚀 TRIGGERING GSAP LANDING EFFECT');
+                            triggerLandingEffect();
                         }
 
-                        // Start hero animations after arrival completes (1.4s bounce duration)
+                        // Start hero animations after landing effect (1.5s)
                         setTimeout(() => {
                             if (typeof startHeroAnimations === 'function') {
                                 startHeroAnimations();
@@ -2782,7 +2758,7 @@
                             // Unlock scroll after everything is ready
                             document.body.classList.remove('no-scroll');
                             console.log('🎭 Smooth transition complete - scroll unlocked');
-                        }, 1400);
+                        }, 1500);
                     }, 500);
                 }, 3500);
             }, 1200);
