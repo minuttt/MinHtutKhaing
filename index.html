@@ -657,20 +657,57 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: none;
         }
 
         #landing-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
+            display: none;
         }
 
-        #landing-canvas {
+        #landing-overlay.zoom-out {
+            animation: zoomOut 1s ease-in forwards;
+        }
+
+        @keyframes zoomOut {
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        #landing-video {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        #wormhole-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #wormhole-overlay.active {
+            display: flex;
+        }
+
+        #wormhole-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .landing-content {
@@ -790,7 +827,9 @@
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
-    <canvas id="landing-canvas"></canvas>
+    <video id="landing-video" autoplay muted loop playsinline>
+        <source src="landing.mp4" type="video/mp4">
+    </video>
     <div class="landing-vignette"></div>
     <div class="text-backdrop"></div>
     <div class="landing-content">
@@ -798,6 +837,13 @@
         <p class="landing-subtitle" id="landing-subtitle">A curated showcase of my projects, ambitions, and dreams.</p>
         <p class="press-key-hint" id="press-hint">Press any key</p>
     </div>
+</div>
+
+<!-- Wormhole Transition -->
+<div id="wormhole-overlay">
+    <video id="wormhole-video" muted playsinline>
+        <source src="wormhole.mp4" type="video/mp4">
+    </video>
 </div>
 
 <!-- Fixed animated background (sits behind hero & all sections, stays put while scrolling) -->
@@ -2492,85 +2538,25 @@
     // ===== LANDING OVERLAY =====
     (function() {
         const overlay = document.getElementById('landing-overlay');
-        const canvas = document.getElementById('landing-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let animationId;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
-        }
-
-        function initParticles() {
-            particles = [];
-            const gap = 6;
-            const colors = ['rgba(34, 211, 238, 0.4)', 'rgba(16, 185, 129, 0.4)', 'rgba(255, 255, 255, 0.3)'];
-
-            for (let x = 0; x < canvas.width; x += gap) {
-                for (let y = 0; y < canvas.height; y += gap) {
-                    const dx = x - canvas.width / 2;
-                    const dy = y - canvas.height / 2;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const delay = distance * 0.3; // Faster spread (was 0.5)
-
-                    particles.push({
-                        x, y, size: 0,
-                        maxSize: Math.random() * 2 + 0.8,
-                        speed: Math.random() * 0.03 + 0.015, // Faster animation
-                        delay, counter: 0, growing: true,
-                        color: colors[Math.floor(Math.random() * colors.length)]
-                    });
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(p => {
-                p.counter++;
-                if (p.counter > p.delay) {
-                    if (p.growing) {
-                        p.size += p.speed;
-                        if (p.size >= p.maxSize) p.growing = false;
-                    } else {
-                        p.size -= p.speed * 0.5;
-                        if (p.size <= p.maxSize * 0.5) p.growing = true;
-                    }
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-                }
-            });
-
-            animationId = requestAnimationFrame(animate);
-        }
-
-        resizeCanvas();
-        animate();
-        window.addEventListener('resize', resizeCanvas);
-
-        // BlurFade-style animations
+        const wormholeOverlay = document.getElementById('wormhole-overlay');
+        const wormholeVideo = document.getElementById('wormhole-video');
         const title = document.getElementById('landing-title');
         const subtitle = document.getElementById('landing-subtitle');
         const hint = document.getElementById('press-hint');
 
-        // Title - fade in
+        // Fade in text elements
         setTimeout(() => {
             title.style.transition = 'all 0.6s ease-out';
             title.style.opacity = '1';
             title.style.transform = 'translateY(0)';
         }, 200);
 
-        // Subtitle - fade in
         setTimeout(() => {
             subtitle.style.transition = 'all 0.6s ease-out';
             subtitle.style.opacity = '1';
             subtitle.style.transform = 'translateY(0)';
         }, 400);
 
-        // Press key hint - fade in + pulse
         setTimeout(() => {
             hint.style.transition = 'all 0.6s ease-out';
             hint.style.opacity = '0.5';
@@ -2580,16 +2566,34 @@
             }, 400);
         }, 600);
 
-        // Hide overlay on any interaction (this will also trigger music!)
+        // Transition sequence
         window.dismissLanding = function() {
-            overlay.classList.add('hidden');
-            cancelAnimationFrame(animationId);
-            console.log('🎭 Landing dismissed');
+            console.log('🎭 Starting transition sequence');
 
-            // Start hero animations
-            if (typeof startHeroAnimations === 'function') {
-                setTimeout(startHeroAnimations, 100);
-            }
+            // Step 1: Zoom out effect (1 second)
+            overlay.classList.add('zoom-out');
+
+            setTimeout(() => {
+                // Step 2: Hide landing overlay, show wormhole
+                overlay.classList.add('hidden');
+                wormholeOverlay.classList.add('active');
+
+                // Play wormhole video
+                wormholeVideo.currentTime = 0;
+                wormholeVideo.play();
+
+                // Step 3: After 3.5 seconds, hide wormhole and show main page
+                setTimeout(() => {
+                    wormholeOverlay.classList.remove('active');
+
+                    // Start hero animations
+                    if (typeof startHeroAnimations === 'function') {
+                        setTimeout(startHeroAnimations, 100);
+                    }
+
+                    console.log('🎭 Transition complete - main page shown');
+                }, 3500);
+            }, 1000);
         };
     })();
 
