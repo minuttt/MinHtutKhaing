@@ -787,6 +787,19 @@
             transform: translateY(20px);
         }
 
+        .landing-portfolio {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: rgba(199, 210, 254, 0.9);
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
         .landing-subtitle {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: clamp(1rem, 2.5vw, 1.25rem);
@@ -984,13 +997,21 @@
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
-    <video id="landing-video" muted loop playsinline preload="auto" webkit-playsinline>
+    <video id="landing-video" muted loop playsinline preload="metadata" webkit-playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
         <source src="landing.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
+    <!-- Loading Spinner for Video -->
+    <div id="video-loading" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; background: #020204;">
+        <div style="width: 50px; height: 50px; border: 3px solid rgba(34,211,238,0.2); border-top-color: #22d3ee; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    </div>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
     <div class="landing-vignette"></div>
     <div class="text-backdrop"></div>
     <div class="landing-content">
+        <p class="landing-portfolio" id="landing-portfolio">Portfolio</p>
         <h1 class="landing-title" id="landing-title">MIN HTUT KHAING</h1>
         <p class="landing-subtitle" id="landing-subtitle">Experience a glimpse of my cosmos.</p>
         <div class="press-key-hint" id="press-hint">
@@ -1004,7 +1025,7 @@
 
 <!-- Wormhole Transition -->
 <div id="wormhole-overlay">
-    <video id="wormhole-video" muted playsinline preload="metadata" webkit-playsinline>
+    <video id="wormhole-video" muted playsinline preload="none" webkit-playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
         <source src="wormhole.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
@@ -1530,7 +1551,7 @@
                                 <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Trained to identify common cybersecurity risks, threats, and vulnerabilities, as well as techniques to mitigate them</span></li>
                                 <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Industry-recognized credential preparing for entry-level roles in cybersecurity operations and defense</span></li>
                             </ul>
-                            <a href="https://github.com/minuttt/MinHtutKhaing" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-emerald-400 hover:text-emerald-300 transition-colors mt-4 inline-flex items-center gap-2">
+                            <a href="https://coursera.org/share/YOUR_CERTIFICATE_ID_HERE" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-emerald-400 hover:text-emerald-300 transition-colors mt-4 inline-flex items-center gap-2">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
                                 View Official Certificate on Coursera
                             </a>
@@ -2729,56 +2750,117 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Mobile video autoplay fix - force play landing video
+        // Video loading state management
+        const videoLoadingSpinner = document.getElementById('video-loading');
+        let landingVideoReady = false;
+        let wormholeVideoReady = false;
+
+        // Hide loading spinner when video can play
+        function hideVideoLoading() {
+            if (videoLoadingSpinner) {
+                videoLoadingSpinner.style.opacity = '0';
+                videoLoadingSpinner.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    videoLoadingSpinner.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        // Mobile video autoplay fix - force play landing video with better error handling
         function ensureLandingVideoPlays() {
-            if (landingVideo) {
+            if (landingVideo && !landingVideoReady) {
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
+
+                // Start loading the video
+                landingVideo.load();
 
                 const playPromise = landingVideo.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         console.log('✅ Landing video playing');
+                        landingVideoReady = true;
+                        hideVideoLoading();
                     }).catch(err => {
                         console.warn('⚠️ Landing video autoplay failed, retrying...', err);
                         // Retry after short delay
                         setTimeout(() => {
-                            landingVideo.play().catch(e => {
+                            landingVideo.play().then(() => {
+                                landingVideoReady = true;
+                                hideVideoLoading();
+                            }).catch(e => {
                                 console.error('❌ Landing video failed completely:', e);
+                                // Hide spinner anyway and allow user interaction
+                                hideVideoLoading();
                             });
-                        }, 100);
+                        }, 200);
                     });
                 }
             }
         }
 
-        // Ensure video plays on page load
-        ensureLandingVideoPlays();
-
-        // Retry on visibility change (mobile wake-up)
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && !transitionStarted) {
+        // Wait for video to be ready before playing (better for slow connections)
+        landingVideo.addEventListener('canplay', () => {
+            console.log('✅ Landing video ready to play');
+            if (!landingVideoReady) {
                 ensureLandingVideoPlays();
             }
         });
 
-        // Preload wormhole video for smooth playback
-        if (wormholeVideo) {
-            wormholeVideo.load();
+        // Handle video errors gracefully
+        landingVideo.addEventListener('error', (e) => {
+            console.error('❌ Landing video error:', e);
+            hideVideoLoading();
+        });
+
+        // Show content after a minimum buffer
+        landingVideo.addEventListener('loadeddata', () => {
+            console.log('✅ Landing video data loaded');
+            hideVideoLoading();
+        });
+
+        // Start loading immediately
+        ensureLandingVideoPlays();
+
+        // Retry on visibility change (mobile wake-up)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && !transitionStarted && !landingVideoReady) {
+                ensureLandingVideoPlays();
+            }
+        });
+
+        // Lazy load wormhole video only when needed (not immediately)
+        function preloadWormholeVideo() {
+            if (wormholeVideo && !wormholeVideoReady) {
+                wormholeVideo.load();
+                wormholeVideo.addEventListener('canplay', () => {
+                    wormholeVideoReady = true;
+                    console.log('✅ Wormhole video preloaded');
+                }, { once: true });
+            }
         }
 
+        // Get portfolio text element
+        const portfolio = document.getElementById('landing-portfolio');
+
         // Fade in text elements with SLOWER animations
+        setTimeout(() => {
+            portfolio.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            portfolio.style.opacity = '1';
+            portfolio.style.transform = 'translateY(0)';
+        }, 400);
+
         setTimeout(() => {
             title.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             title.style.opacity = '1';
             title.style.transform = 'translateY(0)';
-        }, 600);
+        }, 800);
 
         setTimeout(() => {
             subtitle.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             subtitle.style.opacity = '1';
             subtitle.style.transform = 'translateY(0)';
-        }, 1000);
+        }, 1200);
 
         setTimeout(() => {
             hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
@@ -2795,10 +2877,26 @@
             }, 1500);
         }, 1400);
 
+        // Preload wormhole when user shows intent to interact
+        let wormholePreloaded = false;
+        function preloadWormholeOnIntent() {
+            if (!wormholePreloaded) {
+                preloadWormholeVideo();
+                wormholePreloaded = true;
+            }
+        }
+        // Preload on any interaction hint
+        document.addEventListener('mousemove', preloadWormholeOnIntent, { once: true });
+        document.addEventListener('touchstart', preloadWormholeOnIntent, { once: true });
+        document.addEventListener('keydown', preloadWormholeOnIntent, { once: true });
+
         // Transition sequence
         window.dismissLanding = function() {
             if (transitionStarted) return; // Prevent multiple triggers
             transitionStarted = true;
+
+            // Ensure wormhole is preloaded before starting transition
+            preloadWormholeVideo();
 
             console.log('🎭 Starting smooth transition sequence');
 
@@ -2806,10 +2904,12 @@
             transitionBlocker.classList.add('active');
 
             // Fade out text elements quickly
+            portfolio.style.transition = 'all 0.4s ease-out';
             title.style.transition = 'all 0.4s ease-out';
             subtitle.style.transition = 'all 0.4s ease-out';
             hint.style.transition = 'all 0.4s ease-out';
             hint.style.animation = 'none';
+            portfolio.style.opacity = '0';
             title.style.opacity = '0';
             subtitle.style.opacity = '0';
             hint.style.opacity = '0';
@@ -2828,21 +2928,24 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('visible');
 
-                    // Ensure wormhole video plays on mobile
+                    // Ensure wormhole video plays on mobile with comprehensive error handling
                     wormholeVideo.muted = true;
                     wormholeVideo.playsInline = true;
                     wormholeVideo.currentTime = 0;
 
+                    // Try to play, but don't block transition if video fails
                     const wormholePlayPromise = wormholeVideo.play();
                     if (wormholePlayPromise !== undefined) {
                         wormholePlayPromise.then(() => {
                             console.log('✅ Wormhole video playing');
                         }).catch(err => {
-                            console.error('❌ Wormhole video play failed:', err);
-                            // Retry mechanism
+                            console.warn('⚠️ Wormhole video play failed (slow connection?), continuing anyway:', err);
+                            // Single retry for slow connections
                             setTimeout(() => {
-                                wormholeVideo.play().catch(e => console.error('❌ Wormhole retry failed:', e));
-                            }, 100);
+                                wormholeVideo.play().catch(e => {
+                                    console.log('ℹ️ Wormhole video unavailable, transition continues');
+                                });
+                            }, 150);
                         });
                     }
 
@@ -3021,9 +3124,7 @@
         console.log('🎵 Music Player: Initializing...');
 
         const openingMusic = [
-            { file: 'opening music/1.02 Opening.mp3', name: 'Opening', composer: 'The Legend of Zelda: Breath of the Wild', album: 'opening music/zelda-botw.jpg' },
-            { file: 'opening music/14 Welcome to the Green Room.mp3', name: 'Welcome to the Green Room', composer: 'Deltarune OST', album: 'opening music/deltarune.jpg' },
-            { file: 'opening music/153 - Do You Remember.mp3', name: 'Do You Remember', composer: 'OMORI OST', album: 'opening music/omori.jpg' }
+            { file: 'opening music/1.02 Opening.mp3', name: 'Opening', composer: 'The Legend of Zelda: Breath of the Wild', album: 'opening music/zelda-botw.jpg' }
         ];
 
         const playlist = [
@@ -3034,6 +3135,8 @@
             { file: 'music/10. Suite \'\'Never Meant to Belong\'\' 2nd Mouvement- Cello&Orchestra.mp3', name: 'Never Meant to Belong (2nd Mvt)', composer: 'Gris OST', album: 'music/gris.jpg' },
             { file: 'music/11 - Mice on Venus.mp3', name: 'Mice on Venus', composer: 'C418', album: 'music/minecraft.jpg' },
             { file: 'music/14 - Clark.mp3', name: 'Clark', composer: 'C418', album: 'music/minecraft.jpg' },
+            { file: 'opening music/14 Welcome to the Green Room.mp3', name: 'Welcome to the Green Room', composer: 'Deltarune OST', album: 'music/deltarune.jpg' },
+            { file: 'opening music/153 - Do You Remember.mp3', name: 'Do You Remember', composer: 'OMORI OST', album: 'music/omori.jpg' },
             { file: 'music/14. Suite \'\'Will of the Heart\'\' 1st Mouvement- Cello&Orchestra.mp3', name: 'Will of the Heart (1st Mvt)', composer: 'Gris OST', album: 'music/gris.jpg' },
             { file: 'music/172 - DUET.mp3', name: 'DUET', composer: 'OMORI OST', album: 'music/omori.jpg' },
             { file: 'music/2.22 Rito Village.mp3', name: 'Rito Village', composer: 'The Legend of Zelda: Breath of the Wild', album: 'music/zelda-botw.jpg' },
@@ -3080,12 +3183,12 @@
         function init() {
             console.log('🎵 Music Player: init() called');
 
-            // Select random opening music
-            const randomOpening = openingMusic[Math.floor(Math.random() * openingMusic.length)];
-            currentPlaylist = [randomOpening, ...shuffleArray([...playlist])];
+            // Use single opening track
+            const openingTrack = openingMusic[0];
+            currentPlaylist = [openingTrack, ...shuffleArray([...playlist])];
             currentIndex = 0;
 
-            console.log('🎵 First track:', currentPlaylist[0].name);
+            console.log('🎵 Opening track:', currentPlaylist[0].name);
 
             // Set initial volume
             audio.volume = 0.7;
