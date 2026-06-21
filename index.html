@@ -653,11 +653,12 @@
             position: fixed;
             inset: 0;
             z-index: 10000;
-            background: #020204;
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: none;
+            opacity: 1;
         }
 
         #landing-overlay.hidden {
@@ -665,18 +666,35 @@
         }
 
         #landing-overlay.zoom-out {
-            animation: zoomOut 1s ease-in forwards;
+            animation: zoomOut 1s cubic-bezier(0.4, 0, 0.6, 1) forwards;
         }
 
         @keyframes zoomOut {
-            from {
+            0% {
                 transform: scale(1);
                 opacity: 1;
             }
-            to {
-                transform: scale(3);
+            70% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(2.5);
                 opacity: 0;
             }
+        }
+
+        /* Transition Blocker - prevents UI flash */
+        #transition-blocker {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: #000;
+            display: none;
+            pointer-events: none;
+        }
+
+        #transition-blocker.active {
+            display: block;
         }
 
         #landing-video {
@@ -696,10 +714,16 @@
             display: none;
             align-items: center;
             justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
         }
 
         #wormhole-overlay.active {
             display: flex;
+        }
+
+        #wormhole-overlay.visible {
+            opacity: 1;
         }
 
         #wormhole-video {
@@ -708,6 +732,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        #wormhole-overlay.fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
         }
 
         .landing-content {
@@ -724,11 +753,11 @@
             letter-spacing: -0.03em;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #ffffff 0%, #22d3ee 50%, #10b981 100%);
+            background: linear-gradient(135deg, #a78bfa 0%, #818cf8 25%, #60a5fa 50%, #22d3ee 75%, #10b981 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: drop-shadow(0 0 30px rgba(34, 211, 238, 0.4));
+            filter: drop-shadow(0 0 40px rgba(167, 139, 250, 0.5)) drop-shadow(0 0 20px rgba(34, 211, 238, 0.3));
             opacity: 0;
             transform: translateY(20px);
         }
@@ -736,39 +765,38 @@
         .landing-subtitle {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: clamp(1rem, 2.5vw, 1.25rem);
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(199, 210, 254, 0.85);
             font-weight: 300;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto 2.5rem;
             line-height: 1.6;
             opacity: 0;
             transform: translateY(20px);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
 
         .press-key-hint {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.75rem;
-            font-weight: 500;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(34, 211, 238, 0.6) 50%, rgba(255, 255, 255, 0.8) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            font-weight: 600;
+            color: rgba(250, 204, 21, 0.9);
+            text-shadow: 0 0 20px rgba(250, 204, 21, 0.6), 0 0 40px rgba(250, 204, 21, 0.3);
             text-transform: uppercase;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.2em;
             opacity: 0;
             transform: translateY(20px);
         }
 
         @keyframes pulseHint {
             0%, 100% {
-                opacity: 0.6;
-                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+                opacity: 0.7;
+                text-shadow: 0 0 20px rgba(250, 204, 21, 0.6), 0 0 40px rgba(250, 204, 21, 0.3);
+                transform: translateY(0);
             }
             50% {
-                opacity: 0.9;
-                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+                opacity: 1;
+                text-shadow: 0 0 30px rgba(250, 204, 21, 0.8), 0 0 60px rgba(250, 204, 21, 0.5);
+                transform: translateY(-2px);
             }
         }
 
@@ -834,8 +862,8 @@
     <div class="text-backdrop"></div>
     <div class="landing-content">
         <h1 class="landing-title" id="landing-title">MIN HTUT KHAING</h1>
-        <p class="landing-subtitle" id="landing-subtitle">A curated showcase of my projects, ambitions, and dreams.</p>
-        <p class="press-key-hint" id="press-hint">Press any key</p>
+        <p class="landing-subtitle" id="landing-subtitle">Navigating the cosmos of code, creativity, and curiosity.</p>
+        <p class="press-key-hint" id="press-hint">Press any key to launch</p>
     </div>
 </div>
 
@@ -845,6 +873,9 @@
         <source src="wormhole.mp4" type="video/mp4">
     </video>
 </div>
+
+<!-- Transition Blocker (prevents UI flash) -->
+<div id="transition-blocker"></div>
 
 <!-- Fixed animated background (sits behind hero & all sections, stays put while scrolling) -->
 <div id="bg-paths" aria-hidden="true">
@@ -2540,60 +2571,83 @@
         const overlay = document.getElementById('landing-overlay');
         const wormholeOverlay = document.getElementById('wormhole-overlay');
         const wormholeVideo = document.getElementById('wormhole-video');
+        const transitionBlocker = document.getElementById('transition-blocker');
         const title = document.getElementById('landing-title');
         const subtitle = document.getElementById('landing-subtitle');
         const hint = document.getElementById('press-hint');
 
-        // Fade in text elements
+        // Fade in text elements with smooth animations
         setTimeout(() => {
-            title.style.transition = 'all 0.6s ease-out';
+            title.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
             title.style.opacity = '1';
             title.style.transform = 'translateY(0)';
-        }, 200);
+        }, 300);
 
         setTimeout(() => {
-            subtitle.style.transition = 'all 0.6s ease-out';
+            subtitle.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
             subtitle.style.opacity = '1';
             subtitle.style.transform = 'translateY(0)';
-        }, 400);
+        }, 500);
 
         setTimeout(() => {
-            hint.style.transition = 'all 0.6s ease-out';
-            hint.style.opacity = '0.5';
+            hint.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            hint.style.opacity = '0.7';
             hint.style.transform = 'translateY(0)';
             setTimeout(() => {
-                hint.style.animation = 'pulseHint 2s ease-in-out infinite';
-            }, 400);
-        }, 600);
+                hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
+            }, 500);
+        }, 700);
 
         // Transition sequence
         window.dismissLanding = function() {
-            console.log('🎭 Starting transition sequence');
+            console.log('🎭 Starting smooth transition sequence');
+
+            // Activate transition blocker immediately to prevent UI flash
+            transitionBlocker.classList.add('active');
+
+            // Fade out text elements quickly
+            title.style.transition = 'all 0.4s ease-out';
+            subtitle.style.transition = 'all 0.4s ease-out';
+            hint.style.transition = 'all 0.4s ease-out';
+            title.style.opacity = '0';
+            subtitle.style.opacity = '0';
+            hint.style.opacity = '0';
 
             // Step 1: Zoom out effect (1 second)
-            overlay.classList.add('zoom-out');
+            setTimeout(() => {
+                overlay.classList.add('zoom-out');
+            }, 200);
 
             setTimeout(() => {
-                // Step 2: Hide landing overlay, show wormhole
+                // Step 2: Hide landing overlay, prepare wormhole
                 overlay.classList.add('hidden');
                 wormholeOverlay.classList.add('active');
 
-                // Play wormhole video
-                wormholeVideo.currentTime = 0;
-                wormholeVideo.play();
-
-                // Step 3: After 3.5 seconds, hide wormhole and show main page
+                // Small delay for display to register, then fade in wormhole
                 setTimeout(() => {
-                    wormholeOverlay.classList.remove('active');
+                    wormholeOverlay.classList.add('visible');
+                    wormholeVideo.currentTime = 0;
+                    wormholeVideo.play();
+                }, 50);
 
-                    // Start hero animations
-                    if (typeof startHeroAnimations === 'function') {
-                        setTimeout(startHeroAnimations, 100);
-                    }
+                // Step 3: After 3.5 seconds, fade out wormhole
+                setTimeout(() => {
+                    wormholeOverlay.classList.add('fade-out');
 
-                    console.log('🎭 Transition complete - main page shown');
+                    // Step 4: After fade completes, show main page
+                    setTimeout(() => {
+                        wormholeOverlay.classList.remove('active', 'visible', 'fade-out');
+                        transitionBlocker.classList.remove('active');
+
+                        // Start hero animations
+                        if (typeof startHeroAnimations === 'function') {
+                            setTimeout(startHeroAnimations, 100);
+                        }
+
+                        console.log('🎭 Smooth transition complete - main page shown');
+                    }, 500);
                 }, 3500);
-            }, 1000);
+            }, 1200);
         };
     })();
 
