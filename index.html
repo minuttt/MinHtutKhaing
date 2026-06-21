@@ -845,14 +845,15 @@
             filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
         }
 
-        /* Arrival animation after wormhole - PRIORITY FIX */
-        #hero {
-            opacity: 1;
+        /* Arrival animation wrapper - MUST work */
+        #hero-wrapper {
+            opacity: 0;
             transform: scale(0.5) translateY(200px);
             filter: blur(40px);
+            will-change: transform, opacity, filter;
         }
 
-        #hero.arrive {
+        #hero-wrapper.arrive {
             animation: arriveFromSpace 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
         }
 
@@ -883,6 +884,14 @@
                 transform: scale(1) translateY(0);
                 filter: blur(0px);
             }
+        }
+
+        /* Hero section reset */
+        #hero {
+            position: relative;
+            transform: none !important;
+            opacity: 1 !important;
+            filter: none !important;
         }
 
         /* Prevent scroll during transitions */
@@ -1021,6 +1030,8 @@
     </div>
 </nav>
  
+<!-- Hero Wrapper for Bounce Animation -->
+<div id="hero-wrapper">
 <!-- Cinematic Text Hero Section -->
 <section id="hero" class="relative w-screen h-screen overflow-hidden flex items-center justify-center" style="perspective: 1500px;">
     <div class="film-grain-hero" aria-hidden="true"></div>
@@ -1106,7 +1117,9 @@
         </div>
     </div>
 </section>
- 
+</div>
+<!-- End Hero Wrapper -->
+
 <!-- Awards Section -->
 <section id="awards" class="relative py-24 px-6">
     <div class="max-w-7xl mx-auto">
@@ -2400,15 +2413,17 @@
                 duration: 1.2, ease: "expo.out"
             }, "-=0.9");
 
-        // Scroll timeline
+        // Scroll timeline - use wrapper as trigger
+        const heroWrapper = document.getElementById('hero-wrapper');
         const scrollTl = gsap.timeline({
             scrollTrigger: {
-                trigger: heroSection,
+                trigger: heroWrapper,
                 start: "top top",
                 end: "+=6000",
                 pin: true,
                 scrub: 1,
                 anticipatePin: 1,
+                invalidateOnRefresh: true,
             },
         });
 
@@ -2751,11 +2766,11 @@
                         wormholeOverlay.classList.remove('active', 'visible', 'fade-out');
                         transitionBlocker.classList.remove('active');
 
-                        // Trigger arrival animation on hero section - PRIORITY
-                        const heroSection = document.getElementById('hero');
-                        if (heroSection) {
-                            console.log('🚀 TRIGGERING BOUNCE ANIMATION NOW');
-                            heroSection.classList.add('arrive');
+                        // Trigger arrival animation on hero WRAPPER - PRIORITY
+                        const heroWrapper = document.getElementById('hero-wrapper');
+                        if (heroWrapper) {
+                            console.log('🚀 TRIGGERING BOUNCE ANIMATION NOW ON WRAPPER');
+                            heroWrapper.classList.add('arrive');
                         }
 
                         // Start hero animations after arrival completes (1.4s bounce duration)
