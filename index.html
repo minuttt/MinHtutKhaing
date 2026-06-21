@@ -856,34 +856,51 @@
             transition: opacity 1s ease-out;
         }
 
-        /* Landing dust overlay */
+        /* Premium landing impact overlay */
         #landing-dust-overlay {
             position: fixed;
             inset: 0;
             z-index: 9997;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
             pointer-events: none;
             opacity: 0;
             display: none;
+            background: radial-gradient(circle at center,
+                rgba(34, 211, 238, 0.2) 0%,
+                rgba(16, 185, 129, 0.15) 20%,
+                rgba(34, 211, 238, 0.1) 40%,
+                transparent 70%);
         }
 
         #landing-dust-overlay.active {
             display: block;
-            animation: dustLanding 1.5s ease-out forwards;
+            animation: premiumImpact 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-        @keyframes dustLanding {
+        @keyframes premiumImpact {
             0% {
                 opacity: 0;
-                transform: scale(0.5);
+                transform: scale(0.3);
+                filter: blur(0px);
             }
-            30% {
+            15% {
                 opacity: 1;
-                transform: scale(1.5);
+                transform: scale(1.2);
+                filter: blur(20px);
+            }
+            40% {
+                opacity: 0.8;
+                transform: scale(1.8);
+                filter: blur(40px);
+            }
+            70% {
+                opacity: 0.3;
+                transform: scale(2.5);
+                filter: blur(60px);
             }
             100% {
                 opacity: 0;
-                transform: scale(2);
+                transform: scale(3.5);
+                filter: blur(80px);
             }
         }
 
@@ -955,8 +972,9 @@
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
-    <video id="landing-video" autoplay muted loop playsinline>
+    <video id="landing-video" autoplay muted loop playsinline preload="auto">
         <source src="landing.mp4" type="video/mp4">
+        Your browser does not support video playback.
     </video>
     <div class="landing-vignette"></div>
     <div class="text-backdrop"></div>
@@ -974,10 +992,16 @@
 
 <!-- Wormhole Transition -->
 <div id="wormhole-overlay">
-    <video id="wormhole-video" muted playsinline>
+    <video id="wormhole-video" muted playsinline preload="metadata">
         <source src="wormhole.mp4" type="video/mp4">
+        Your browser does not support video playback.
     </video>
 </div>
+
+<!-- Wormhole Sound Effect -->
+<audio id="wormhole-audio" preload="auto">
+    <source src="virtualzero-whoosh-sci-fi-portal-hd-374800.mp3" type="audio/mpeg">
+</audio>
 
 <!-- Transition Blocker (prevents UI flash) -->
 <div id="transition-blocker"></div>
@@ -2682,6 +2706,7 @@
         const overlay = document.getElementById('landing-overlay');
         const wormholeOverlay = document.getElementById('wormhole-overlay');
         const wormholeVideo = document.getElementById('wormhole-video');
+        const wormholeAudio = document.getElementById('wormhole-audio');
         const transitionBlocker = document.getElementById('transition-blocker');
         const title = document.getElementById('landing-title');
         const subtitle = document.getElementById('landing-subtitle');
@@ -2690,6 +2715,11 @@
 
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
+
+        // Preload wormhole video for smooth playback
+        if (wormholeVideo) {
+            wormholeVideo.load();
+        }
 
         // Fade in text elements with SLOWER animations
         setTimeout(() => {
@@ -2752,12 +2782,27 @@
                 setTimeout(() => {
                     wormholeOverlay.classList.add('visible');
                     wormholeVideo.currentTime = 0;
-                    wormholeVideo.play();
+                    wormholeVideo.play().catch(err => console.warn('Wormhole video play failed:', err));
+
+                    // Play wormhole sound effect
+                    if (wormholeAudio) {
+                        wormholeAudio.volume = 0.6;
+                        wormholeAudio.currentTime = 0;
+                        wormholeAudio.play().catch(err => console.warn('Wormhole audio play failed:', err));
+                        console.log('🔊 Wormhole sound effect playing');
+                    }
                 }, 50);
 
-                // Step 3: After 3.5 seconds, fade out wormhole
+                // Step 3: After 3.5 seconds, fade out wormhole and stop audio
                 setTimeout(() => {
                     wormholeOverlay.classList.add('fade-out');
+
+                    // Stop wormhole audio
+                    if (wormholeAudio) {
+                        wormholeAudio.pause();
+                        wormholeAudio.currentTime = 0;
+                        console.log('🔇 Wormhole sound stopped');
+                    }
 
                     // Step 4: After fade completes, show main page with dust landing effect
                     setTimeout(() => {
@@ -2770,18 +2815,18 @@
                             heroSection.classList.add('visible');
                         }
 
-                        // Trigger dust landing effect
+                        // Trigger premium landing effect
                         const dustOverlay = document.getElementById('landing-dust-overlay');
                         const dustCanvas = document.getElementById('dust-canvas');
                         if (dustOverlay && dustCanvas) {
-                            console.log('💨 TRIGGERING DUST LANDING EFFECT');
+                            console.log('✨ TRIGGERING PREMIUM LANDING EFFECT');
                             dustOverlay.classList.add('active');
                             createDustEffect(dustCanvas);
 
                             // Remove dust overlay after animation
                             setTimeout(() => {
                                 dustOverlay.classList.remove('active');
-                            }, 1500);
+                            }, 2000); // Longer duration for premium effect
                         }
 
                         // Start hero animations after dust effect
@@ -2812,32 +2857,46 @@
         window.addEventListener('touchmove', preventScroll, { passive: false });
         window.addEventListener('scroll', preventScroll, { passive: false });
 
-        // Dust landing effect
+        // Premium landing effect - high quality particle system
         function createDustEffect(canvas) {
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
             const particles = [];
-            const particleCount = 150;
+            const particleCount = 300; // More particles for quality
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
 
-            // Create particles from center
+            // Create multi-layered particle system
             for (let i = 0; i < particleCount; i++) {
                 const angle = (Math.PI * 2 * i) / particleCount;
+                const speed = Math.random() * 12 + 6;
+                const layer = Math.random();
+
                 particles.push({
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    vx: Math.cos(angle) * (Math.random() * 8 + 4),
-                    vy: Math.sin(angle) * (Math.random() * 8 + 4),
+                    x: centerX,
+                    y: centerY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
                     life: 1,
-                    decay: Math.random() * 0.02 + 0.015,
-                    size: Math.random() * 4 + 2,
-                    color: `rgba(${200 + Math.random() * 55}, ${200 + Math.random() * 55}, ${255}, ${Math.random() * 0.5 + 0.5})`
+                    decay: Math.random() * 0.008 + 0.006, // Slower decay
+                    size: Math.random() * 6 + 3, // Larger particles
+                    baseSize: Math.random() * 6 + 3,
+                    layer: layer,
+                    // Cyan/emerald gradient colors
+                    hue: Math.random() < 0.5 ? 180 + Math.random() * 20 : 160 + Math.random() * 20,
+                    saturation: 70 + Math.random() * 30,
+                    lightness: 60 + Math.random() * 30,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.2
                 });
             }
 
             function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Fade trail effect instead of clearing
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 particles.forEach((p, index) => {
                     if (p.life <= 0) {
@@ -2845,18 +2904,41 @@
                         return;
                     }
 
+                    // Physics
                     p.x += p.vx;
                     p.y += p.vy;
-                    p.vy += 0.3; // Gravity
-                    p.vx *= 0.98; // Friction
+                    p.vy += 0.4; // Stronger gravity
+                    p.vx *= 0.97; // More friction
+                    p.vy *= 0.97;
                     p.life -= p.decay;
+                    p.rotation += p.rotationSpeed;
+
+                    // Pulsing size
+                    const pulse = Math.sin(Date.now() * 0.003 + index) * 0.3 + 1;
+                    const currentSize = p.baseSize * pulse * p.life;
 
                     ctx.save();
-                    ctx.globalAlpha = p.life;
-                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life * 0.9;
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+
+                    // Glow effect
+                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, currentSize * 2);
+                    gradient.addColorStop(0, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.life * 0.8})`);
+                    gradient.addColorStop(0.4, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.life * 0.4})`);
+                    gradient.addColorStop(1, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, 0)`);
+
+                    ctx.fillStyle = gradient;
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.arc(0, 0, currentSize * 2, 0, Math.PI * 2);
                     ctx.fill();
+
+                    // Core particle
+                    ctx.fillStyle = `hsl(${p.hue}, ${p.saturation}%, ${p.lightness + 20}%)`;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, currentSize, 0, Math.PI * 2);
+                    ctx.fill();
+
                     ctx.restore();
                 });
 
