@@ -1082,9 +1082,119 @@
         #album-art i, #album-art-expanded i {
             transition: none !important;
         }
+
+        /* Premium Loading Screen */
+        #premium-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            background: linear-gradient(135deg, #020204 0%, #0a0a1e 50%, #020204 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+        }
+
+        #premium-loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #premium-loader.hidden {
+            display: none;
+        }
+
+        .loader-logo {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(180deg, #22d3ee 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 3rem;
+            filter: drop-shadow(0px 8px 24px rgba(34,211,238,0.4));
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0px 8px 24px rgba(34,211,238,0.4)); }
+            50% { filter: drop-shadow(0px 12px 32px rgba(34,211,238,0.6)); }
+        }
+
+        .loader-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: rgba(148, 163, 184, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-container {
+            width: 280px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #22d3ee, #10b981);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
+        }
+
+        .progress-percentage {
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: rgba(34, 211, 238, 0.8);
+            letter-spacing: 0.05em;
+        }
+
+        .loader-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(34, 211, 238, 0.6);
+            border-radius: 50%;
+            animation: floatParticle 3s ease-in-out infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
     </style>
 </head>
 <body class="no-scrollbar">
+
+<!-- Premium Loading Screen -->
+<div id="premium-loader">
+    <div class="loader-particles" id="loader-particles"></div>
+    <div class="loader-logo">MK</div>
+    <div class="loader-text">Loading Experience</div>
+    <div class="progress-container">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+    <div class="progress-percentage" id="progress-text">0%</div>
+</div>
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
@@ -2850,6 +2960,124 @@
         });
     })();
 
+    // ===== PREMIUM LOADER =====
+    (function() {
+        const loader = document.getElementById('premium-loader');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const particlesContainer = document.getElementById('loader-particles');
+        const landingVideo = document.getElementById('landing-video');
+        const wormholeVideo = document.getElementById('wormhole-video');
+
+        let loadProgress = 0;
+        const maxLoadTime = 4500; // 4.5 seconds max
+        const startTime = Date.now();
+        let videosLoaded = false;
+        let forceCompleted = false;
+
+        // Create floating particles
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 3 + 's';
+            particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Track video loading progress
+        function updateProgress(percent) {
+            loadProgress = Math.min(percent, 100);
+            progressBar.style.width = loadProgress + '%';
+            progressText.textContent = Math.floor(loadProgress) + '%';
+        }
+
+        // Smooth progress animation
+        let animProgress = 0;
+        const progressInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const timeProgress = (elapsed / maxLoadTime) * 100;
+
+            if (videosLoaded) {
+                animProgress += (100 - animProgress) * 0.15;
+            } else {
+                animProgress += (Math.min(timeProgress, 95) - animProgress) * 0.1;
+            }
+
+            updateProgress(animProgress);
+
+            if (animProgress >= 99.5 || forceCompleted) {
+                clearInterval(progressInterval);
+                completeLoading();
+            }
+        }, 50);
+
+        // Force complete after max time
+        setTimeout(() => {
+            if (!forceCompleted) {
+                console.log('⏱️ Max load time reached, continuing...');
+                forceCompleted = true;
+                videosLoaded = true;
+            }
+        }, maxLoadTime);
+
+        // Track both videos
+        let landingReady = false;
+        let wormholeReady = false;
+
+        function checkVideosReady() {
+            if (landingReady && wormholeReady) {
+                videosLoaded = true;
+                console.log('✅ All videos loaded');
+            }
+        }
+
+        // Landing video loading
+        if (landingVideo) {
+            landingVideo.addEventListener('canplaythrough', () => {
+                landingReady = true;
+                checkVideosReady();
+            }, { once: true });
+
+            landingVideo.addEventListener('loadeddata', () => {
+                if (!landingReady) {
+                    landingReady = true;
+                    checkVideosReady();
+                }
+            }, { once: true });
+
+            // Start loading
+            landingVideo.load();
+        }
+
+        // Wormhole video loading
+        if (wormholeVideo) {
+            wormholeVideo.addEventListener('canplaythrough', () => {
+                wormholeReady = true;
+                checkVideosReady();
+            }, { once: true });
+
+            wormholeVideo.addEventListener('loadeddata', () => {
+                if (!wormholeReady) {
+                    wormholeReady = true;
+                    checkVideosReady();
+                }
+            }, { once: true });
+
+            // Preload wormhole
+            wormholeVideo.load();
+        }
+
+        function completeLoading() {
+            setTimeout(() => {
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 800);
+            }, 200);
+        }
+    })();
+
     // ===== LANDING OVERLAY =====
     (function() {
         const overlay = document.getElementById('landing-overlay');
@@ -2866,13 +3094,13 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Simple video autoplay - play immediately, no delays
+        // Simple video autoplay - play immediately after loader
         function ensureLandingVideoPlays() {
             if (landingVideo) {
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
 
-                // Play immediately - autoplay attribute should handle this
+                // Play immediately
                 const playPromise = landingVideo.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
@@ -2887,8 +3115,10 @@
             }
         }
 
-        // Start video immediately (autoplay attribute should handle it, this is backup)
-        ensureLandingVideoPlays();
+        // Wait for loader to finish, then start video
+        setTimeout(() => {
+            ensureLandingVideoPlays();
+        }, 4600);
 
         // Retry on visibility change
         document.addEventListener('visibilitychange', () => {
@@ -2896,12 +3126,6 @@
                 ensureLandingVideoPlays();
             }
         });
-
-        // Preload wormhole video immediately for instant playback
-        if (wormholeVideo) {
-            wormholeVideo.load();
-            console.log('📦 Wormhole video preloading immediately');
-        }
 
         // Get portfolio text element
         const portfolio = document.getElementById('landing-portfolio');
