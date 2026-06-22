@@ -113,21 +113,24 @@
 
     console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
 
-    // Create 2x2 grid (4 copies) for PERFORMANCE - still infinite!
+    // Create 2x2 grid (4 copies) - each tile shuffled differently!
     // STRATEGY: Load images AFTER videos start loading (lazy loading)
     const fragment = document.createDocumentFragment();
     const imagesToLoad = [];
 
     for (let tileY = 0; tileY < 2; tileY++) {
         for (let tileX = 0; tileX < 2; tileX++) {
-            for (let i = 0; i < allImages.length; i++) {
+            // Shuffle for EACH tile - different order every tile!
+            const shuffledForThisTile = shuffleArray(allImages);
+
+            for (let i = 0; i < shuffledForThisTile.length; i++) {
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
                 item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
                 const img = document.createElement('img');
                 // Don't set src yet - we'll load in batches!
-                img.setAttribute('data-src', allImages[i]);
+                img.setAttribute('data-src', shuffledForThisTile[i]);
                 img.alt = `Photo ${i + 1}`;
                 img.draggable = false;
 
@@ -139,7 +142,7 @@
     }
     galleryGrid.appendChild(fragment);
 
-    console.log(`📸 CREATED: ${4 * allImages.length} items (will lazy-load in batches)`);
+    console.log(`📸 CREATED: ${4 * allImages.length} items (each tile shuffled differently!)`);
 
     // State - START AT CENTER POSITION (2x2 grid)
     let isDragging = false;
