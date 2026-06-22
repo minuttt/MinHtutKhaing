@@ -93,7 +93,6 @@
     let hasScrolled = false;
     let videosLoaded = false;
     let maxLoadTime = 5500;
-    let exceedsMaxTime = false;
     const startTime = Date.now();
 
     // Set initial position to show center tile - use translate3d for GPU acceleration
@@ -317,6 +316,9 @@
         console.log('⚠️ Local file:// detected - using 5.5s loading time');
     }
 
+    // Define video timeout OUTSIDE the if blocks so both can use it
+    const videoTimeout = isLocalFile ? 500 : 5000; // 500ms local, 5s production
+
     if (landingVideo) {
         // iOS-specific: ensure video is properly configured
         landingVideo.muted = true;
@@ -325,7 +327,6 @@
         landingVideo.setAttribute('webkit-playsinline', '');
 
         // Fallback timeout - if events don't fire, mark ready anyway after reasonable time
-        const videoTimeout = isLocalFile ? 500 : 5000; // 500ms local, 5s production
         setTimeout(() => {
             if (!landingReady) {
                 console.warn(`⚠️ Landing video timeout after ${videoTimeout}ms - assuming ready`);
