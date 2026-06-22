@@ -3183,17 +3183,40 @@
             }, 1500);
         }, 3900); // 1200ms (subtitle) + 2500ms (buffer) = 3700ms, rounded to 3900ms
 
-        // Transition sequence - also block for 2.5s after hint appears
+        // Transition control - enable after "Press any key" is visible for 2.5s
         let canStartTransition = false;
-        setTimeout(() => {
-            canStartTransition = true;
-            console.log('✅ Landing page interaction now enabled (2.5s buffer elapsed)');
-        }, 6400); // 3900ms (hint appears) + 2500ms (buffer) = 6400ms
+        let transitionTimer = null;
+
+        // Start the timer when landing overlay becomes visible (after loader is done)
+        function enableTransitionsAfterDelay() {
+            if (transitionTimer) return; // Already started
+
+            console.log('⏱️ Starting 2.5s interaction buffer timer...');
+            transitionTimer = setTimeout(() => {
+                canStartTransition = true;
+                console.log('✅ Landing page interaction now enabled (2.5s buffer elapsed)');
+            }, 6400); // 3900ms (hint appears) + 2500ms (buffer) = 6400ms
+        }
+
+        // Observe when loader is removed and landing is shown
+        const loaderElement = document.getElementById('premium-loader');
+        if (loaderElement) {
+            const loaderObserver = new MutationObserver(() => {
+                if (loaderElement.classList.contains('hidden')) {
+                    enableTransitionsAfterDelay();
+                    loaderObserver.disconnect();
+                }
+            });
+            loaderObserver.observe(loaderElement, { attributes: true, attributeFilter: ['class'] });
+        } else {
+            // No loader, start immediately
+            enableTransitionsAfterDelay();
+        }
 
         window.dismissLanding = function() {
             if (transitionStarted) return; // Prevent multiple triggers
             if (!canStartTransition) {
-                console.log('⏸️ Transition blocked - let users admire the landing page');
+                console.log('⏸️ Transition blocked - let users admire the landing page (please wait 2.5s)');
                 return; // Block transition during buffer period
             }
             transitionStarted = true;

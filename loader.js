@@ -169,6 +169,11 @@
         }
     }
 
+    // Store references for cleanup
+    const keydownBlocker = blockKeyboard;
+    const keypressBlocker = blockKeyboard;
+    const keyupBlocker = blockKeyboard;
+
     // Event listeners
     dragContainer.addEventListener('mousedown', handleDragStart);
     dragContainer.addEventListener('touchstart', handleDragStart, { passive: false });
@@ -177,19 +182,29 @@
     window.addEventListener('mouseup', handleDragEnd);
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('keydown', blockKeyboard, { passive: false, capture: true });
-    window.addEventListener('keypress', blockKeyboard, { passive: false, capture: true });
-    window.addEventListener('keyup', blockKeyboard, { passive: false, capture: true });
+    window.addEventListener('keydown', keydownBlocker, { passive: false, capture: true });
+    window.addEventListener('keypress', keypressBlocker, { passive: false, capture: true });
+    window.addEventListener('keyup', keyupBlocker, { passive: false, capture: true });
 
     // Connection detection with smart minimum load times
     function detectConnection() {
         try {
             const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            if (conn && conn.downlink) {
+
+            // Set default to high speed if API unavailable
+            if (!conn) {
+                connectionSpeed = 50; // Assume fast if unknown
+                console.log('📡 Connection API unavailable, assuming fast connection');
+            } else if (conn.downlink && conn.downlink > 0) {
                 connectionSpeed = conn.downlink;
-            } else if (conn && conn.effectiveType) {
+                console.log(`📡 Detected speed: ${connectionSpeed.toFixed(1)} Mbps (downlink)`);
+            } else if (conn.effectiveType) {
                 const types = { 'slow-2g': 0.5, '2g': 1, '3g': 3, '4g': 20 };
-                connectionSpeed = types[conn.effectiveType] || 10;
+                connectionSpeed = types[conn.effectiveType] || 20;
+                console.log(`📡 Detected speed: ${connectionSpeed.toFixed(1)} Mbps (${conn.effectiveType})`);
+            } else {
+                connectionSpeed = 50; // Assume fast
+                console.log('📡 No speed info, assuming fast connection');
             }
 
             const estimatedSeconds = (88 * 8) / connectionSpeed;
@@ -214,11 +229,14 @@
             }
 
             maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, minLoadTime), 30000);
-            console.log(`⏱️ Load time: ${(maxLoadTime/1000).toFixed(1)}s (speed: ${connectionSpeed.toFixed(1)} Mbps)`);
+            console.log(`⏱️ Final load time: ${(maxLoadTime/1000).toFixed(1)}s (min: ${(minLoadTime/1000).toFixed(1)}s, estimated: ${estimatedSeconds.toFixed(1)}s)`);
         } catch (err) {
+            console.error('❌ Connection detection error:', err);
+            connectionSpeed = 50;
             connectionBadge.textContent = 'Loading...';
             connectionBadge.className = 'connection-badge connection-medium';
-            maxLoadTime = 5500; // Default 5.5 seconds
+            maxLoadTime = 4500; // Default 4.5 seconds for fast
+            console.log(`⏱️ Fallback load time: ${(maxLoadTime/1000).toFixed(1)}s`);
         }
     }
 
@@ -304,12 +322,18 @@
             loader.classList.add('fade-out');
             setTimeout(() => {
                 loader.classList.add('hidden');
-                // Clean up event listeners
+
+                // CRITICAL: Clean up ALL event listeners including keyboard blockers
                 window.removeEventListener('wheel', handleWheel);
                 window.removeEventListener('mousemove', handleDragMove);
                 window.removeEventListener('touchmove', handleDragMove);
                 window.removeEventListener('mouseup', handleDragEnd);
                 window.removeEventListener('touchend', handleDragEnd);
+                window.removeEventListener('keydown', keydownBlocker, { capture: true });
+                window.removeEventListener('keypress', keypressBlocker, { capture: true });
+                window.removeEventListener('keyup', keyupBlocker, { capture: true });
+
+                console.log('🧹 All loader event listeners cleaned up - keyboard unblocked!');
             }, 1000);
         }, 1000);
     }
