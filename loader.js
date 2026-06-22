@@ -257,58 +257,24 @@
 
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
+        const timeProgress = Math.min((elapsed / maxLoadTime) * 100, 100);
 
-        // Show honest time-based progress, don't wait forever for videos
-        let progress;
+        updateProgress(timeProgress);
 
-        if (elapsed < maxLoadTime) {
-            // Normal loading: 0-90%
-            progress = (elapsed / maxLoadTime) * 90;
-        } else if (!videosLoaded && elapsed < (maxLoadTime + 5000)) {
-            // Grace period (5s): 90-95%
-            const graceElapsed = elapsed - maxLoadTime;
-            progress = 90 + (graceElapsed / 5000) * 5;
-        } else if (!videosLoaded) {
-            // Give up waiting: 95-100% quickly
-            const giveUpElapsed = elapsed - (maxLoadTime + 5000);
-            progress = Math.min(95 + (giveUpElapsed / 2000) * 5, 100);
-        } else {
-            // Videos loaded!
-            progress = 100;
-        }
-
-        updateProgress(progress);
-
-        // Only set exceedsMaxTime if we're in grace period AND videos not loaded
-        if (elapsed > maxLoadTime && !videosLoaded && !exceedsMaxTime) {
+        if (elapsed > maxLoadTime && !exceedsMaxTime) {
             exceedsMaxTime = true;
         }
 
-        // Complete when:
-        // 1. Minimum time passed AND videos loaded, OR
-        // 2. Time + grace period exceeded (give up)
-        // Grace period depends on connection speed estimate
-        const gracePeriod = isLocalFile ? 2000 : 30000; // Local: 2s, Production: 30s
-        const minTimePassed = elapsed >= maxLoadTime;
-        const forceComplete = elapsed > (maxLoadTime + gracePeriod);
-
-        if ((minTimePassed && videosLoaded) || forceComplete) {
-            if (forceComplete && !videosLoaded) {
-                console.warn(`⚠️ Videos not ready after ${gracePeriod/1000}s grace (${(elapsed/1000).toFixed(1)}s total) - continuing without them`);
-                console.warn(`   Landing: ${landingReady}, Wormhole: ${wormholeReady}, Working: ${landingVideoWorking}/${wormholeVideoWorking}`);
-                connectionBadge.textContent = 'Videos Unavailable';
-                connectionBadge.className = 'connection-badge connection-slow';
-            }
+        // SIMPLE: Just complete when minimum time passes
+        // Don't wait for videos - they'll load in background
+        if (timeProgress >= 100) {
             clearInterval(progressInterval);
-            updateProgress(100);
             completeLoading();
         }
     }, 50);
 
     let landingReady = false;
     let wormholeReady = false;
-    let landingVideoWorking = false;
-    let wormholeVideoWorking = false;
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
@@ -319,39 +285,29 @@
             const loadTime = (elapsed / 1000).toFixed(1);
             console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
 
-            // On local file://, videos work even if events didn't fire
-            const videosActuallyWorking = isLocalFile || (landingVideoWorking && wormholeVideoWorking);
+            // Don't calculate speed for local files (meaningless)
+            if (!isLocalFile) {
+                const videoSizeMB = 88;
+                const loadTimeSeconds = elapsed / 1000;
+                const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
 
-            // Only calculate speed if videos actually loaded (not error fallback)
-            if (videosActuallyWorking) {
-                // Don't calculate speed for local files (meaningless)
-                if (!isLocalFile) {
-                    const videoSizeMB = 88;
-                    const loadTimeSeconds = elapsed / 1000;
-                    const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
-
-                    // Update badge with REAL performance
-                    if (actualSpeedMbps >= 10) {
-                        connectionBadge.textContent = 'Fast Connection';
-                        connectionBadge.className = 'connection-badge connection-fast';
-                    } else if (actualSpeedMbps >= 3) {
-                        connectionBadge.textContent = 'Moderate Connection';
-                        connectionBadge.className = 'connection-badge connection-medium';
-                    } else {
-                        connectionBadge.textContent = 'Slow Connection';
-                        connectionBadge.className = 'connection-badge connection-slow';
-                    }
-
-                    console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
+                // Update badge with REAL performance
+                if (actualSpeedMbps >= 10) {
+                    connectionBadge.textContent = 'Fast Connection';
+                    connectionBadge.className = 'connection-badge connection-fast';
+                } else if (actualSpeedMbps >= 3) {
+                    connectionBadge.textContent = 'Moderate Connection';
+                    connectionBadge.className = 'connection-badge connection-medium';
+                } else {
+                    connectionBadge.textContent = 'Slow Connection';
+                    connectionBadge.className = 'connection-badge connection-slow';
                 }
 
-                if (progressEta) {
-                    progressEta.textContent = 'Visuals loaded!';
-                }
-            } else {
-                console.warn('⚠️ Videos failed to load - continuing without them');
-                connectionBadge.textContent = 'Videos Unavailable';
-                connectionBadge.className = 'connection-badge connection-slow';
+                console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
+            }
+
+            if (progressEta) {
+                progressEta.textContent = 'Visuals loaded!';
             }
         }
     }
@@ -380,7 +336,6 @@
             if (!landingReady) {
                 console.warn(`⚠️ Landing video timeout after ${videoTimeout}ms - assuming ready`);
                 landingReady = true;
-                landingVideoWorking = true;
                 checkVideos();
             }
         }, videoTimeout);
@@ -388,7 +343,6 @@
         landingVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Landing video ready (canplaythrough)');
             landingReady = true;
-            landingVideoWorking = true;
             checkVideos();
         }, { once: true });
 
@@ -396,7 +350,6 @@
             if (!landingReady) {
                 console.log('✅ Landing video ready (loadeddata fallback)');
                 landingReady = true;
-                landingVideoWorking = true;
                 checkVideos();
             }
         }, { once: true });
@@ -404,7 +357,6 @@
         landingVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Landing video load error:', e);
             landingReady = true;
-            landingVideoWorking = true; // Mark as working anyway - will try to play later
             checkVideos();
         }, { once: true });
 
@@ -425,7 +377,6 @@
             if (!wormholeReady) {
                 console.warn(`⚠️ Wormhole video timeout after ${videoTimeout}ms - assuming ready`);
                 wormholeReady = true;
-                wormholeVideoWorking = true;
                 checkVideos();
             }
         }, videoTimeout);
@@ -433,7 +384,6 @@
         wormholeVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Wormhole video ready (canplaythrough)');
             wormholeReady = true;
-            wormholeVideoWorking = true;
             checkVideos();
         }, { once: true });
 
@@ -441,7 +391,6 @@
             if (!wormholeReady) {
                 console.log('✅ Wormhole video ready (loadeddata fallback)');
                 wormholeReady = true;
-                wormholeVideoWorking = true;
                 checkVideos();
             }
         }, { once: true });
@@ -449,7 +398,6 @@
         wormholeVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Wormhole video load error:', e);
             wormholeReady = true;
-            wormholeVideoWorking = true; // Mark as working anyway - will try to play later
             checkVideos();
         }, { once: true });
 
