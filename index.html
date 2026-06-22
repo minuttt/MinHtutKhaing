@@ -3544,22 +3544,27 @@
             let musicStarted = false;
 
             const startMusicDirectly = (e) => {
-                // CRITICAL: Check if loader is still active
-                const loader = document.getElementById('premium-loader');
-                if (loader && !loader.classList.contains('hidden')) {
-                    console.log('⏸️ Loader still active - ignoring interaction');
+                // CRITICAL: Check if loader is complete
+                if (!window.loaderIsComplete) {
+                    console.log('⏸️ Loader not complete yet - ignoring interaction');
                     return;
                 }
 
-                if (musicStarted) return;
+                if (musicStarted) {
+                    console.log('⏸️ Music already started - ignoring duplicate');
+                    return;
+                }
+
                 musicStarted = true;
+                console.log(`🎵 VALID user interaction detected: ${e.type} - starting music NOW`);
 
                 // Dismiss landing overlay
                 if (window.dismissLanding) {
+                    console.log('🚀 Calling dismissLanding()...');
                     window.dismissLanding();
+                } else {
+                    console.error('❌ window.dismissLanding is not defined!');
                 }
-
-                console.log('🎵 VALID user interaction detected - starting music NOW');
 
                 // Play must be called DIRECTLY in event handler
                 audio.play().then(() => {
@@ -3568,17 +3573,23 @@
                     albumArt.classList.add('spinning');
                     hasStarted = true;
                 }).catch(err => {
-                    console.error('❌ Failed to start:', err);
+                    console.error('❌ Failed to start music:', err);
                 });
             };
 
-            // Set up listeners immediately, but check loader state in handler
+            // Set up listeners immediately, but check loader completion in handler
             document.addEventListener('click', startMusicDirectly);
             document.addEventListener('mousedown', startMusicDirectly);
             document.addEventListener('keydown', startMusicDirectly);
+            document.addEventListener('keypress', startMusicDirectly);
             document.addEventListener('touchstart', startMusicDirectly);
 
-            console.log('🎵 Interaction listeners active (will check loader state before triggering)');
+            console.log('🎵 Interaction listeners active (waiting for loader to complete)');
+
+            // Also listen for loaderComplete event
+            window.addEventListener('loaderComplete', () => {
+                console.log('📢 Received loaderComplete event - keyboard should work now!');
+            }, { once: true });
         }
 
         function shuffleArray(array) {

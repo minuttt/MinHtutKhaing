@@ -54,7 +54,7 @@
 
     console.log('✅ All loader elements found');
 
-    // State
+    // State for INFINITE wrapping drag
     let isDragging = false;
     let startX = 0, startY = 0;
     let currentX = 0, currentY = 0;
@@ -67,30 +67,72 @@
     let maxLoadTime = 15000;
     const startTime = Date.now();
 
-    // Create truly infinite grid - 6 columns x 4 rows per section, repeat 4 times
-    const imagesPerRow = 6;
-    const rowsPerSection = 4;
-    const sections = 4; // Repeat 4 times for seamless infinite effect
+    // Create INFINITE WRAPPING GRID - 3x3 tiled grid for seamless wrapping
+    // Each tile is 6 columns x 11 rows (66 images, using all 63 + repeat a few)
+    const cols = 6;
+    const rows = 11;
+    const tilesX = 3; // 3 tiles horizontally
+    const tilesY = 3; // 3 tiles vertically
 
-    for (let section = 0; section < sections; section++) {
-        for (let i = 0; i < allImages.length; i++) {
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
+    // Calculate tile dimensions (will be set after images load)
+    let tileWidth = 0;
+    let tileHeight = 0;
+    const itemWidth = 256; // 16rem = 256px
+    const itemHeight = 384; // 24rem = 384px
+    const gap = 56; // 3.5rem = 56px
 
-            const img = document.createElement('img');
-            img.src = allImages[i];
-            img.alt = `Personal photo ${i + 1}`;
-            img.draggable = false;
+    tileWidth = (itemWidth * cols) + (gap * (cols - 1)) + (gap * 2); // + padding
+    tileHeight = (itemHeight * rows) + (gap * (rows - 1)) + (gap * 2);
 
-            item.appendChild(img);
-            galleryGrid.appendChild(item);
+    console.log(`🔲 Tile dimensions: ${tileWidth}px x ${tileHeight}px`);
+
+    // Create 3x3 grid of tiles
+    for (let ty = 0; ty < tilesY; ty++) {
+        for (let tx = 0; tx < tilesX; tx++) {
+            for (let i = 0; i < allImages.length; i++) {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
+
+                const img = document.createElement('img');
+                img.src = allImages[i];
+                img.alt = `Personal photo ${i + 1}`;
+                img.draggable = false;
+
+                item.appendChild(img);
+                galleryGrid.appendChild(item);
+            }
         }
     }
 
-    console.log(`📸 Created ${sections * allImages.length} gallery items for infinite scroll`);
+    console.log(`📸 Created ${tilesX * tilesY * allImages.length} gallery items for infinite wrapping`);
 
-    // Drag functionality with momentum
+    // INFINITE WRAPPING LOGIC
+    function wrapPosition() {
+        // Wrap X - if dragged past half tile width in any direction
+        if (currentX > tileWidth / 2) {
+            currentX -= tileWidth;
+            lastX = currentX;
+            console.log('🔄 Wrapped LEFT');
+        } else if (currentX < -tileWidth / 2) {
+            currentX += tileWidth;
+            lastX = currentX;
+            console.log('🔄 Wrapped RIGHT');
+        }
+
+        // Wrap Y - if dragged past half tile height in any direction
+        if (currentY > tileHeight / 2) {
+            currentY -= tileHeight;
+            lastY = currentY;
+            console.log('🔄 Wrapped UP');
+        } else if (currentY < -tileHeight / 2) {
+            currentY += tileHeight;
+            lastY = currentY;
+            console.log('🔄 Wrapped DOWN');
+        }
+    }
+
+    // Drag functionality with INFINITE wrapping
     function handleDragStart(e) {
         isDragging = true;
         startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
@@ -119,9 +161,12 @@
         velocityX = deltaX * 0.05;
         velocityY = deltaY * 0.05;
 
+        // Apply wrapping
+        wrapPosition();
+
         galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
-        // Move info overlay when user scrolls
+        // Move info overlay when user drags
         if (!hasScrolled && (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20)) {
             hasScrolled = true;
             loadingInfo.classList.add('scrolled');
@@ -143,18 +188,22 @@
         velocityX *= 0.95;
         velocityY *= 0.95;
 
+        // Apply wrapping during momentum
+        wrapPosition();
+
         galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
         requestAnimationFrame(applyMomentum);
     }
 
-    // Wheel scroll
+    // Wheel scroll - also wraps
     function handleWheel(e) {
         e.preventDefault();
         e.stopPropagation();
 
         if (!isDragging) {
             currentY -= e.deltaY * 2.7;
+            wrapPosition();
             galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
             if (!hasScrolled && Math.abs(e.deltaY) > 5) {
@@ -175,7 +224,7 @@
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
 
-    // Connection detection
+    // Connection detection - FIXED TIMING
     function detectConnection() {
         try {
             const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -195,31 +244,39 @@
                 console.log('📡 No speed info, assuming fast connection');
             }
 
-            const estimatedSeconds = (88 * 8) / connectionSpeed;
-
+            // FIXED: Correct timing logic
             let minLoadTime;
-            if (connectionSpeed >= 20) {
+            if (connectionSpeed >= 10) {
+                // Fast/Smooth connection: 4.5 seconds
                 minLoadTime = 4500;
+                maxLoadTime = 4500;
                 connectionBadge.textContent = 'Lightning Fast';
                 connectionBadge.className = 'connection-badge connection-fast';
-            } else if (connectionSpeed >= 5) {
-                minLoadTime = 5500;
+                console.log('⚡ Fast connection: 4.5s load time');
+            } else if (connectionSpeed >= 3) {
+                // Medium connection: 7 seconds
+                minLoadTime = 7000;
+                maxLoadTime = 7000;
                 connectionBadge.textContent = 'Smooth Connection';
                 connectionBadge.className = 'connection-badge connection-medium';
+                console.log('📶 Medium connection: 7s load time');
             } else {
-                minLoadTime = 7000;
-                connectionBadge.textContent = 'Loading...';
+                // Slow connection: up to 30 seconds
+                const estimatedSeconds = Math.min((88 * 8) / connectionSpeed, 30);
+                minLoadTime = estimatedSeconds * 1000;
+                maxLoadTime = Math.max(minLoadTime, 15000); // at least 15s for slow
+                connectionBadge.textContent = 'Slow Connection';
                 connectionBadge.className = 'connection-badge connection-slow';
+                console.log(`🐌 Slow connection: ${(maxLoadTime/1000).toFixed(1)}s load time`);
             }
 
-            maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, minLoadTime), 30000);
-            console.log(`⏱️ Final load time: ${(maxLoadTime/1000).toFixed(1)}s (min: ${(minLoadTime/1000).toFixed(1)}s)`);
+            console.log(`⏱️ Final load time: ${(maxLoadTime/1000).toFixed(1)}s`);
         } catch (err) {
             console.error('❌ Connection detection error:', err);
             connectionSpeed = 50;
             connectionBadge.textContent = 'Loading...';
             maxLoadTime = 4500;
-            console.log(`⏱️ Fallback load time: ${(maxLoadTime/1000).toFixed(1)}s`);
+            console.log(`⏱️ Fallback: 4.5s load time`);
         }
     }
 
@@ -279,12 +336,14 @@
     function checkVideosReady() {
         if (landingReady && wormholeReady) {
             videosLoaded = true;
+            console.log('📹 Both videos ready!');
         }
     }
 
     if (landingVideo) {
         landingVideo.addEventListener('canplaythrough', () => {
             landingReady = true;
+            console.log('✅ Landing video ready');
             checkVideosReady();
         }, { once: true });
         landingVideo.load();
@@ -293,6 +352,7 @@
     if (wormholeVideo) {
         wormholeVideo.addEventListener('canplaythrough', () => {
             wormholeReady = true;
+            console.log('✅ Wormhole video ready');
             checkVideosReady();
         }, { once: true });
         wormholeVideo.load();
@@ -314,11 +374,12 @@
             loader.classList.add('fade-out');
 
             setTimeout(() => {
-                console.log('👻 Loader now hidden');
+                console.log('👻 Loader now hidden - REMOVING FROM DOM');
                 loader.classList.add('hidden');
                 loader.style.display = 'none';
 
                 // Clean up event listeners
+                console.log('🧹 Cleaning up event listeners...');
                 window.removeEventListener('wheel', handleWheel);
                 window.removeEventListener('mousemove', handleDragMove);
                 window.removeEventListener('touchmove', handleDragMove);
@@ -327,11 +388,12 @@
 
                 const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
                 console.log(`✅ Loader cleanup complete at ${totalTime}s`);
-                console.log('🔓 Landing page is now active!');
+                console.log('🔓 KEYBOARD NOW ACTIVE - LANDING PAGE READY!');
 
-                // Signal completion
-                window.loaderComplete = true;
+                // Signal completion CLEARLY
+                window.loaderIsComplete = true;
                 window.dispatchEvent(new CustomEvent('loaderComplete'));
+                console.log('📢 Dispatched loaderComplete event');
             }, 1000);
         }, 1000);
     }
