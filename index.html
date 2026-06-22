@@ -3098,6 +3098,8 @@
 
     // ===== LANDING OVERLAY =====
     (function() {
+        console.log('🎬 Landing overlay script initialized');
+
         const overlay = document.getElementById('landing-overlay');
         const wormholeOverlay = document.getElementById('wormhole-overlay');
         const wormholeVideo = document.getElementById('wormhole-video');
@@ -3150,18 +3152,21 @@
 
         // Fade in text elements with SLOWER animations
         setTimeout(() => {
+            console.log('📝 [+0.4s] "Portfolio" fading in');
             portfolio.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             portfolio.style.opacity = '1';
             portfolio.style.transform = 'translateY(0)';
         }, 400);
 
         setTimeout(() => {
+            console.log('📝 [+0.8s] "MIN HTUT KHAING" fading in');
             title.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             title.style.opacity = '1';
             title.style.transform = 'translateY(0)';
         }, 800);
 
         setTimeout(() => {
+            console.log('📝 [+1.2s] "Experience a glimpse..." fading in');
             subtitle.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             subtitle.style.opacity = '1';
             subtitle.style.transform = 'translateY(0)';
@@ -3169,6 +3174,7 @@
 
         // Delay "Press any key" by 2.5 seconds after subtitle appears
         setTimeout(() => {
+            console.log('📝 [+3.9s] "Press any key to launch" fading in');
             hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             hint.style.opacity = '0.7';
 
@@ -3179,6 +3185,7 @@
             }
 
             setTimeout(() => {
+                console.log('✨ [+5.4s] "Press any key" animation started');
                 hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
             }, 1500);
         }, 3900); // 1200ms (subtitle) + 2500ms (buffer) = 3700ms, rounded to 3900ms
@@ -3191,37 +3198,44 @@
         function enableTransitionsAfterDelay() {
             if (transitionTimer) return; // Already started
 
-            console.log('⏱️ Starting 2.5s interaction buffer timer...');
+            const timerStartTime = Date.now();
+            console.log('⏱️ [NOW] Starting 6.4s buffer timer (3.9s for hint + 2.5s buffer)');
             transitionTimer = setTimeout(() => {
+                const elapsed = ((Date.now() - timerStartTime) / 1000).toFixed(1);
                 canStartTransition = true;
-                console.log('✅ Landing page interaction now enabled (2.5s buffer elapsed)');
+                console.log(`✅ [+${elapsed}s] Interaction NOW ENABLED - press any key to continue!`);
             }, 6400); // 3900ms (hint appears) + 2500ms (buffer) = 6400ms
         }
 
         // Observe when loader is removed and landing is shown
         const loaderElement = document.getElementById('premium-loader');
         if (loaderElement) {
+            console.log('👀 Watching for loader to be hidden...');
             const loaderObserver = new MutationObserver(() => {
                 if (loaderElement.classList.contains('hidden')) {
+                    console.log('🎬 Loader is hidden - landing page now visible!');
                     enableTransitionsAfterDelay();
                     loaderObserver.disconnect();
                 }
             });
             loaderObserver.observe(loaderElement, { attributes: true, attributeFilter: ['class'] });
         } else {
-            // No loader, start immediately
+            console.log('⚠️ No loader element found - starting transition timer immediately');
             enableTransitionsAfterDelay();
         }
 
         window.dismissLanding = function() {
-            if (transitionStarted) return; // Prevent multiple triggers
+            if (transitionStarted) {
+                console.log('⏭️ Transition already started - ignoring duplicate call');
+                return; // Prevent multiple triggers
+            }
             if (!canStartTransition) {
-                console.log('⏸️ Transition blocked - let users admire the landing page (please wait 2.5s)');
+                console.log('⏸️ Transition BLOCKED - please wait for 2.5s buffer period to end');
                 return; // Block transition during buffer period
             }
             transitionStarted = true;
 
-            console.log('🎭 Starting smooth transition sequence');
+            console.log('🚀 Transition APPROVED - starting wormhole sequence...');
 
             // Activate transition blocker immediately to prevent UI flash
             transitionBlocker.classList.add('active');

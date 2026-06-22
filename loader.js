@@ -312,15 +312,21 @@
 
     // Complete loading with smooth fade
     function completeLoading() {
+        const loadCompleteTime = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log(`✅ Loading complete at ${loadCompleteTime}s - showing completion message`);
+
         loadingInfo.querySelector('.loading-title').textContent = 'All Set!';
         loadingInfo.querySelector('.loading-subtitle').innerHTML = '<span class="loading-complete">✓ Loading Complete</span><br>Welcome to my portfolio...';
         progressEta.textContent = 'Ready!';
 
         // Smooth fade out after 1 second
         setTimeout(() => {
+            console.log('🎭 Starting loader fade-out (1s transition)...');
             loader.style.transition = 'opacity 1s ease-out';
             loader.classList.add('fade-out');
+
             setTimeout(() => {
+                console.log('👻 Loader now hidden - removing from DOM');
                 loader.classList.add('hidden');
 
                 // CRITICAL: Clean up ALL event listeners including keyboard blockers
@@ -333,7 +339,9 @@
                 window.removeEventListener('keypress', keypressBlocker, { capture: true });
                 window.removeEventListener('keyup', keyupBlocker, { capture: true });
 
-                console.log('🧹 All loader event listeners cleaned up - keyboard unblocked!');
+                const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+                console.log(`🧹 All loader event listeners cleaned up at ${totalTime}s - keyboard unblocked!`);
+                console.log('📍 Landing page should now be visible');
             }, 1000);
         }, 1000);
     }
