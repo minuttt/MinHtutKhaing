@@ -160,19 +160,33 @@
     }
 
     // Block keyboard events during loading to prevent landing page skip
-    function blockKeyboard(e) {
+    const blockKeydown = (e) => {
+        if (loader && !loader.classList.contains('hidden')) {
+            console.log('🚫 Blocked keydown during loading');
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    };
+
+    const blockKeypress = (e) => {
         if (loader && !loader.classList.contains('hidden')) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
             return false;
         }
-    }
+    };
 
-    // Store references for cleanup
-    const keydownBlocker = blockKeyboard;
-    const keypressBlocker = blockKeyboard;
-    const keyupBlocker = blockKeyboard;
+    const blockKeyup = (e) => {
+        if (loader && !loader.classList.contains('hidden')) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    };
 
     // Event listeners
     dragContainer.addEventListener('mousedown', handleDragStart);
@@ -182,9 +196,11 @@
     window.addEventListener('mouseup', handleDragEnd);
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('keydown', keydownBlocker, { passive: false, capture: true });
-    window.addEventListener('keypress', keypressBlocker, { passive: false, capture: true });
-    window.addEventListener('keyup', keyupBlocker, { passive: false, capture: true });
+    window.addEventListener('keydown', blockKeydown, { passive: false, capture: true });
+    window.addEventListener('keypress', blockKeypress, { passive: false, capture: true });
+    window.addEventListener('keyup', blockKeyup, { passive: false, capture: true });
+
+    console.log('🔒 Keyboard blockers installed (will unblock when loader hidden)');
 
     // Connection detection with smart minimum load times
     function detectConnection() {
@@ -257,31 +273,38 @@
         }
     }
 
-    // Smooth progress animation
+    // Smooth progress animation - ENFORCE MINIMUM TIME
     let animProgress = 0;
+    let canComplete = false;
+
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const timeProgress = (elapsed / maxLoadTime) * 100;
 
-        if (videosLoaded) {
+        if (videosLoaded && canComplete) {
+            // Videos loaded AND minimum time reached - accelerate to 100%
             animProgress += (100 - animProgress) * 0.15;
         } else {
+            // Still loading or waiting for minimum time
             animProgress += (Math.min(timeProgress, 95) - animProgress) * 0.1;
         }
 
         updateProgress(animProgress);
 
-        if (animProgress >= 99.5) {
+        if (animProgress >= 99.5 && canComplete) {
             clearInterval(progressInterval);
             completeLoading();
         }
     }, 50);
 
-    // Force complete after max time
+    // ENFORCE MINIMUM TIME - only allow completion after maxLoadTime
     setTimeout(() => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        canComplete = true;
         if (!videosLoaded) {
             videosLoaded = true;
         }
+        console.log(`⏰ Minimum time ${elapsed}s reached - completion now allowed`);
     }, maxLoadTime);
 
     // Track videos
@@ -330,18 +353,29 @@
                 loader.classList.add('hidden');
 
                 // CRITICAL: Clean up ALL event listeners including keyboard blockers
+                console.log('🧹 Starting cleanup of event listeners...');
+
                 window.removeEventListener('wheel', handleWheel);
                 window.removeEventListener('mousemove', handleDragMove);
                 window.removeEventListener('touchmove', handleDragMove);
                 window.removeEventListener('mouseup', handleDragEnd);
                 window.removeEventListener('touchend', handleDragEnd);
-                window.removeEventListener('keydown', keydownBlocker, { capture: true });
-                window.removeEventListener('keypress', keypressBlocker, { capture: true });
-                window.removeEventListener('keyup', keyupBlocker, { capture: true });
+                window.removeEventListener('keydown', blockKeydown, { capture: true });
+                window.removeEventListener('keypress', blockKeypress, { capture: true });
+                window.removeEventListener('keyup', blockKeyup, { capture: true });
 
                 const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-                console.log(`🧹 All loader event listeners cleaned up at ${totalTime}s - keyboard unblocked!`);
+                console.log(`✅ All loader event listeners removed at ${totalTime}s`);
+                console.log('🔓 KEYBOARD UNBLOCKED - keys should work now!');
                 console.log('📍 Landing page should now be visible');
+
+                // Test if keyboard is really unblocked
+                const testKeyHandler = (e) => {
+                    console.log(`✅ TEST: Keydown detected! Key: ${e.key} - keyboard is working!`);
+                    window.removeEventListener('keydown', testKeyHandler);
+                };
+                window.addEventListener('keydown', testKeyHandler, { once: true, capture: false });
+                console.log('🧪 Test listener added - press any key to verify keyboard works');
             }, 1000);
         }, 1000);
     }
