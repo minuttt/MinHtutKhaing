@@ -82,10 +82,9 @@
         return shuffled;
     }
 
-    // Randomly pick 12 images from all 63, then shuffle their order too!
-    const selected12 = shuffleArray(allAvailableImages).slice(0, 12);
-    const allImages = shuffleArray(selected12); // Shuffle again for random positions!
-    console.log(`🎲 RANDOM: Picked 12 from ${allAvailableImages.length}, shuffled their order too`);
+    // Use ALL 63 images - shuffled for variety!
+    const allImages = shuffleArray(allAvailableImages);
+    console.log(`🎨 FULL GALLERY: All ${allImages.length} images in random order!`);
 
     const loader = document.getElementById('premium-loader');
     const galleryGrid = document.getElementById('gallery-grid');
@@ -123,7 +122,7 @@
 
     for (let tileY = 0; tileY < 2; tileY++) {
         for (let tileX = 0; tileX < 2; tileX++) {
-            // Shuffle for EACH tile - different order every tile!
+            // Each tile shows all images in random order!
             const shuffledForThisTile = shuffleArray(allImages);
 
             for (let i = 0; i < shuffledForThisTile.length; i++) {
