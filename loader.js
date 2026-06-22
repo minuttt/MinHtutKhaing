@@ -1,12 +1,14 @@
 // ===== INFINITE DRAG GALLERY LOADING SCREEN =====
 (function() {
+    console.log('🎨 Initializing infinite drag gallery loader...');
+
     // Personal photos from Loading images folder (JPG only - browsers don't support HEIC)
     const personalPhotos = [
-        'Loading images/Loading images/1354d826-0e6b-43f4-bad2-c49c270e16a1.jpg',
-        'Loading images/Loading images/5DE894B2-3103-4C30-8DFE-08793200DB9A.jpg',
-        'Loading images/Loading images/7e64b24a-4c78-4d02-bf91-79aea9547b8e.jpg',
-        'Loading images/Loading images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg',
-        'Loading images/Loading images/IMG_6082.JPG'
+        'Loading%20images/Loading%20images/1354d826-0e6b-43f4-bad2-c49c270e16a1.jpg',
+        'Loading%20images/Loading%20images/5DE894B2-3103-4C30-8DFE-08793200DB9A.jpg',
+        'Loading%20images/Loading%20images/7e64b24a-4c78-4d02-bf91-79aea9547b8e.jpg',
+        'Loading%20images/Loading%20images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg',
+        'Loading%20images/Loading%20images/IMG_6082.JPG'
     ];
 
     // Duplicate photos to create rich infinite grid effect
@@ -14,6 +16,8 @@
     for (let i = 0; i < 30; i++) {
         photos.push(personalPhotos[i % personalPhotos.length]);
     }
+
+    console.log(`📸 Loaded ${photos.length} photos for gallery`);
 
     // Elements
     const loader = document.getElementById('premium-loader');
@@ -26,6 +30,15 @@
     const connectionBadge = document.getElementById('connection-badge');
     const landingVideo = document.getElementById('landing-video');
     const wormholeVideo = document.getElementById('wormhole-video');
+
+    // Check if all elements exist
+    if (!loader || !galleryGrid || !dragContainer || !loadingInfo) {
+        console.error('❌ Required loader elements not found!');
+        console.log('loader:', !!loader, 'galleryGrid:', !!galleryGrid, 'dragContainer:', !!dragContainer, 'loadingInfo:', !!loadingInfo);
+        return;
+    }
+
+    console.log('✅ All loader elements found');
 
     // State
     let isDragging = false;
