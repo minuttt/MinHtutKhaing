@@ -2,28 +2,20 @@
 (function() {
     console.log('🎨 LOADER: Starting initialization...');
 
-    // Selected 20 images - will be duplicated in 2×2 grid for infinite scroll
+    // Selected 12 images - fewer images = videos load faster!
     const allImages = [
         'Loading images/IMG_0173.jpg',
-        'Loading images/IMG_0199.jpg',
         'Loading images/IMG_0218.jpg',
-        'Loading images/IMG_0237.jpg',
         'Loading images/IMG_0257.jpg',
-        'Loading images/IMG_0276.jpg',
         'Loading images/IMG_0303.jpg',
-        'Loading images/IMG_0333.jpg',
         'Loading images/IMG_0353.jpg',
-        'Loading images/IMG_0371.jpg',
         'Loading images/IMG_4144.jpg',
         'Loading images/IMG_8008.jpg',
-        'Loading images/IMG_8053.jpg',
         'Loading images/IMG_8762.jpg',
         'Loading images/IMG_8995.jpg',
         'Loading images/IMG_9905.jpg',
-        'Loading images/Loading images/1354d826-0e6b-43f4-bad2-c49c270e16a1.jpg',
-        'Loading images/Loading images/5DE894B2-3103-4C30-8DFE-08793200DB9A.jpg',
-        'Loading images/Loading images/7e64b24a-4c78-4d02-bf91-79aea9547b8e.jpg',
-        'Loading images/Loading images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg'
+        'Loading images/IMG_0199.jpg',
+        'Loading images/IMG_0371.jpg'
     ];
 
     const loader = document.getElementById('premium-loader');
@@ -219,12 +211,13 @@
     connectionBadge.className = 'connection-badge connection-medium';
 
     // Set minimum loading times based on initial estimate
+    // REDUCED times - fewer images = faster load!
     if (connectionSpeed >= 10) {
-        maxLoadTime = 8000; // 8s minimum for fast estimate
+        maxLoadTime = 5000; // 5s minimum for fast estimate
     } else if (connectionSpeed >= 3) {
-        maxLoadTime = 15000; // 15s for medium estimate
+        maxLoadTime = 10000; // 10s for medium estimate
     } else {
-        maxLoadTime = 30000; // 30s for slow estimate
+        maxLoadTime = 20000; // 20s for slow estimate
     }
 
     // Track actual loading performance
@@ -283,7 +276,7 @@
         // Complete when:
         // 1. Minimum time passed AND videos loaded, OR
         // 2. Time + grace period exceeded (give up waiting)
-        const gracePeriod = 30000; // 30 seconds grace for 88MB videos
+        const gracePeriod = 15000; // 15 seconds grace (reduced - fewer images competing)
         const minTimePassed = elapsed >= maxLoadTime;
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
 
