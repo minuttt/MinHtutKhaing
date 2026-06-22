@@ -257,31 +257,42 @@
 
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        const timeProgress = Math.min((elapsed / maxLoadTime) * 100, 100);
 
-        // Progress is weighted: 70% time, 30% video loading
-        const videoProgress = videosLoaded ? 30 : 0;
-        const totalProgress = Math.min(timeProgress * 0.7 + videoProgress, 100);
+        // Show honest time-based progress, don't wait forever for videos
+        let progress;
 
-        updateProgress(totalProgress);
+        if (elapsed < maxLoadTime) {
+            // Normal loading: 0-90%
+            progress = (elapsed / maxLoadTime) * 90;
+        } else if (!videosLoaded && elapsed < (maxLoadTime + 5000)) {
+            // Grace period (5s): 90-95%
+            const graceElapsed = elapsed - maxLoadTime;
+            progress = 90 + (graceElapsed / 5000) * 5;
+        } else if (!videosLoaded) {
+            // Give up waiting: 95-100% quickly
+            const giveUpElapsed = elapsed - (maxLoadTime + 5000);
+            progress = Math.min(95 + (giveUpElapsed / 2000) * 5, 100);
+        } else {
+            // Videos loaded!
+            progress = 100;
+        }
+
+        updateProgress(progress);
 
         if (elapsed > maxLoadTime && !exceedsMaxTime) {
             exceedsMaxTime = true;
         }
 
         // Complete when EITHER:
-        // 1. Time complete AND videos ready, OR
-        // 2. Time complete + grace period (generous for large video files)
-        const gracePeriod = 45000; // 45 seconds grace for 88MB of video
+        // 1. Videos loaded, OR
+        // 2. Time complete + short grace period (7 seconds total)
+        const gracePeriod = 7000; // 7 seconds grace period (shorter!)
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
 
-        if (timeProgress >= 100 && (videosLoaded || forceComplete)) {
+        if (videosLoaded || forceComplete) {
             if (forceComplete && !videosLoaded) {
-                console.warn('⚠️ Videos still loading after 45s grace period - continuing anyway');
-                console.warn('⚠️ Videos may not play smoothly on this connection');
-
-                // Update badge to show very slow connection
-                connectionBadge.textContent = 'Very Slow Connection';
+                console.warn('⚠️ Videos not ready after 7s grace - continuing without them');
+                connectionBadge.textContent = 'Videos Unavailable';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
             clearInterval(progressInterval);

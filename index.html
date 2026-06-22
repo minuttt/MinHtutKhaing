@@ -3169,22 +3169,25 @@
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
 
-                // Video should be ready (loader waited for it)
-                const playPromise = landingVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('✅ Landing video playing smoothly');
-                    }).catch(err => {
-                        console.error('❌ Landing video autoplay failed:', err);
-                        // Force reload and retry
-                        landingVideo.load();
-                        setTimeout(() => {
-                            landingVideo.play()
-                                .then(() => console.log('✅ Landing video playing after reload'))
-                                .catch(e => console.error('❌ Landing video completely failed:', e));
-                        }, 200);
-                    });
-                }
+                // Aggressive play attempt - mobile needs multiple retries
+                const tryPlayLanding = (attempt = 1) => {
+                    const playPromise = landingVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log(`✅ Landing video playing (attempt ${attempt})`);
+                        }).catch(err => {
+                            console.warn(`⚠️ Landing play attempt ${attempt} failed:`, err.message);
+                            if (attempt < 5) {
+                                // Mobile often needs multiple tries
+                                setTimeout(() => tryPlayLanding(attempt + 1), 200);
+                            } else {
+                                console.error('❌ Landing video failed after 5 attempts');
+                            }
+                        });
+                    }
+                };
+
+                tryPlayLanding();
             }
         }
 
@@ -3280,7 +3283,7 @@
         }, 30000);
 
         let videoRetryCount = 0;
-        const MAX_VIDEO_RETRIES = 3;
+        const MAX_VIDEO_RETRIES = 2;
 
         window.dismissLanding = function() {
             if (transitionStarted) {
@@ -3292,23 +3295,22 @@
                 return;
             }
 
-            // Check if wormhole video is ready (prefer readyState >= 4, but allow >= 2 after retries)
-            const minReadyState = videoRetryCount >= MAX_VIDEO_RETRIES ? 2 : 4;
-            const videoReady = wormholeVideo.readyState >= minReadyState;
-            console.log(`🎬 Wormhole readyState: ${wormholeVideo.readyState} (need ${minReadyState}, ${videoReady ? 'READY' : 'NOT READY'})`);
+            // On mobile, video readyState is unreliable - only check if it's completely unloaded
+            const videoReady = wormholeVideo.readyState >= 1; // HAVE_METADATA or better
+            console.log(`🎬 Wormhole readyState: ${wormholeVideo.readyState} (${videoReady ? 'READY' : 'NOT READY'})`);
 
             if (!videoReady && videoRetryCount < MAX_VIDEO_RETRIES) {
                 videoRetryCount++;
-                console.warn(`⚠️ Wormhole video not ready - retry ${videoRetryCount}/${MAX_VIDEO_RETRIES}...`);
+                console.warn(`⚠️ Wormhole video has no metadata - retry ${videoRetryCount}/${MAX_VIDEO_RETRIES} in 500ms...`);
                 setTimeout(() => {
                     console.log(`🔄 Retry ${videoRetryCount} - Wormhole readyState: ${wormholeVideo.readyState}`);
                     window.dismissLanding();
-                }, 1000);
+                }, 500);
                 return;
             }
 
             if (!videoReady) {
-                console.warn('⚠️ Video not ready after retries - continuing anyway (may not play smoothly)');
+                console.warn('⚠️ Video completely unloaded after retries - will try to play anyway');
             }
 
             transitionStarted = true;
@@ -3352,22 +3354,26 @@
 
                     console.log(`🎬 Attempting wormhole play (readyState: ${wormholeVideo.readyState})`);
 
-                    // Video should be ready by now (loader waited for it)
-                    const wormholePlayPromise = wormholeVideo.play();
-                    if (wormholePlayPromise !== undefined) {
-                        wormholePlayPromise.then(() => {
-                            console.log('✅ Wormhole video playing smoothly');
-                        }).catch(err => {
-                            console.error('❌ Wormhole play failed:', err);
-                            // Force load and retry
-                            wormholeVideo.load();
-                            setTimeout(() => {
-                                wormholeVideo.play()
-                                    .then(() => console.log('✅ Wormhole playing after reload'))
-                                    .catch(e => console.error('❌ Wormhole completely failed:', e));
-                            }, 200);
-                        });
-                    }
+                    // Aggressive play attempt - try multiple times if needed
+                    const tryPlayWormhole = (attempt = 1) => {
+                        const playPromise = wormholeVideo.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                console.log(`✅ Wormhole playing (attempt ${attempt})`);
+                            }).catch(err => {
+                                console.warn(`⚠️ Wormhole play attempt ${attempt} failed:`, err.message);
+                                if (attempt < 3) {
+                                    // Try reloading and playing again
+                                    wormholeVideo.load();
+                                    setTimeout(() => tryPlayWormhole(attempt + 1), 100);
+                                } else {
+                                    console.error('❌ Wormhole play failed after 3 attempts');
+                                }
+                            });
+                        }
+                    };
+
+                    tryPlayWormhole();
 
                     // Play wormhole sound effect
                     if (wormholeAudio) {
