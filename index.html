@@ -1120,7 +1120,7 @@
 
         .drag-gallery-grid {
             display: grid;
-            grid-template-columns: repeat(18, 16rem);
+            grid-template-columns: repeat(12, 16rem);
             grid-auto-rows: 24rem;
             grid-auto-flow: row;
             gap: 3.5rem;
@@ -1138,15 +1138,18 @@
             height: 24rem;
             border-radius: 0.5rem;
             overflow: hidden;
-            opacity: 1;
-            transform: scale(1);
+            opacity: 0;
+            transform: scale(0.3);
+            animation: galleryItemFadeIn 1.4s cubic-bezier(0.18, 0.71, 0.11, 1) forwards;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             will-change: transform;
             contain: layout style paint;
-            content-visibility: auto;
         }
 
-        /* Removed hover effect for performance */
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
 
         /* Removed masonry offset - let grid flow naturally */
 
@@ -1161,7 +1164,16 @@
             transform: translateZ(0);
         }
 
-        /* Removed animation for performance */
+        @keyframes galleryItemFadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
 
         /* Loading Info Overlay - Simple Grey & White */
         .loading-info-overlay {

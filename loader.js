@@ -58,19 +58,19 @@
 
     console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
 
-    // Create 3x3 grid (9 copies of the image set) - NO ANIMATIONS
+    // Create 2x2 grid (4 copies) for PERFORMANCE - still infinite!
     const fragment = document.createDocumentFragment();
-    for (let tileY = 0; tileY < 3; tileY++) {
-        for (let tileX = 0; tileX < 3; tileX++) {
+    for (let tileY = 0; tileY < 2; tileY++) {
+        for (let tileX = 0; tileX < 2; tileX++) {
             for (let i = 0; i < allImages.length; i++) {
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
+                item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
                 const img = document.createElement('img');
                 img.src = allImages[i];
-                img.alt = '';
+                img.alt = `Photo ${i + 1}`;
                 img.draggable = false;
-                img.loading = 'lazy';
 
                 item.appendChild(img);
                 fragment.appendChild(item);
@@ -79,14 +79,14 @@
     }
     galleryGrid.appendChild(fragment);
 
-    console.log(`📸 CREATED: ${9 * allImages.length} items`);
+    console.log(`📸 CREATED: ${4 * allImages.length} items (2×2 tiles for performance)`);
 
-    // State - START AT CENTER TILE POSITION
+    // State - START AT CENTER POSITION (2x2 grid)
     let isDragging = false;
     let startX = 0, startY = 0;
-    // CRITICAL: Start at -tileWidth, -tileHeight so CENTER tile is visible
-    let currentX = -tileWidth;
-    let currentY = -tileHeight;
+    // CRITICAL: Start at -tileWidth/2, -tileHeight/2 for 2x2 grid
+    let currentX = -tileWidth / 2;
+    let currentY = -tileHeight / 2;
     let velocityX = 0, velocityY = 0;
     let lastX = currentX;
     let lastY = currentY;
@@ -107,10 +107,10 @@
     }
 
     function applyWrapping() {
-        // Wrap X between -2*tileWidth and 0
-        currentX = wrap(-2 * tileWidth, 0, currentX);
-        // Wrap Y between -2*tileHeight and 0
-        currentY = wrap(-2 * tileHeight, 0, currentY);
+        // Wrap X between -tileWidth and 0 (2 tiles wide)
+        currentX = wrap(-tileWidth, 0, currentX);
+        // Wrap Y between -tileHeight and 0 (2 tiles high)
+        currentY = wrap(-tileHeight, 0, currentY);
     }
 
     function handleDragStart(e) {
