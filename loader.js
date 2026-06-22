@@ -349,19 +349,20 @@
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
 
-        // HONEST progress based on actual asset loading
+        // Progress bar follows ETA/time (smooth, matches countdown)
         let progress = 0;
 
-        // Calculate real progress: 50% images + 50% videos
-        const imageProgress = (imagesLoaded / imagesToLoad.length) * 50;
-        const videoProgress = (videosLoaded ? 50 : 0);
-
-        // Blend actual progress with time-based progress for smooth bar
-        const timeBasedProgress = Math.min((elapsed / maxLoadTime) * 90, 90);
-        const actualProgress = imageProgress + videoProgress;
-
-        // Use whichever is higher (honest but never goes backward)
-        progress = Math.max(timeBasedProgress, actualProgress);
+        if (elapsed < maxLoadTime) {
+            // Progress based on TIME (0-90%), so it matches ETA countdown
+            progress = (elapsed / maxLoadTime) * 90;
+        } else if (!videosLoaded) {
+            // After minimum time, wait for videos (90-95%)
+            const waitTime = elapsed - maxLoadTime;
+            progress = Math.min(90 + (waitTime / 10000) * 5, 95);
+        } else {
+            // Videos ready! Final push to 100%
+            progress = 100;
+        }
 
         updateProgress(progress);
 
