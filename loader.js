@@ -48,7 +48,10 @@
     console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
 
     // Create 2x2 grid (4 copies) for PERFORMANCE - still infinite!
+    // STRATEGY: Load images AFTER videos start loading (lazy loading)
     const fragment = document.createDocumentFragment();
+    const imagesToLoad = [];
+
     for (let tileY = 0; tileY < 2; tileY++) {
         for (let tileX = 0; tileX < 2; tileX++) {
             for (let i = 0; i < allImages.length; i++) {
@@ -57,18 +60,20 @@
                 item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
                 const img = document.createElement('img');
-                img.src = allImages[i];
+                // Don't set src yet - we'll load in batches!
+                img.setAttribute('data-src', allImages[i]);
                 img.alt = `Photo ${i + 1}`;
                 img.draggable = false;
 
                 item.appendChild(img);
                 fragment.appendChild(item);
+                imagesToLoad.push(img);
             }
         }
     }
     galleryGrid.appendChild(fragment);
 
-    console.log(`📸 CREATED: ${4 * allImages.length} items (2×2 tiles for performance)`);
+    console.log(`📸 CREATED: ${4 * allImages.length} items (will lazy-load in batches)`);
 
     // State - START AT CENTER POSITION (2x2 grid)
     let isDragging = false;
@@ -296,6 +301,46 @@
     let wormholeReady = false;
     let landingVideoWorking = false;
     let wormholeVideoWorking = false;
+
+    // BATCH LOAD IMAGES: Load in small batches to avoid blocking videos
+    let imagesLoaded = 0;
+    const BATCH_SIZE = 6; // Load 6 images at a time
+    const BATCH_DELAY = 200; // Wait 200ms between batches
+
+    function loadImageBatch(startIndex) {
+        const endIndex = Math.min(startIndex + BATCH_SIZE, imagesToLoad.length);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            const img = imagesToLoad[i];
+            const src = img.getAttribute('data-src');
+            if (src) {
+                img.src = src;
+                img.onload = () => {
+                    imagesLoaded++;
+                    if (imagesLoaded % 12 === 0) {
+                        console.log(`📸 Loaded ${imagesLoaded}/${imagesToLoad.length} images`);
+                    }
+                };
+                img.onerror = () => {
+                    console.warn(`⚠️ Failed to load: ${src}`);
+                    imagesLoaded++;
+                };
+            }
+        }
+
+        // Schedule next batch
+        if (endIndex < imagesToLoad.length) {
+            setTimeout(() => loadImageBatch(endIndex), BATCH_DELAY);
+        } else {
+            console.log(`✅ All ${imagesToLoad.length} images queued!`);
+        }
+    }
+
+    // Start loading images AFTER a short delay (let videos start first)
+    setTimeout(() => {
+        console.log('🎬 Starting batch image loading...');
+        loadImageBatch(0);
+    }, 500); // 500ms delay = videos get head start
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
