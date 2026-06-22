@@ -115,8 +115,9 @@
 
     function handleDragStart(e) {
         isDragging = true;
-        startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-        startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+        const touch = e.type === 'touchstart' ? e.touches[0] : e;
+        startX = touch.clientX;
+        startY = touch.clientY;
         lastX = currentX;
         lastY = currentY;
         dragContainer.classList.add('dragging');
@@ -130,8 +131,9 @@
         e.preventDefault();
         e.stopPropagation();
 
-        const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
-        const clientY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+        const touch = e.type === 'touchmove' ? e.touches[0] : e;
+        const clientX = touch.clientX;
+        const clientY = touch.clientY;
 
         const deltaX = clientX - startX;
         const deltaY = clientY - startY;
@@ -278,7 +280,16 @@
             landingReady = true;
             checkVideos();
         }, { once: true });
+
+        landingVideo.addEventListener('error', (e) => {
+            console.warn('⚠️ Landing video load error:', e);
+            landingReady = true; // Continue anyway
+            checkVideos();
+        }, { once: true });
+
         landingVideo.load();
+    } else {
+        landingReady = true;
     }
 
     if (wormholeVideo) {
@@ -286,15 +297,27 @@
             wormholeReady = true;
             checkVideos();
         }, { once: true });
+
+        wormholeVideo.addEventListener('error', (e) => {
+            console.warn('⚠️ Wormhole video load error:', e);
+            wormholeReady = true; // Continue anyway
+            checkVideos();
+        }, { once: true });
+
         wormholeVideo.load();
+    } else {
+        wormholeReady = true;
     }
 
     function completeLoading() {
         console.log(`✅ LOADER: COMPLETE`);
 
-        loadingInfo.querySelector('.loading-title').textContent = 'All Set!';
-        loadingInfo.querySelector('.loading-subtitle').textContent = 'Loading Complete';
-        progressEta.textContent = 'Ready!';
+        const titleEl = loadingInfo?.querySelector('.loading-title');
+        const subtitleEl = loadingInfo?.querySelector('.loading-subtitle');
+
+        if (titleEl) titleEl.textContent = 'All Set!';
+        if (subtitleEl) subtitleEl.textContent = 'Loading Complete';
+        if (progressEta) progressEta.textContent = 'Ready!';
 
         setTimeout(() => {
             loader.style.transition = 'opacity 1s ease-out';

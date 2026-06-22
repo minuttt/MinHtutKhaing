@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Min Htut Khaing – Scholar, Sportsman, Innovator, Environmental Advocate</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,8 +22,19 @@
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020204; color: #fff; overflow-x: hidden; }
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #020204;
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
  
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
@@ -1112,6 +1123,9 @@
             overflow: hidden;
             cursor: grab;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
         }
 
         .drag-gallery-container.dragging {
@@ -1133,6 +1147,15 @@
             background: #0a0a0a;
         }
 
+        @media (max-width: 768px) {
+            .drag-gallery-grid {
+                grid-template-columns: repeat(12, 12rem);
+                grid-auto-rows: 18rem;
+                gap: 2rem;
+                padding: 2rem;
+            }
+        }
+
         .gallery-item {
             width: 16rem;
             height: 24rem;
@@ -1144,6 +1167,15 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             will-change: transform;
             contain: layout style paint;
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 12rem;
+                height: 18rem;
+            }
         }
 
         .gallery-item:hover {
@@ -1183,9 +1215,10 @@
             transform: translate(-50%, -50%);
             z-index: 10002;
             text-align: center;
-            padding: 2.5rem;
+            padding: 2rem;
             background: rgba(30, 30, 30, 0.95);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 1rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -1193,7 +1226,15 @@
             animation: infoFadeIn 0.8s ease-out 0.5s forwards;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             max-width: 90%;
-            width: 480px;
+            width: min(480px, 90vw);
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .loading-info-overlay {
+                padding: 1.5rem;
+                width: 85vw;
+            }
         }
 
         .loading-info-overlay.scrolled {
@@ -1208,14 +1249,14 @@
         }
 
         .loading-title {
-            font-size: 1.75rem;
+            font-size: clamp(1.25rem, 4vw, 1.75rem);
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 0.75rem;
         }
 
         .loading-subtitle {
-            font-size: 1rem;
+            font-size: clamp(0.875rem, 3vw, 1rem);
             font-weight: 500;
             color: rgba(200, 200, 200, 0.95);
             margin-bottom: 1.5rem;
@@ -1224,7 +1265,7 @@
 
         .connection-badge {
             display: inline-block;
-            font-size: 0.75rem;
+            font-size: clamp(0.625rem, 2.5vw, 0.75rem);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -1234,6 +1275,7 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: rgba(200, 200, 200, 0.9);
+            white-space: nowrap;
         }
 
         .connection-fast {
