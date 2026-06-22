@@ -336,12 +336,27 @@
         }
     }
 
+    // Detect if running on file:// protocol (local testing)
+    const isLocalFile = window.location.protocol === 'file:';
+
     if (landingVideo) {
         // iOS-specific: ensure video is properly configured
         landingVideo.muted = true;
         landingVideo.playsInline = true;
         landingVideo.setAttribute('playsinline', '');
         landingVideo.setAttribute('webkit-playsinline', '');
+
+        // On file:// protocol, don't wait for videos (they may not load properly)
+        if (isLocalFile) {
+            console.log('⚠️ Local file:// detected - skipping video preload wait');
+            setTimeout(() => {
+                if (!landingReady) {
+                    landingReady = true;
+                    landingVideoWorking = true;
+                    checkVideos();
+                }
+            }, 500);
+        }
 
         landingVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Landing video ready (canplaythrough)');
@@ -377,6 +392,17 @@
         wormholeVideo.playsInline = true;
         wormholeVideo.setAttribute('playsinline', '');
         wormholeVideo.setAttribute('webkit-playsinline', '');
+
+        // On file:// protocol, don't wait for videos (they may not load properly)
+        if (isLocalFile) {
+            setTimeout(() => {
+                if (!wormholeReady) {
+                    wormholeReady = true;
+                    wormholeVideoWorking = true;
+                    checkVideos();
+                }
+            }, 500);
+        }
 
         wormholeVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Wormhole video ready (canplaythrough)');
