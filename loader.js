@@ -382,9 +382,9 @@
 
     // SMART IMAGE LOADING: Load visible images FIRST, rest after videos
     let imagesLoaded = 0;
-    const VISIBLE_COUNT = 12; // First 12 images (one full set) - load immediately
-    const BATCH_SIZE = 8; // Rest load in batches of 8
-    const BATCH_DELAY = 150; // 150ms between batches
+    const VISIBLE_COUNT = 30; // First 30 images (enough to fill viewport!) - load immediately
+    const BATCH_SIZE = 10; // Rest load in batches of 10
+    const BATCH_DELAY = 100; // 100ms between batches (faster!)
 
     function loadImageBatch(startIndex) {
         const endIndex = Math.min(startIndex + BATCH_SIZE, imagesToLoad.length);
@@ -415,9 +415,11 @@
         }
     }
 
-    // IMMEDIATELY load first 12 images (user sees these during loader!)
-    console.log('🎬 Loading first 12 visible images immediately...');
-    loadImageBatch(0);
+    // IMMEDIATELY load first 30 images (fills entire viewport - no blank spots!)
+    console.log('🎬 Loading first 30 visible images immediately...');
+    for (let i = 0; i < Math.min(VISIBLE_COUNT, imagesToLoad.length); i += BATCH_SIZE) {
+        setTimeout(() => loadImageBatch(i), (i / BATCH_SIZE) * 50); // Stagger by 50ms
+    }
 
     // Rest will load AFTER videos complete (see checkVideos function)
 
