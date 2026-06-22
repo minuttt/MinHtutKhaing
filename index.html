@@ -10,7 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -1383,7 +1382,7 @@
 
 <!-- Landing Overlay -->
 <div id="landing-overlay">
-    <video id="landing-video" muted loop playsinline preload="auto" webkit-playsinline autoplay playbackRate="1.0" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect width='1920' height='1080' fill='%23020204'/%3E%3C/svg%3E">
+    <video id="landing-video" muted loop playsinline preload="auto" webkit-playsinline autoplay poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect width='1920' height='1080' fill='%23020204'/%3E%3C/svg%3E">
         <source src="landing.mp4" type="video/mp4">
         Your browser does not support video playback.
     </video>
@@ -3166,19 +3165,24 @@
         // Simple video autoplay - play immediately after loader
         function ensureLandingVideoPlays() {
             if (landingVideo) {
+                console.log(`🎬 Landing video readyState: ${landingVideo.readyState}`);
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
 
-                // Play immediately
+                // Video should be ready (loader waited for it)
                 const playPromise = landingVideo.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        console.log('✅ Landing video playing');
+                        console.log('✅ Landing video playing smoothly');
                     }).catch(err => {
-                        console.warn('⚠️ Autoplay failed, retrying...', err);
+                        console.error('❌ Landing video autoplay failed:', err);
+                        // Force reload and retry
+                        landingVideo.load();
                         setTimeout(() => {
-                            landingVideo.play().catch(e => console.error('❌ Failed:', e));
-                        }, 100);
+                            landingVideo.play()
+                                .then(() => console.log('✅ Landing video playing after reload'))
+                                .catch(e => console.error('❌ Landing video completely failed:', e));
+                        }, 200);
                     });
                 }
             }
@@ -3203,10 +3207,14 @@
         let landingAnimationsStarted = false;
 
         function startLandingAnimations() {
-            if (landingAnimationsStarted) return;
+            if (landingAnimationsStarted) {
+                console.warn('⚠️ startLandingAnimations called but already started!');
+                return;
+            }
             landingAnimationsStarted = true;
 
             console.log('🎬 Starting landing page text animations NOW');
+            console.log(`🎯 BEFORE animation: portfolio opacity="${portfolio.style.opacity || 'unset'}", transform="${portfolio.style.transform || 'unset'}"`);
 
             // Fade in text elements with SLOWER animations
             setTimeout(() => {
@@ -3214,6 +3222,7 @@
                 portfolio.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 portfolio.style.opacity = '1';
                 portfolio.style.transform = 'translateY(0)';
+                console.log(`✨ AFTER setting: portfolio opacity="${portfolio.style.opacity}", transform="${portfolio.style.transform}"`);
             }, 400);
 
             setTimeout(() => {
@@ -3230,9 +3239,9 @@
                 subtitle.style.transform = 'translateY(0)';
             }, 1200);
 
-            // Delay "Press any key" by 2.5 seconds after subtitle appears
+            // Show "Press any key" shortly after subtitle
             setTimeout(() => {
-                console.log('📝 [+3.9s] "Press any key to launch" fading in');
+                console.log('📝 [+2.0s] "Press any key to launch" fading in');
                 hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 hint.style.opacity = '0.7';
 
@@ -3243,10 +3252,10 @@
                 }
 
                 setTimeout(() => {
-                    console.log('✨ [+5.4s] "Press any key" animation started');
+                    console.log('✨ [+3.2s] "Press any key" animation started');
                     hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
-                }, 1500);
-            }, 3900);
+                }, 1200);
+            }, 2000);
         }
 
         // NO BUFFER - Allow transition immediately after loader completes
@@ -3255,18 +3264,20 @@
         // Start animations IMMEDIATELY when loader is done (loader already waited 2s)
         window.addEventListener('loaderComplete', () => {
             console.log('✅ RECEIVED loaderComplete - starting landing animations NOW');
+            console.log(`📊 STATE CHECK: landingAnimationsStarted=${landingAnimationsStarted}, canStartTransition=${canStartTransition}`);
+            console.log(`📍 ELEMENT CHECK: portfolio exists=${!!portfolio}, opacity=${portfolio.style.opacity || 'CSS default'}`);
             startLandingAnimations();
             canStartTransition = true;
         }, { once: true });
 
-        // Fallback: enable after short delay if no loader
+        // Fallback: only after max possible load time (25s + 2s fade = 27s)
         setTimeout(() => {
             if (!canStartTransition) {
-                console.log('⚠️ No loader detected - starting animations immediately');
+                console.log('⚠️ No loader detected after 30s - starting animations as fallback');
                 startLandingAnimations();
                 canStartTransition = true;
             }
-        }, 2000);
+        }, 30000);
 
         window.dismissLanding = function() {
             if (transitionStarted) {
@@ -3274,9 +3285,24 @@
                 return; // Prevent multiple triggers
             }
             if (!canStartTransition) {
-                console.log('⏸️ Transition BLOCKED - please wait for 2.5s buffer period to end');
-                return; // Block transition during buffer period
+                console.log('⏸️ Transition BLOCKED - loader not complete yet');
+                return;
             }
+
+            // Check if wormhole video is ready (iOS/mobile needs readyState >= 4)
+            const videoReady = wormholeVideo.readyState >= 4;
+            console.log(`🎬 Wormhole readyState: ${wormholeVideo.readyState} (${videoReady ? 'READY' : 'NOT READY'})`);
+
+            if (!videoReady) {
+                console.warn('⚠️ Wormhole video not fully ready - waiting 1 second...');
+                // Wait for video to reach HAVE_ENOUGH_DATA state
+                setTimeout(() => {
+                    console.log(`🔄 Retry - Wormhole readyState: ${wormholeVideo.readyState}`);
+                    window.dismissLanding();
+                }, 1000);
+                return;
+            }
+
             transitionStarted = true;
 
             console.log('🚀 Transition APPROVED - starting wormhole sequence...');
@@ -3312,18 +3338,26 @@
                     // Ensure wormhole video plays immediately (already preloaded)
                     wormholeVideo.muted = true;
                     wormholeVideo.playsInline = true;
+                    wormholeVideo.setAttribute('playsinline', '');
+                    wormholeVideo.setAttribute('webkit-playsinline', '');
                     wormholeVideo.currentTime = 0;
 
-                    // Play immediately - video is already preloaded
+                    console.log(`🎬 Attempting wormhole play (readyState: ${wormholeVideo.readyState})`);
+
+                    // Video should be ready by now (loader waited for it)
                     const wormholePlayPromise = wormholeVideo.play();
                     if (wormholePlayPromise !== undefined) {
                         wormholePlayPromise.then(() => {
-                            console.log('✅ Wormhole video playing instantly');
+                            console.log('✅ Wormhole video playing smoothly');
                         }).catch(err => {
-                            console.warn('⚠️ Wormhole play failed, retrying...', err);
+                            console.error('❌ Wormhole play failed:', err);
+                            // Force load and retry
+                            wormholeVideo.load();
                             setTimeout(() => {
-                                wormholeVideo.play().catch(e => console.log('ℹ️ Wormhole skipped'));
-                            }, 50);
+                                wormholeVideo.play()
+                                    .then(() => console.log('✅ Wormhole playing after reload'))
+                                    .catch(e => console.error('❌ Wormhole completely failed:', e));
+                            }, 200);
                         });
                     }
 
@@ -3602,6 +3636,14 @@
 
                 musicStarted = true;
                 console.log(`🎵 TRIGGERING: ${e.type}`);
+
+                // Remove all event listeners immediately
+                document.removeEventListener('click', startMusicDirectly);
+                document.removeEventListener('mousedown', startMusicDirectly);
+                document.removeEventListener('keydown', startMusicDirectly);
+                document.removeEventListener('keypress', startMusicDirectly);
+                document.removeEventListener('keyup', startMusicDirectly);
+                document.removeEventListener('touchstart', startMusicDirectly);
 
                 // Dismiss landing overlay FIRST
                 if (window.dismissLanding) {
