@@ -93,6 +93,7 @@
     let hasScrolled = false;
     let videosLoaded = false;
     let maxLoadTime = 5500;
+    let exceedsMaxTime = false;
     const startTime = Date.now();
 
     // Set initial position to show center tile - use translate3d for GPU acceleration
@@ -205,7 +206,7 @@
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
 
-    // Initial connection detection (estimate only)
+    // Connection detection
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     let connectionSpeed = 50;
 
@@ -216,22 +217,19 @@
         connectionSpeed = types[conn.effectiveType] || 20;
     }
 
-    // Start with "Detecting..." until we know actual speed
-    connectionBadge.textContent = 'Detecting Connection...';
-    connectionBadge.className = 'connection-badge connection-medium';
-
-    // Set minimum loading times based on initial estimate
     if (connectionSpeed >= 10) {
-        maxLoadTime = 8000; // 8s minimum for fast estimate
+        maxLoadTime = 5500;
+        connectionBadge.textContent = 'Fast Connection';
+        connectionBadge.className = 'connection-badge connection-fast';
     } else if (connectionSpeed >= 3) {
-        maxLoadTime = 15000; // 15s for medium estimate
+        maxLoadTime = 10000;
+        connectionBadge.textContent = 'Slow Connection';
+        connectionBadge.className = 'connection-badge connection-medium';
     } else {
-        maxLoadTime = 30000; // 30s for slow estimate
+        maxLoadTime = 25000;
+        connectionBadge.textContent = 'Very Slow Connection';
+        connectionBadge.className = 'connection-badge connection-slow';
     }
-
-    // Track actual loading performance
-    let actualLoadSpeed = null;
-    const videoStartTime = Date.now();
 
     console.log(`⏱️ LOAD TIME: ${(maxLoadTime/1000).toFixed(1)}s`);
 
@@ -242,11 +240,10 @@
         const elapsed = Date.now() - startTime;
         const remaining = Math.max(0, (maxLoadTime - elapsed) / 1000);
 
-        if (remaining > 0) {
+        if (remaining > 0 && !exceedsMaxTime) {
             progressEta.textContent = `ETA: ${Math.ceil(remaining)}s`;
-        } else if (!videosLoaded) {
-            // Time complete but videos still loading
-            progressEta.textContent = 'Loading visuals...';
+        } else if (exceedsMaxTime) {
+            progressEta.textContent = 'Exceeded maximum loading time, continuing with static background';
         } else {
             progressEta.textContent = 'Almost ready...';
         }
@@ -258,8 +255,11 @@
 
         updateProgress(timeProgress);
 
-        // SIMPLE: Just complete when minimum time passes
-        // Don't wait for videos - they'll load in background
+        if (elapsed > maxLoadTime && !exceedsMaxTime) {
+            exceedsMaxTime = true;
+            updateProgress(100);
+        }
+
         if (timeProgress >= 100) {
             clearInterval(progressInterval);
             completeLoading();
@@ -270,87 +270,20 @@
     let wormholeReady = false;
 
     function checkVideos() {
-        const elapsed = Date.now() - startTime;
-        console.log(`🎥 VIDEO CHECK: Landing=${landingReady}, Wormhole=${wormholeReady} (${(elapsed/1000).toFixed(1)}s)`);
-
         if (landingReady && wormholeReady) {
             videosLoaded = true;
-            const loadTime = (elapsed / 1000).toFixed(1);
-            console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
-
-            // Don't calculate speed for local files (meaningless)
-            if (!isLocalFile) {
-                const videoSizeMB = 88;
-                const loadTimeSeconds = elapsed / 1000;
-                const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
-
-                // Update badge with REAL performance
-                if (actualSpeedMbps >= 10) {
-                    connectionBadge.textContent = 'Fast Connection';
-                    connectionBadge.className = 'connection-badge connection-fast';
-                } else if (actualSpeedMbps >= 3) {
-                    connectionBadge.textContent = 'Moderate Connection';
-                    connectionBadge.className = 'connection-badge connection-medium';
-                } else {
-                    connectionBadge.textContent = 'Slow Connection';
-                    connectionBadge.className = 'connection-badge connection-slow';
-                }
-
-                console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
-            }
-
-            if (progressEta) {
-                progressEta.textContent = 'Visuals loaded!';
-            }
         }
-    }
-
-    // Detect if running on file:// protocol (local testing)
-    const isLocalFile = window.location.protocol === 'file:';
-
-    // Override timing for local file testing
-    if (isLocalFile) {
-        maxLoadTime = 5500; // Fast 5.5s for local testing
-        connectionBadge.textContent = 'Local Testing';
-        connectionBadge.className = 'connection-badge connection-fast';
-        console.log('⚠️ Local file:// detected - using 5.5s loading time');
     }
 
     if (landingVideo) {
-        // iOS-specific: ensure video is properly configured
-        landingVideo.muted = true;
-        landingVideo.playsInline = true;
-        landingVideo.setAttribute('playsinline', '');
-        landingVideo.setAttribute('webkit-playsinline', '');
-
-        // Fallback timeout ONLY for local file testing
-        if (isLocalFile) {
-            setTimeout(() => {
-                if (!landingReady) {
-                    console.warn('⚠️ Local file - landing video timeout');
-                    landingReady = true;
-                    checkVideos();
-                }
-            }, 500);
-        }
-
         landingVideo.addEventListener('canplaythrough', () => {
-            console.log('✅ Landing video ready (canplaythrough)');
             landingReady = true;
             checkVideos();
         }, { once: true });
 
-        landingVideo.addEventListener('loadeddata', () => {
-            if (!landingReady) {
-                console.log('✅ Landing video ready (loadeddata fallback)');
-                landingReady = true;
-                checkVideos();
-            }
-        }, { once: true });
-
         landingVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Landing video load error:', e);
-            landingReady = true;
+            landingReady = true; // Continue anyway
             checkVideos();
         }, { once: true });
 
@@ -360,40 +293,14 @@
     }
 
     if (wormholeVideo) {
-        // iOS-specific: ensure video is properly configured
-        wormholeVideo.muted = true;
-        wormholeVideo.playsInline = true;
-        wormholeVideo.setAttribute('playsinline', '');
-        wormholeVideo.setAttribute('webkit-playsinline', '');
-
-        // Fallback timeout ONLY for local file testing
-        if (isLocalFile) {
-            setTimeout(() => {
-                if (!wormholeReady) {
-                    console.warn('⚠️ Local file - wormhole video timeout');
-                    wormholeReady = true;
-                    checkVideos();
-                }
-            }, 500);
-        }
-
         wormholeVideo.addEventListener('canplaythrough', () => {
-            console.log('✅ Wormhole video ready (canplaythrough)');
             wormholeReady = true;
             checkVideos();
         }, { once: true });
 
-        wormholeVideo.addEventListener('loadeddata', () => {
-            if (!wormholeReady) {
-                console.log('✅ Wormhole video ready (loadeddata fallback)');
-                wormholeReady = true;
-                checkVideos();
-            }
-        }, { once: true });
-
         wormholeVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Wormhole video load error:', e);
-            wormholeReady = true;
+            wormholeReady = true; // Continue anyway
             checkVideos();
         }, { once: true });
 
@@ -414,15 +321,13 @@
 
         // Wait 1 second to show "All Set!" message
         setTimeout(() => {
-            const elapsed = Date.now() - startTime;
-            console.log(`🎬 Starting fade-out NOW (total time: ${(elapsed/1000).toFixed(1)}s)`);
+            console.log('🎬 Starting fade-out NOW');
             loader.style.transition = 'opacity 1s ease-out';
             loader.classList.add('fade-out');
 
             // After fade-out completes, hide and cleanup
             setTimeout(() => {
-                const fadeCompleteTime = Date.now() - startTime;
-                console.log(`👻 Loader hidden - cleaning up (total time: ${(fadeCompleteTime/1000).toFixed(1)}s)`);
+                console.log('👻 Loader hidden - cleaning up');
                 loader.classList.add('hidden');
                 loader.style.display = 'none';
 
@@ -434,10 +339,8 @@
 
                 // DISPATCH EVENT NOW - so landing animations can start
                 window.loaderIsComplete = true;
-                const eventTime = Date.now() - startTime;
-                console.log(`🔓 DISPATCHING loaderComplete event NOW (at ${(eventTime/1000).toFixed(1)}s)`);
                 window.dispatchEvent(new CustomEvent('loaderComplete'));
-                console.log(`✅ Event dispatched! Landing page should animate now.`);
+                console.log(`🔓 LOADER FULLY COMPLETE - dispatching event for landing animations`);
             }, 1000);
         }, 1000);
     }
