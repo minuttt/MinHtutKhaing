@@ -22,7 +22,7 @@
         CDN_BASE + 'IMG_0226.jpg',
         CDN_BASE + 'IMG_0236_f71eqk.jpg',
         CDN_BASE + 'IMG_0237_qcd10z.jpg',
-        CDN_BASE + 'IMG_0249_tyOwqo.jpg',
+        CDN_BASE + 'IMG_0249_tyowqo.jpg',
         CDN_BASE + 'IMG_0250_byed5z.jpg',
         CDN_BASE + 'IMG_0255_z0pgv0.jpg',
         CDN_BASE + 'IMG_0257_dye2fl.jpg',
