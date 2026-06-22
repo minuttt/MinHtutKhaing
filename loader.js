@@ -351,6 +351,14 @@
     // Detect if running on file:// protocol (local testing)
     const isLocalFile = window.location.protocol === 'file:';
 
+    // Override timing for local file testing
+    if (isLocalFile) {
+        maxLoadTime = 5500; // Fast 5.5s for local testing
+        connectionBadge.textContent = 'Local Testing';
+        connectionBadge.className = 'connection-badge connection-fast';
+        console.log('⚠️ Local file:// detected - using 5.5s loading time');
+    }
+
     if (landingVideo) {
         // iOS-specific: ensure video is properly configured
         landingVideo.muted = true;
