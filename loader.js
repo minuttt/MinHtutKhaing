@@ -257,25 +257,7 @@
 
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-
-        // Show honest time-based progress, don't wait forever for videos
-        let progress;
-
-        if (elapsed < maxLoadTime) {
-            // Normal loading: 0-90%
-            progress = (elapsed / maxLoadTime) * 90;
-        } else if (!videosLoaded && elapsed < (maxLoadTime + 5000)) {
-            // Grace period (5s): 90-95%
-            const graceElapsed = elapsed - maxLoadTime;
-            progress = 90 + (graceElapsed / 5000) * 5;
-        } else if (!videosLoaded) {
-            // Give up waiting: 95-100% quickly
-            const giveUpElapsed = elapsed - (maxLoadTime + 5000);
-            progress = Math.min(95 + (giveUpElapsed / 2000) * 5, 100);
-        } else {
-            // Videos loaded!
-            progress = 100;
-        }
+        const progress = Math.min((elapsed / maxLoadTime) * 100, 100);
 
         updateProgress(progress);
 
@@ -283,20 +265,9 @@
             exceedsMaxTime = true;
         }
 
-        // Complete when EITHER:
-        // 1. Videos loaded, OR
-        // 2. Time complete + grace period (enough for 88MB download)
-        const gracePeriod = 45000; // 45 seconds grace for production (88MB needs time!)
-        const forceComplete = elapsed > (maxLoadTime + gracePeriod);
-
-        if (videosLoaded || forceComplete) {
-            if (forceComplete && !videosLoaded) {
-                console.warn('⚠️ Videos not ready after 45s grace - continuing without them');
-                connectionBadge.textContent = 'Videos Unavailable';
-                connectionBadge.className = 'connection-badge connection-slow';
-            }
+        // SIMPLE: Complete when time passes, videos download in background!
+        if (progress >= 100) {
             clearInterval(progressInterval);
-            updateProgress(100);
             completeLoading();
         }
     }, 50);
