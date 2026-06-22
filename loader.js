@@ -373,17 +373,16 @@
         landingVideo.setAttribute('playsinline', '');
         landingVideo.setAttribute('webkit-playsinline', '');
 
-        // On file:// protocol, don't wait for videos (they may not load properly)
-        if (isLocalFile) {
-            console.log('⚠️ Local file:// detected - skipping video preload wait');
-            setTimeout(() => {
-                if (!landingReady) {
-                    landingReady = true;
-                    landingVideoWorking = true;
-                    checkVideos();
-                }
-            }, 500);
-        }
+        // Fallback timeout - if events don't fire, mark ready anyway after reasonable time
+        const videoTimeout = isLocalFile ? 500 : 5000; // 500ms local, 5s production
+        setTimeout(() => {
+            if (!landingReady) {
+                console.warn(`⚠️ Landing video timeout after ${videoTimeout}ms - assuming ready`);
+                landingReady = true;
+                landingVideoWorking = true;
+                checkVideos();
+            }
+        }, videoTimeout);
 
         landingVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Landing video ready (canplaythrough)');
@@ -403,8 +402,8 @@
 
         landingVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Landing video load error:', e);
-            landingReady = true; // Continue anyway but mark as failed
-            landingVideoWorking = false;
+            landingReady = true;
+            landingVideoWorking = true; // Mark as working anyway - will try to play later
             checkVideos();
         }, { once: true });
 
@@ -420,16 +419,15 @@
         wormholeVideo.setAttribute('playsinline', '');
         wormholeVideo.setAttribute('webkit-playsinline', '');
 
-        // On file:// protocol, don't wait for videos (they may not load properly)
-        if (isLocalFile) {
-            setTimeout(() => {
-                if (!wormholeReady) {
-                    wormholeReady = true;
-                    wormholeVideoWorking = true;
-                    checkVideos();
-                }
-            }, 500);
-        }
+        // Fallback timeout - if events don't fire, mark ready anyway
+        setTimeout(() => {
+            if (!wormholeReady) {
+                console.warn(`⚠️ Wormhole video timeout after ${videoTimeout}ms - assuming ready`);
+                wormholeReady = true;
+                wormholeVideoWorking = true;
+                checkVideos();
+            }
+        }, videoTimeout);
 
         wormholeVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Wormhole video ready (canplaythrough)');
@@ -449,8 +447,8 @@
 
         wormholeVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Wormhole video load error:', e);
-            wormholeReady = true; // Continue anyway but mark as failed
-            wormholeVideoWorking = false;
+            wormholeReady = true;
+            wormholeVideoWorking = true; // Mark as working anyway - will try to play later
             checkVideos();
         }, { once: true });
 
