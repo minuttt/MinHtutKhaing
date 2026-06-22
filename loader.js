@@ -71,6 +71,7 @@
                 img.src = allImages[i];
                 img.alt = `Photo ${i + 1}`;
                 img.draggable = false;
+                img.loading = 'lazy'; // Browser loads images only when near viewport!
 
                 item.appendChild(img);
                 fragment.appendChild(item);
