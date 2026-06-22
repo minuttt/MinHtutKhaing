@@ -7,7 +7,7 @@
     const CDN_BASE = 'https://res.cloudinary.com/dnmayywbs/image/upload/f_auto,q_auto,w_512/';
 
     const allAvailableImages = [
-        CDN_BASE + 'IMG_0173_ninlcr.jpg',
+        CDN_BASE + 'IMG_0173_nlnlcr.jpg',
         CDN_BASE + 'IMG_0176_uirmtb.jpg',
         CDN_BASE + 'IMG_0192_ius3au.jpg',
         CDN_BASE + 'IMG_0199_atbzkn.jpg',
@@ -22,7 +22,7 @@
         CDN_BASE + 'IMG_0226_a4s8bk.jpg',
         CDN_BASE + 'IMG_0236_f71eqk.jpg',
         CDN_BASE + 'IMG_0237_qcd10z.jpg',
-        CDN_BASE + 'IMG_0249_tyowqo.jpg',
+        CDN_BASE + 'IMG_0249_ty0wqo.jpg',
         CDN_BASE + 'IMG_0250_byed5z.jpg',
         CDN_BASE + 'IMG_0255_z0pgv0.jpg',
         CDN_BASE + 'IMG_0257_dye2fl.jpg',
@@ -43,7 +43,7 @@
         CDN_BASE + 'IMG_0351_rxipgz.jpg',
         CDN_BASE + 'IMG_0353_nzj7do.jpg',
         CDN_BASE + 'IMG_0355_ig14wz.jpg',
-        CDN_BASE + 'IMG_0357_I2JGTY.jpg',
+        CDN_BASE + 'IMG_0357_l2jgty.jpg',
         CDN_BASE + 'IMG_0359_psf9jx.jpg',
         CDN_BASE + 'IMG_0371_sluabn.jpg',
         CDN_BASE + 'IMG_0395_i4fqmu.jpg',
