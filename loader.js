@@ -281,9 +281,15 @@
         // Complete when:
         // 1. Minimum time passed AND videos loaded, OR
         // 2. Time + grace period exceeded (give up waiting)
-        const gracePeriod = 15000; // 15 seconds grace (reduced - fewer images competing)
+        const gracePeriod = 30000; // 30 seconds grace for 88MB videos
         const minTimePassed = elapsed >= maxLoadTime;
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
+
+        // If timing out, at least START loading images so user sees something
+        if (forceComplete && imagesLoaded === 0) {
+            console.warn('⚠️ Timeout - starting image load anyway');
+            loadImageBatch(0);
+        }
 
         if ((minTimePassed && videosLoaded) || forceComplete) {
             if (forceComplete && !videosLoaded) {
@@ -336,11 +342,8 @@
         }
     }
 
-    // Start loading images AFTER a short delay (let videos start first)
-    setTimeout(() => {
-        console.log('🎬 Starting batch image loading...');
-        loadImageBatch(0);
-    }, 500); // 500ms delay = videos get head start
+    // DON'T start loading images yet - wait for videos first!
+    // Images will start loading AFTER videos are ready (see checkVideos function)
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
@@ -350,6 +353,10 @@
             videosLoaded = true;
             const loadTime = (elapsed / 1000).toFixed(1);
             console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
+
+            // NOW start loading images - videos are done!
+            console.log('🎬 Videos loaded! Now starting batch image loading...');
+            loadImageBatch(0);
 
             // Only calculate speed if videos actually loaded (not error fallback)
             if (landingVideoWorking && wormholeVideoWorking) {
