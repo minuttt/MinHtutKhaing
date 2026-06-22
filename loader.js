@@ -316,9 +316,6 @@
         console.log('⚠️ Local file:// detected - using 5.5s loading time');
     }
 
-    // Define video timeout OUTSIDE the if blocks so both can use it
-    const videoTimeout = isLocalFile ? 500 : 5000; // 500ms local, 5s production
-
     if (landingVideo) {
         // iOS-specific: ensure video is properly configured
         landingVideo.muted = true;
@@ -326,14 +323,16 @@
         landingVideo.setAttribute('playsinline', '');
         landingVideo.setAttribute('webkit-playsinline', '');
 
-        // Fallback timeout - if events don't fire, mark ready anyway after reasonable time
-        setTimeout(() => {
-            if (!landingReady) {
-                console.warn(`⚠️ Landing video timeout after ${videoTimeout}ms - assuming ready`);
-                landingReady = true;
-                checkVideos();
-            }
-        }, videoTimeout);
+        // Fallback timeout ONLY for local file testing
+        if (isLocalFile) {
+            setTimeout(() => {
+                if (!landingReady) {
+                    console.warn('⚠️ Local file - landing video timeout');
+                    landingReady = true;
+                    checkVideos();
+                }
+            }, 500);
+        }
 
         landingVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Landing video ready (canplaythrough)');
@@ -367,14 +366,16 @@
         wormholeVideo.setAttribute('playsinline', '');
         wormholeVideo.setAttribute('webkit-playsinline', '');
 
-        // Fallback timeout - if events don't fire, mark ready anyway
-        setTimeout(() => {
-            if (!wormholeReady) {
-                console.warn(`⚠️ Wormhole video timeout after ${videoTimeout}ms - assuming ready`);
-                wormholeReady = true;
-                checkVideos();
-            }
-        }, videoTimeout);
+        // Fallback timeout ONLY for local file testing
+        if (isLocalFile) {
+            setTimeout(() => {
+                if (!wormholeReady) {
+                    console.warn('⚠️ Local file - wormhole video timeout');
+                    wormholeReady = true;
+                    checkVideos();
+                }
+            }, 500);
+        }
 
         wormholeVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Wormhole video ready (canplaythrough)');
