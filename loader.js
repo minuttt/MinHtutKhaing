@@ -367,15 +367,12 @@
                 const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
                 console.log(`✅ All loader event listeners removed at ${totalTime}s`);
                 console.log('🔓 KEYBOARD UNBLOCKED - keys should work now!');
-                console.log('📍 Landing page should now be visible');
+                console.log('📍 Landing page should now be visible and accepting input');
 
-                // Test if keyboard is really unblocked
-                const testKeyHandler = (e) => {
-                    console.log(`✅ TEST: Keydown detected! Key: ${e.key} - keyboard is working!`);
-                    window.removeEventListener('keydown', testKeyHandler);
-                };
-                window.addEventListener('keydown', testKeyHandler, { once: true, capture: false });
-                console.log('🧪 Test listener added - press any key to verify keyboard works');
+                // CRITICAL FIX: Signal to landing page that it can now accept keyboard input
+                // Dispatch custom event to notify landing/music that loader is done
+                window.dispatchEvent(new CustomEvent('loaderComplete'));
+                console.log('📢 Dispatched loaderComplete event to wake up landing page');
             }, 1000);
         }, 1000);
     }

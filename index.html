@@ -3564,13 +3564,35 @@
                 });
             };
 
-            // Valid triggers (browsers allow these for autoplay)
-            document.addEventListener('click', startMusicDirectly, { once: true });
-            document.addEventListener('mousedown', startMusicDirectly, { once: true });
-            document.addEventListener('keydown', startMusicDirectly, { once: true });
-            document.addEventListener('touchstart', startMusicDirectly, { once: true });
+            // CRITICAL FIX: Wait for loader to complete before setting up keyboard listeners
+            function setupInteractionListeners() {
+                console.log('🎵 Setting up interaction listeners NOW (loader is done)');
 
-            console.log('🎵 Waiting for user interaction (click, mousedown, keypress, or touch)');
+                // Valid triggers (browsers allow these for autoplay)
+                document.addEventListener('click', startMusicDirectly, { once: true });
+                document.addEventListener('mousedown', startMusicDirectly, { once: true });
+                document.addEventListener('keydown', startMusicDirectly, { once: true });
+                document.addEventListener('touchstart', startMusicDirectly, { once: true });
+
+                console.log('🎵 Waiting for user interaction (click, mousedown, keydown, or touch)');
+            }
+
+            // Wait for loader to complete before setting up listeners
+            window.addEventListener('loaderComplete', () => {
+                console.log('📢 Received loaderComplete event - setting up listeners in 100ms');
+                setTimeout(() => {
+                    setupInteractionListeners();
+                }, 100);
+            }, { once: true });
+
+            // Fallback: if no loader, set up immediately
+            setTimeout(() => {
+                const loader = document.getElementById('premium-loader');
+                if (!loader || loader.classList.contains('hidden')) {
+                    console.log('⚠️ No active loader detected - setting up listeners immediately');
+                    setupInteractionListeners();
+                }
+            }, 1000);
         }
 
         function shuffleArray(array) {
