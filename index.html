@@ -3167,6 +3167,7 @@
             subtitle.style.transform = 'translateY(0)';
         }, 1200);
 
+        // Delay "Press any key" by 2.5 seconds after subtitle appears
         setTimeout(() => {
             hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
             hint.style.opacity = '0.7';
@@ -3180,11 +3181,21 @@
             setTimeout(() => {
                 hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
             }, 1500);
-        }, 1400);
+        }, 3900); // 1200ms (subtitle) + 2500ms (buffer) = 3700ms, rounded to 3900ms
 
-        // Transition sequence
+        // Transition sequence - also block for 2.5s after hint appears
+        let canStartTransition = false;
+        setTimeout(() => {
+            canStartTransition = true;
+            console.log('✅ Landing page interaction now enabled (2.5s buffer elapsed)');
+        }, 6400); // 3900ms (hint appears) + 2500ms (buffer) = 6400ms
+
         window.dismissLanding = function() {
             if (transitionStarted) return; // Prevent multiple triggers
+            if (!canStartTransition) {
+                console.log('⏸️ Transition blocked - let users admire the landing page');
+                return; // Block transition during buffer period
+            }
             transitionStarted = true;
 
             console.log('🎭 Starting smooth transition sequence');

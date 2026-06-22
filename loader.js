@@ -2,22 +2,34 @@
 (function() {
     console.log('🎨 Initializing infinite drag gallery loader...');
 
-    // Personal photos from Loading images folder (JPG only - browsers don't support HEIC)
+    // All 59 personal photos from Loading images folder (converted to JPG)
     const personalPhotos = [
-        'Loading%20images/Loading%20images/1354d826-0e6b-43f4-bad2-c49c270e16a1.jpg',
-        'Loading%20images/Loading%20images/5DE894B2-3103-4C30-8DFE-08793200DB9A.jpg',
-        'Loading%20images/Loading%20images/7e64b24a-4c78-4d02-bf91-79aea9547b8e.jpg',
-        'Loading%20images/Loading%20images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg',
-        'Loading%20images/Loading%20images/IMG_6082.JPG'
+        'Loading%20images/IMG_0173.jpg', 'Loading%20images/IMG_0176.jpg', 'Loading%20images/IMG_0192.jpg',
+        'Loading%20images/IMG_0199.jpg', 'Loading%20images/IMG_0201.jpg', 'Loading%20images/IMG_0206.jpg',
+        'Loading%20images/IMG_0208.jpg', 'Loading%20images/IMG_0212.jpg', 'Loading%20images/IMG_0218.jpg',
+        'Loading%20images/IMG_0219.jpg', 'Loading%20images/IMG_0220.jpg', 'Loading%20images/IMG_0221.jpg',
+        'Loading%20images/IMG_0226.jpg', 'Loading%20images/IMG_0236.jpg', 'Loading%20images/IMG_0237.jpg',
+        'Loading%20images/IMG_0249.jpg', 'Loading%20images/IMG_0250.jpg', 'Loading%20images/IMG_0255.jpg',
+        'Loading%20images/IMG_0257.jpg', 'Loading%20images/IMG_0267.jpg', 'Loading%20images/IMG_0268.jpg',
+        'Loading%20images/IMG_0274.jpg', 'Loading%20images/IMG_0275.jpg', 'Loading%20images/IMG_0276.jpg',
+        'Loading%20images/IMG_0277.jpg', 'Loading%20images/IMG_0283.jpg', 'Loading%20images/IMG_0301.jpg',
+        'Loading%20images/IMG_0303.jpg', 'Loading%20images/IMG_0307.jpg', 'Loading%20images/IMG_0312.jpg',
+        'Loading%20images/IMG_0331.jpg', 'Loading%20images/IMG_0333.jpg', 'Loading%20images/IMG_0343.jpg',
+        'Loading%20images/IMG_0349.jpg', 'Loading%20images/IMG_0351.jpg', 'Loading%20images/IMG_0353.jpg',
+        'Loading%20images/IMG_0355.jpg', 'Loading%20images/IMG_0357.jpg', 'Loading%20images/IMG_0359.jpg',
+        'Loading%20images/IMG_0371.jpg', 'Loading%20images/IMG_0395.jpg', 'Loading%20images/IMG_0546.jpg',
+        'Loading%20images/IMG_4130.jpg', 'Loading%20images/IMG_4144.jpg', 'Loading%20images/IMG_4154.jpg',
+        'Loading%20images/IMG_7995.jpg', 'Loading%20images/IMG_8008.jpg', 'Loading%20images/IMG_8044.jpg',
+        'Loading%20images/IMG_8051.jpg', 'Loading%20images/IMG_8053.jpg', 'Loading%20images/IMG_8062.jpg',
+        'Loading%20images/IMG_8072.jpg', 'Loading%20images/IMG_8762.jpg', 'Loading%20images/IMG_8819.jpg',
+        'Loading%20images/IMG_8990.jpg', 'Loading%20images/IMG_8995.jpg', 'Loading%20images/IMG_9888.jpg',
+        'Loading%20images/IMG_9897.jpg', 'Loading%20images/IMG_9905.jpg'
     ];
 
-    // Duplicate photos to create rich infinite grid effect
-    const photos = [];
-    for (let i = 0; i < 30; i++) {
-        photos.push(personalPhotos[i % personalPhotos.length]);
-    }
+    // Use all photos directly - no duplication needed!
+    const photos = personalPhotos;
 
-    console.log(`📸 Loaded ${photos.length} photos for gallery`);
+    console.log(`📸 Loaded ${photos.length} unique personal photos for gallery`);
 
     // Elements
     const loader = document.getElementById('premium-loader');
@@ -169,7 +181,7 @@
     window.addEventListener('keypress', blockKeyboard, { passive: false, capture: true });
     window.addEventListener('keyup', blockKeyboard, { passive: false, capture: true });
 
-    // Connection detection with minimum 5.5s load time
+    // Connection detection with smart minimum load times
     function detectConnection() {
         try {
             const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -181,23 +193,32 @@
             }
 
             const estimatedSeconds = (88 * 8) / connectionSpeed;
-            // Minimum 5.5 seconds, maximum 30 seconds
-            maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, 5500), 30000);
 
+            // Smart minimum times based on connection:
+            // Fast (20+ Mbps): 4.5s minimum
+            // Medium (5-20 Mbps): 5.5s minimum
+            // Slow (<5 Mbps): 7s minimum, up to 30s max
+            let minLoadTime;
             if (connectionSpeed >= 20) {
+                minLoadTime = 4500; // 4.5 seconds for fast connections
                 connectionBadge.textContent = 'Lightning Fast';
                 connectionBadge.className = 'connection-badge connection-fast';
             } else if (connectionSpeed >= 5) {
+                minLoadTime = 5500; // 5.5 seconds for medium
                 connectionBadge.textContent = 'Smooth Connection';
                 connectionBadge.className = 'connection-badge connection-medium';
             } else {
+                minLoadTime = 7000; // 7 seconds for slow
                 connectionBadge.textContent = 'Loading...';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
+
+            maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, minLoadTime), 30000);
+            console.log(`⏱️ Load time: ${(maxLoadTime/1000).toFixed(1)}s (speed: ${connectionSpeed.toFixed(1)} Mbps)`);
         } catch (err) {
             connectionBadge.textContent = 'Loading...';
             connectionBadge.className = 'connection-badge connection-medium';
-            maxLoadTime = 5500; // Minimum 5.5 seconds
+            maxLoadTime = 5500; // Default 5.5 seconds
         }
     }
 
