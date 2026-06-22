@@ -279,7 +279,8 @@
 
         updateProgress(progress);
 
-        if (elapsed > maxLoadTime && !exceedsMaxTime) {
+        // Only set exceedsMaxTime if we're in grace period AND videos not loaded
+        if (elapsed > maxLoadTime && !videosLoaded && !exceedsMaxTime) {
             exceedsMaxTime = true;
         }
 
