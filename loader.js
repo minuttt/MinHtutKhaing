@@ -79,9 +79,10 @@
         return shuffled;
     }
 
-    // Randomly pick 12 images from all 63!
-    const allImages = shuffleArray(allAvailableImages).slice(0, 12);
-    console.log(`🎲 RANDOM SELECTION: Picked 12 random images from ${allAvailableImages.length} total`);
+    // Randomly pick 12 images from all 63, then shuffle their order too!
+    const selected12 = shuffleArray(allAvailableImages).slice(0, 12);
+    const allImages = shuffleArray(selected12); // Shuffle again for random positions!
+    console.log(`🎲 RANDOM: Picked 12 from ${allAvailableImages.length}, shuffled their order too`);
 
     const loader = document.getElementById('premium-loader');
     const galleryGrid = document.getElementById('gallery-grid');
