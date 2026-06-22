@@ -20,7 +20,8 @@
       "Bash(python *)",
       "Bash(awk '{print $5, $9}')",
       "Bash(node -c loader.js)",
-      "Bash(curl -s https://minhtutkhaing.me/loader.js)"
+      "Bash(curl -s https://minhtutkhaing.me/loader.js)",
+      "WebFetch(domain:collection.cloudinary.com)"
     ]
   }
 }
