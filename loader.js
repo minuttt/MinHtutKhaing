@@ -283,13 +283,14 @@
             exceedsMaxTime = true;
         }
 
-        // Complete when EITHER:
-        // 1. Videos loaded, OR
-        // 2. Time complete + short grace period (7 seconds total)
-        const gracePeriod = 7000; // 7 seconds grace period (shorter!)
+        // Complete when:
+        // 1. Minimum time passed AND videos loaded, OR
+        // 2. Time + grace period exceeded (give up)
+        const gracePeriod = 7000; // 7 seconds grace period
+        const minTimePassed = elapsed >= maxLoadTime;
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
 
-        if (videosLoaded || forceComplete) {
+        if ((minTimePassed && videosLoaded) || forceComplete) {
             if (forceComplete && !videosLoaded) {
                 console.warn('⚠️ Videos not ready after 7s grace - continuing without them');
                 connectionBadge.textContent = 'Videos Unavailable';
