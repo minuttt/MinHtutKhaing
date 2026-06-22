@@ -415,13 +415,26 @@
         }
     }
 
-    // IMMEDIATELY load first 30 images (fills entire viewport - no blank spots!)
-    console.log('🎬 Loading first 30 visible images immediately...');
-    for (let i = 0; i < Math.min(VISIBLE_COUNT, imagesToLoad.length); i += BATCH_SIZE) {
-        setTimeout(() => loadImageBatch(i), (i / BATCH_SIZE) * 50); // Stagger by 50ms
-    }
+    // IMMEDIATELY load ALL 48 images - they're from CDN, super fast!
+    console.log('🎬 Loading all images immediately from Cloudinary CDN...');
+    imagesToLoad.forEach((img, index) => {
+        const src = img.getAttribute('data-src');
+        if (src) {
+            img.src = src;
+            img.onload = () => {
+                imagesLoaded++;
+                if (imagesLoaded % 12 === 0 || imagesLoaded === imagesToLoad.length) {
+                    console.log(`📸 Loaded ${imagesLoaded}/${imagesToLoad.length} images`);
+                }
+            };
+            img.onerror = () => {
+                console.warn(`⚠️ Failed to load image ${index}: ${src}`);
+                imagesLoaded++;
+            };
+        }
+    });
 
-    // Rest will load AFTER videos complete (see checkVideos function)
+    console.log(`✅ All ${imagesToLoad.length} images loading from CDN!`);
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
@@ -432,14 +445,8 @@
             const loadTime = (elapsed / 1000).toFixed(1);
             console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
 
-            // NOW load remaining images (first 12 already loading)
-            if (imagesLoaded < imagesToLoad.length) {
-                const remainingStart = Math.ceil(imagesLoaded / BATCH_SIZE) * BATCH_SIZE;
-                console.log(`🎬 Videos loaded! Loading remaining images from ${remainingStart}...`);
-                if (remainingStart < imagesToLoad.length) {
-                    loadImageBatch(remainingStart);
-                }
-            }
+            // All images already loading from CDN!
+            console.log(`🎬 Videos loaded! Images: ${imagesLoaded}/${imagesToLoad.length}`);
 
             // Only calculate speed if videos actually loaded (not error fallback)
             if (landingVideoWorking && wormholeVideoWorking) {
