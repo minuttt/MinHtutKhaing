@@ -1083,15 +1083,12 @@
             transition: none !important;
         }
 
-        /* Premium Loading Screen with Aurora Background */
+        /* Infinite Drag Gallery Loading Screen */
         #premium-loader {
             position: fixed;
             inset: 0;
             z-index: 10001;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: #141414;
             opacity: 1;
             transition: opacity 0.8s ease-out;
             overflow: hidden;
@@ -1106,113 +1103,132 @@
             display: none;
         }
 
-        #aurora-canvas {
+        /* Drag Gallery Container */
+        .drag-gallery-container {
             position: absolute;
             inset: 0;
             width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .drag-gallery-container.dragging {
+            cursor: grabbing;
+        }
+
+        .drag-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 3.5rem;
+            padding: 3.5rem;
+            width: fit-content;
+            height: fit-content;
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+        }
+
+        .gallery-item {
+            width: 16rem;
+            height: 24rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.3);
+            animation: galleryItemFadeIn 1.4s cubic-bezier(0.18, 0.71, 0.11, 1) forwards;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease-out;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .gallery-item:nth-child(even) {
+            margin-top: 60%;
+        }
+
+        .gallery-item img {
+            width: 100%;
             height: 100%;
-            z-index: 1;
+            object-fit: cover;
+            pointer-events: none;
         }
 
-        .loader-content {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Premium Honeycomb Loader */
-        .honeycomb {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 3rem;
-            transform: scale(1.2);
-        }
-
-        .honeycomb div {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #22d3ee 0%, #0891b2 50%, #10b981 100%);
-            border-radius: 4px;
-            animation: honeycomb 2.4s ease-in-out infinite;
-            box-shadow:
-                0 0 30px rgba(34, 211, 238, 0.6),
-                0 0 60px rgba(34, 211, 238, 0.3),
-                inset 0 0 10px rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .honeycomb div:nth-child(1) {
-            left: 48px; top: 0;
-            animation-delay: 0s;
-        }
-        .honeycomb div:nth-child(2) {
-            left: 24px; top: 24px;
-            animation-delay: 0.15s;
-        }
-        .honeycomb div:nth-child(3) {
-            left: 72px; top: 24px;
-            animation-delay: 0.3s;
-        }
-        .honeycomb div:nth-child(4) {
-            left: 0; top: 48px;
-            animation-delay: 0.45s;
-        }
-        .honeycomb div:nth-child(5) {
-            left: 48px; top: 48px;
-            animation-delay: 0.6s;
-        }
-        .honeycomb div:nth-child(6) {
-            left: 96px; top: 48px;
-            animation-delay: 0.75s;
-        }
-        .honeycomb div:nth-child(7) {
-            left: 24px; top: 72px;
-            animation-delay: 0.9s;
-        }
-
-        @keyframes honeycomb {
-            0%, 20%, 80%, 100% {
+        @keyframes galleryItemFadeIn {
+            0% {
                 opacity: 0;
-                transform: scale(0) rotate(0deg);
+                transform: scale(0.3);
             }
-            30%, 70% {
+            100% {
                 opacity: 1;
-                transform: scale(1) rotate(180deg);
+                transform: scale(1);
             }
         }
 
-        .loader-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        /* Loading Info Overlay */
+        .loading-info-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10002;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(2, 2, 4, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            animation: infoFadeIn 0.8s ease-out 0.5s forwards;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 90%;
+            width: 480px;
         }
 
-        .loader-subtitle {
+        .loading-info-overlay.scrolled {
+            top: 2rem;
+            transform: translateX(-50%) scale(0.85);
+        }
+
+        @keyframes infoFadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loading-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, #22d3ee 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading-subtitle {
             font-size: 0.875rem;
             font-weight: 400;
             color: rgba(148, 163, 184, 0.9);
-            margin-bottom: 2.5rem;
-            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
-        .connection-status {
+        .connection-badge {
+            display: inline-block;
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.1em;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             margin-bottom: 1.5rem;
-            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .connection-fast {
@@ -1233,93 +1249,89 @@
             color: #ef4444;
         }
 
-        .progress-container {
-            width: 320px;
+        .progress-bar-container {
+            width: 100%;
             height: 6px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
             overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            margin-bottom: 1rem;
         }
 
-        .progress-bar-fill {
+        .progress-bar {
             height: 100%;
             background: linear-gradient(to right, #22d3ee, #10b981);
             border-radius: 3px;
             width: 0%;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s ease-out;
             box-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
-            position: relative;
         }
 
-        .progress-bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .progress-info {
-            margin-top: 1rem;
+        .progress-stats {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            width: 320px;
+            align-items: center;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
         }
 
         .progress-percentage {
-            font-size: 0.875rem;
             font-weight: 700;
             color: rgba(34, 211, 238, 0.9);
-            letter-spacing: 0.05em;
         }
 
-        .eta-text {
-            font-size: 0.75rem;
+        .progress-eta {
             font-weight: 500;
             color: rgba(148, 163, 184, 0.7);
-            letter-spacing: 0.05em;
+        }
+
+        .enjoy-text {
+            font-size: 0.8125rem;
+            color: rgba(148, 163, 184, 0.8);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .loading-complete {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body class="no-scrollbar">
 
-<!-- Premium Loading Screen -->
+<!-- Infinite Drag Gallery Loading Screen -->
 <div id="premium-loader">
-    <canvas id="aurora-canvas"></canvas>
-    <div class="loader-content">
-        <div class="honeycomb">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+    <!-- Draggable Gallery -->
+    <div class="drag-gallery-container" id="drag-gallery">
+        <div class="drag-gallery-grid" id="gallery-grid">
+            <!-- Images will be injected here -->
         </div>
-        <h2 class="loader-title">Hang on a sec!</h2>
-        <p class="loader-subtitle">Loading premium components...</p>
-        <div class="connection-status" id="connection-status">
+    </div>
+
+    <!-- Loading Info Overlay -->
+    <div class="loading-info-overlay" id="loading-info">
+        <h2 class="loading-title">Hold on a sec!</h2>
+        <p class="loading-subtitle">Loading content...</p>
+
+        <div class="connection-badge" id="connection-badge">
             Detecting connection...
         </div>
-        <div class="progress-container">
-            <div class="progress-bar-fill" id="progress-bar"></div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
-        <div class="progress-info">
-            <div class="progress-percentage" id="progress-text">0%</div>
-            <div class="eta-text" id="eta-text">Calculating ETA...</div>
+
+        <div class="progress-stats">
+            <span class="progress-percentage" id="progress-percentage">0%</span>
+            <span class="progress-eta" id="progress-eta">Calculating ETA...</span>
         </div>
+
+        <p class="enjoy-text">
+            Meanwhile, scroll and drag around to enjoy these pictures I personally captured during my adventures.
+        </p>
     </div>
 </div>
 
@@ -3087,365 +3099,9 @@
         });
     })();
 
-    // ===== AURORA SHADER BACKGROUND (Simplified & Fixed) =====
-    (function() {
-        const canvas = document.getElementById('aurora-canvas');
-        if (!canvas) {
-            console.error('Aurora canvas not found');
-            return;
-        }
+    // LOADER MOVED TO loader.js
 
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if (!gl) {
-            console.warn('WebGL not supported, using gradient fallback');
-            canvas.style.background = 'linear-gradient(135deg, #020204 0%, #0a0a1e 50%, #020204 100%)';
-            return;
-        }
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        gl.viewport(0, 0, canvas.width, canvas.height);
-
-        const vertexShaderSource = `
-            attribute vec2 position;
-            void main() {
-                gl_Position = vec4(position, 0.0, 1.0);
-            }
-        `;
-
-        const fragmentShaderSource = `
-            precision mediump float;
-            uniform float iTime;
-            uniform vec2 iResolution;
-
-            float rand(vec2 n) {
-                return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
-            }
-
-            float noise(vec2 p) {
-                vec2 ip = floor(p);
-                vec2 u = fract(p);
-                u = u * u * (3.0 - 2.0 * u);
-                float res = mix(
-                    mix(rand(ip), rand(ip + vec2(1.0, 0.0)), u.x),
-                    mix(rand(ip + vec2(0.0, 1.0)), rand(ip + vec2(1.0, 1.0)), u.x),
-                    u.y
-                );
-                return res * res;
-            }
-
-            // Manual smoothstep (some devices don't support it)
-            float sStep(float edge0, float edge1, float x) {
-                float t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
-                return t * t * (3.0 - 2.0 * t);
-            }
-
-            void main() {
-                vec2 uv = gl_FragCoord.xy / iResolution.xy;
-                vec2 p = (gl_FragCoord.xy - iResolution.xy * 0.5) / iResolution.y;
-
-                // Premium dark gradient base (matching portfolio theme)
-                vec3 color = mix(
-                    vec3(0.008, 0.008, 0.016),  // Deep dark blue #020204
-                    vec3(0.039, 0.039, 0.118),  // Dark purple #0a0a1e
-                    uv.y
-                );
-
-                // Create flowing premium aurora waves
-                for (float i = 0.0; i < 12.0; i += 1.0) {
-                    float speed = 0.25 + i * 0.05;
-                    vec2 offset = vec2(
-                        sin(iTime * speed + i * 2.0) * 0.6,
-                        cos(iTime * speed * 0.7 + i * 1.3) * 0.4
-                    );
-                    vec2 pos = p + offset;
-
-                    float dist = length(pos) + noise(pos * 1.5 + iTime * 0.3) * 0.4;
-                    float wave = sin(dist * 4.0 - iTime * 1.5 + i * 0.8) * 0.5 + 0.5;
-
-                    // Premium cyan-to-emerald gradient (matching your portfolio #22d3ee -> #10b981)
-                    float colorMix = (i / 12.0);
-                    vec3 cyan = vec3(0.133, 0.827, 0.933);      // #22d3ee
-                    vec3 teal = vec3(0.034, 0.569, 0.698);      // #0891b2
-                    vec3 emerald = vec3(0.063, 0.725, 0.506);   // #10b981
-
-                    vec3 auroraColor = mix(
-                        mix(cyan, teal, colorMix),
-                        emerald,
-                        sin(iTime * 0.4 + i * 0.5) * 0.5 + 0.5
-                    );
-
-                    // Enhanced glow with depth
-                    float glow = wave * (1.0 - sStep(0.0, 2.5, dist));
-                    float intensity = glow * (0.15 + sin(iTime * 0.5 + i) * 0.05);
-
-                    color += auroraColor * intensity;
-                }
-
-                // Add subtle shimmer particles
-                float sparkle = noise(p * 20.0 + iTime * 0.5);
-                sparkle = pow(sparkle, 8.0) * 0.3;
-                color += vec3(0.133, 0.827, 0.933) * sparkle;
-
-                // Vignette effect for depth
-                float vignette = 1.0 - length(uv - 0.5) * 0.8;
-                color *= vignette;
-
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `;
-
-        function createShader(type, source) {
-            const shader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-
-            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                console.error('Shader compile error:', gl.getShaderInfoLog(shader));
-                gl.deleteShader(shader);
-                return null;
-            }
-            return shader;
-        }
-
-        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
-        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
-
-        if (!vertexShader || !fragmentShader) {
-            console.error('Failed to create shaders');
-            canvas.style.background = 'linear-gradient(135deg, #020204 0%, #0a0a1e 50%, #020204 100%)';
-            return;
-        }
-
-        const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            console.error('Program link error:', gl.getProgramInfoLog(program));
-            canvas.style.background = 'linear-gradient(135deg, #020204 0%, #0a0a1e 50%, #020204 100%)';
-            return;
-        }
-
-        gl.useProgram(program);
-
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1, -1,
-             1, -1,
-            -1,  1,
-             1,  1
-        ]), gl.STATIC_DRAW);
-
-        const positionLocation = gl.getAttribLocation(program, 'position');
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-        const iTimeLocation = gl.getUniformLocation(program, 'iTime');
-        const iResolutionLocation = gl.getUniformLocation(program, 'iResolution');
-
-        let time = 0;
-        let animationId;
-
-        function render() {
-            time += 0.016;
-            gl.uniform1f(iTimeLocation, time);
-            gl.uniform2f(iResolutionLocation, canvas.width, canvas.height);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            animationId = requestAnimationFrame(render);
-        }
-        render();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            gl.viewport(0, 0, canvas.width, canvas.height);
-        });
-
-        // Cleanup when loader is hidden
-        const loader = document.getElementById('premium-loader');
-        const observer = new MutationObserver(() => {
-            if (loader.classList.contains('hidden')) {
-                cancelAnimationFrame(animationId);
-                observer.disconnect();
-            }
-        });
-        observer.observe(loader, { attributes: true, attributeFilter: ['class'] });
-    })();
-
-    // ===== PREMIUM LOADER WITH CONNECTION DETECTION =====
-    (function() {
-        const loader = document.getElementById('premium-loader');
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        const etaText = document.getElementById('eta-text');
-        const connectionStatus = document.getElementById('connection-status');
-        const landingVideo = document.getElementById('landing-video');
-        const wormholeVideo = document.getElementById('wormhole-video');
-
-        let loadProgress = 0;
-        const totalVideoSize = 88 * 1024 * 1024; // 88MB in bytes
-        const startTime = Date.now();
-        let videosLoaded = false;
-        let forceCompleted = false;
-        let connectionSpeed = 0; // Mbps
-        let maxLoadTime = 15000; // Default 15 seconds
-
-        // Detect connection speed
-        function detectConnectionSpeed() {
-            try {
-                if (navigator.connection || navigator.mozConnection || navigator.webkitConnection) {
-                    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-                    const effectiveType = conn.effectiveType || '4g';
-                    const downlink = conn.downlink || 0;
-
-                    if (downlink && downlink > 0) {
-                        connectionSpeed = downlink;
-                    } else {
-                        // Fallback based on effective type
-                        switch(effectiveType) {
-                            case 'slow-2g': connectionSpeed = 0.5; break;
-                            case '2g': connectionSpeed = 1; break;
-                            case '3g': connectionSpeed = 3; break;
-                            case '4g': connectionSpeed = 20; break;
-                            default: connectionSpeed = 10;
-                        }
-                    }
-
-                    // Calculate ETA and adjust max load time
-                    const estimatedSeconds = (totalVideoSize * 8) / (connectionSpeed * 1024 * 1024);
-                    maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, 10000), 30000); // 10-30s range
-
-                    // Update connection status
-                    if (connectionSpeed >= 20) {
-                        connectionStatus.textContent = '🚀 Lightning Fast';
-                        connectionStatus.className = 'connection-status connection-fast';
-                    } else if (connectionSpeed >= 5) {
-                        connectionStatus.textContent = '⚡ Smooth Ride';
-                        connectionStatus.className = 'connection-status connection-medium';
-                    } else {
-                        connectionStatus.textContent = '🐌 Taking it slow...';
-                        connectionStatus.className = 'connection-status connection-slow';
-                    }
-
-                    console.log(`📡 Connection: ${connectionSpeed.toFixed(1)} Mbps, Max wait: ${(maxLoadTime/1000).toFixed(1)}s`);
-                } else {
-                    throw new Error('Connection API not supported');
-                }
-            } catch (err) {
-                console.log('Connection detection unavailable, using defaults');
-                connectionStatus.textContent = '⚡ Loading at warp speed...';
-                connectionStatus.className = 'connection-status connection-medium';
-                connectionSpeed = 10; // Default assumption
-                maxLoadTime = 15000;
-            }
-        }
-
-        detectConnectionSpeed();
-
-        // Track video loading progress
-        function updateProgress(percent) {
-            loadProgress = Math.min(percent, 100);
-            progressBar.style.width = loadProgress + '%';
-            progressText.textContent = Math.floor(loadProgress) + '%';
-
-            // Update ETA
-            const elapsed = Date.now() - startTime;
-            const remaining = ((maxLoadTime * (100 - loadProgress)) / 100) / 1000;
-            if (remaining > 0 && !videosLoaded) {
-                etaText.textContent = `ETA: ${Math.ceil(remaining)}s`;
-            } else {
-                etaText.textContent = 'Almost there...';
-            }
-        }
-
-        // Smooth progress animation
-        let animProgress = 0;
-        const progressInterval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            const timeProgress = (elapsed / maxLoadTime) * 100;
-
-            if (videosLoaded) {
-                animProgress += (100 - animProgress) * 0.15;
-            } else {
-                animProgress += (Math.min(timeProgress, 95) - animProgress) * 0.1;
-            }
-
-            updateProgress(animProgress);
-
-            if (animProgress >= 99.5 || forceCompleted) {
-                clearInterval(progressInterval);
-                completeLoading();
-            }
-        }, 50);
-
-        // Force complete after max time
-        setTimeout(() => {
-            if (!forceCompleted) {
-                console.log('⏱️ Max load time reached, continuing...');
-                forceCompleted = true;
-                videosLoaded = true;
-            }
-        }, maxLoadTime);
-
-        // Track both videos
-        let landingReady = false;
-        let wormholeReady = false;
-
-        function checkVideosReady() {
-            if (landingReady && wormholeReady) {
-                videosLoaded = true;
-                console.log('✅ All videos loaded');
-            }
-        }
-
-        // Landing video loading
-        if (landingVideo) {
-            landingVideo.addEventListener('canplaythrough', () => {
-                landingReady = true;
-                checkVideosReady();
-            }, { once: true });
-
-            landingVideo.addEventListener('loadeddata', () => {
-                if (!landingReady) {
-                    landingReady = true;
-                    checkVideosReady();
-                }
-            }, { once: true });
-
-            landingVideo.load();
-        }
-
-        // Wormhole video loading
-        if (wormholeVideo) {
-            wormholeVideo.addEventListener('canplaythrough', () => {
-                wormholeReady = true;
-                checkVideosReady();
-            }, { once: true });
-
-            wormholeVideo.addEventListener('loadeddata', () => {
-                if (!wormholeReady) {
-                    wormholeReady = true;
-                    checkVideosReady();
-                }
-            }, { once: true });
-
-            wormholeVideo.load();
-        }
-
-        function completeLoading() {
-            etaText.textContent = 'Ready!';
-            setTimeout(() => {
-                loader.classList.add('fade-out');
-                setTimeout(() => {
-                    loader.classList.add('hidden');
-                }, 800);
-            }, 200);
-        }
-    })();
-
+    <script src="loader.js"></script>
     // ===== LANDING OVERLAY =====
     (function() {
         const overlay = document.getElementById('landing-overlay');
