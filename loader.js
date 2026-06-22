@@ -415,26 +415,44 @@
         }
     }
 
-    // IMMEDIATELY load ALL 48 images - they're from CDN, super fast!
+    // IMMEDIATELY load ALL 48 images with retry on failure!
     console.log('🎬 Loading all images immediately from Cloudinary CDN...');
+
+    function loadImageWithRetry(img, src, index, attempt = 1) {
+        img.src = src;
+
+        img.onload = () => {
+            imagesLoaded++;
+            if (imagesLoaded % 12 === 0 || imagesLoaded === imagesToLoad.length) {
+                console.log(`📸 Loaded ${imagesLoaded}/${imagesToLoad.length} images`);
+            }
+        };
+
+        img.onerror = () => {
+            console.warn(`⚠️ Image ${index} failed (attempt ${attempt}): ${src}`);
+            if (attempt < 5) {
+                // Retry after delay
+                setTimeout(() => {
+                    console.log(`🔄 Retrying image ${index} (attempt ${attempt + 1})`);
+                    loadImageWithRetry(img, src, index, attempt + 1);
+                }, attempt * 500); // Progressive delay: 500ms, 1s, 1.5s, 2s
+            } else {
+                console.error(`❌ Image ${index} failed after 5 attempts: ${src}`);
+                imagesLoaded++;
+                // Set a fallback placeholder color
+                img.style.background = 'rgba(16, 185, 129, 0.1)';
+            }
+        };
+    }
+
     imagesToLoad.forEach((img, index) => {
         const src = img.getAttribute('data-src');
         if (src) {
-            img.src = src;
-            img.onload = () => {
-                imagesLoaded++;
-                if (imagesLoaded % 12 === 0 || imagesLoaded === imagesToLoad.length) {
-                    console.log(`📸 Loaded ${imagesLoaded}/${imagesToLoad.length} images`);
-                }
-            };
-            img.onerror = () => {
-                console.warn(`⚠️ Failed to load image ${index}: ${src}`);
-                imagesLoaded++;
-            };
+            loadImageWithRetry(img, src, index);
         }
     });
 
-    console.log(`✅ All ${imagesToLoad.length} images loading from CDN!`);
+    console.log(`✅ All ${imagesToLoad.length} images loading from CDN with retry logic!`);
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
