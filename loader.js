@@ -40,8 +40,9 @@
     const landingVideo = document.getElementById('landing-video');
     const wormholeVideo = document.getElementById('wormhole-video');
 
-    if (!loader || !galleryGrid) {
+    if (!loader || !galleryGrid || !dragContainer) {
         console.error('❌ LOADER: Required elements not found!');
+        console.error('Missing:', { loader: !!loader, galleryGrid: !!galleryGrid, dragContainer: !!dragContainer });
         return;
     }
 
@@ -157,16 +158,27 @@
         }
     }
 
+    let momentumRaf = null;
     function handleDragEnd() {
         isDragging = false;
         dragContainer.classList.remove('dragging');
         lastX = currentX;
         lastY = currentY;
+
+        // Cancel any existing RAF
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+
         applyMomentum();
     }
 
     function applyMomentum() {
-        if (Math.abs(velocityX) < 0.1 && Math.abs(velocityY) < 0.1) return;
+        if (Math.abs(velocityX) < 0.1 && Math.abs(velocityY) < 0.1) {
+            momentumRaf = null;
+            return;
+        }
 
         currentX += velocityX;
         currentY += velocityY;
@@ -177,7 +189,7 @@
         lastX = currentX;
         lastY = currentY;
         galleryGrid.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-        requestAnimationFrame(applyMomentum);
+        momentumRaf = requestAnimationFrame(applyMomentum);
     }
 
     function handleWheel(e) {
@@ -327,11 +339,16 @@
                 loader.classList.add('hidden');
                 loader.style.display = 'none';
 
+                // Clean up event listeners
                 window.removeEventListener('wheel', handleWheel);
                 window.removeEventListener('mousemove', handleDragMove);
                 window.removeEventListener('touchmove', handleDragMove);
                 window.removeEventListener('mouseup', handleDragEnd);
                 window.removeEventListener('touchend', handleDragEnd);
+
+                // Cancel any pending RAF
+                if (rafId) cancelAnimationFrame(rafId);
+                if (momentumRaf) cancelAnimationFrame(momentumRaf);
 
                 window.loaderIsComplete = true;
                 window.dispatchEvent(new CustomEvent('loaderComplete'));

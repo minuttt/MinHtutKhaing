@@ -3199,62 +3199,86 @@
         // Get portfolio text element
         const portfolio = document.getElementById('landing-portfolio');
 
-        // Fade in text elements with SLOWER animations
-        setTimeout(() => {
-            console.log('📝 [+0.4s] "Portfolio" fading in');
-            portfolio.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            portfolio.style.opacity = '1';
-            portfolio.style.transform = 'translateY(0)';
-        }, 400);
+        // WAIT for loader to complete before animating text
+        let landingTextAnimated = false;
 
-        setTimeout(() => {
-            console.log('📝 [+0.8s] "MIN HTUT KHAING" fading in');
-            title.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            title.style.opacity = '1';
-            title.style.transform = 'translateY(0)';
-        }, 800);
+        function animateLandingText() {
+            if (landingTextAnimated) return;
+            landingTextAnimated = true;
 
-        setTimeout(() => {
-            console.log('📝 [+1.2s] "Experience a glimpse..." fading in');
-            subtitle.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            subtitle.style.opacity = '1';
-            subtitle.style.transform = 'translateY(0)';
-        }, 1200);
+            console.log('🎬 STARTING landing text animations NOW');
 
-        // Delay "Press any key" by 2.5 seconds after subtitle appears
-        setTimeout(() => {
-            console.log('📝 [+3.9s] "Press any key to launch" fading in');
-            hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            hint.style.opacity = '0.7';
-
-            // Trigger underline drawing animation
-            const underlinePath = hint.querySelector('.underline-path');
-            if (underlinePath) {
-                underlinePath.classList.add('active');
+            // Fade in text elements with SLOWER animations
+            if (portfolio) {
+                setTimeout(() => {
+                    console.log('📝 "Portfolio" fading in');
+                    portfolio.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    portfolio.style.opacity = '1';
+                    portfolio.style.transform = 'translateY(0)';
+                }, 400);
             }
 
-            setTimeout(() => {
-                console.log('✨ [+5.4s] "Press any key" animation started');
-                hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
-            }, 1500);
-        }, 3900); // 1200ms (subtitle) + 2500ms (buffer) = 3700ms, rounded to 3900ms
+            if (title) {
+                setTimeout(() => {
+                    console.log('📝 "MIN HTUT KHAING" fading in');
+                    title.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    title.style.opacity = '1';
+                    title.style.transform = 'translateY(0)';
+                }, 800);
+            }
+
+            if (subtitle) {
+                setTimeout(() => {
+                    console.log('📝 "Experience a glimpse..." fading in');
+                    subtitle.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    subtitle.style.opacity = '1';
+                    subtitle.style.transform = 'translateY(0)';
+                }, 1200);
+            }
+
+            // "Press any key" appears after subtitle
+            if (hint) {
+                setTimeout(() => {
+                    console.log('📝 "Press any key to launch" fading in');
+                    hint.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    hint.style.opacity = '0.7';
+
+                    // Trigger underline drawing animation
+                    const underlinePath = hint.querySelector('.underline-path');
+                    if (underlinePath) {
+                        underlinePath.classList.add('active');
+                    }
+
+                    setTimeout(() => {
+                        console.log('✨ "Press any key" animation started');
+                        hint.style.animation = 'pulseHint 2.5s ease-in-out infinite';
+                    }, 1500);
+                }, 3900);
+            }
+        }
 
         // NO BUFFER - Allow transition immediately after loader completes
         let canStartTransition = false;
 
-        // Enable transitions when loader completes
+        // Enable transitions when loader completes + start text animations
         window.addEventListener('loaderComplete', () => {
             console.log('🎬 Loader complete - enabling transitions NOW');
             canStartTransition = true;
+
+            // Wait for loader fade-out (2 seconds total) before starting text animations
+            setTimeout(() => {
+                animateLandingText();
+            }, 2000); // 1s fade + 1s buffer = 2s
         }, { once: true });
 
-        // Fallback: enable after short delay if no loader
+        // Fallback: if loader never completes, start animations anyway
         setTimeout(() => {
             if (!canStartTransition) {
-                console.log('⚠️ No loader detected - enabling transitions');
+                console.log('⚠️ Fallback: Loader did not complete, starting anyway');
                 canStartTransition = true;
+                animateLandingText();
             }
-        }, 2000);
+        }, 10000); // 10 second fallback
 
         window.dismissLanding = function() {
             if (transitionStarted) {
