@@ -43,7 +43,7 @@
         CDN_BASE + 'IMG_0351_rxipgz.jpg',
         CDN_BASE + 'IMG_0353_nzj7do.jpg',
         CDN_BASE + 'IMG_0355_ig14wz.jpg',
-        CDN_BASE + 'IMG_0357_12jgty.jpg',
+        CDN_BASE + 'IMG_0357_I2JGTY.jpg',
         CDN_BASE + 'IMG_0359_psf9jx.jpg',
         CDN_BASE + 'IMG_0371_sluabn.jpg',
         CDN_BASE + 'IMG_0395_i4fqmu.jpg',
