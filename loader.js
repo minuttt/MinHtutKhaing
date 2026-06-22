@@ -2,7 +2,6 @@
 (function() {
     console.log('🎨 LOADER: Starting initialization...');
 
-    // Get ALL images from both folders
     const allImages = [
         'Loading images/IMG_0173.jpg', 'Loading images/IMG_0176.jpg', 'Loading images/IMG_0192.jpg',
         'Loading images/IMG_0199.jpg', 'Loading images/IMG_0201.jpg', 'Loading images/IMG_0206.jpg',
@@ -30,8 +29,6 @@
         'Loading images/Loading images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg'
     ];
 
-    console.log(`📸 LOADER: Loaded ${allImages.length} images`);
-
     const loader = document.getElementById('premium-loader');
     const galleryGrid = document.getElementById('gallery-grid');
     const dragContainer = document.getElementById('drag-gallery');
@@ -43,29 +40,25 @@
     const landingVideo = document.getElementById('landing-video');
     const wormholeVideo = document.getElementById('wormhole-video');
 
-    if (!loader || !galleryGrid || !dragContainer || !loadingInfo) {
+    if (!loader || !galleryGrid) {
         console.error('❌ LOADER: Required elements not found!');
         return;
     }
 
-    // State
-    let isDragging = false;
-    let startX = 0, startY = 0;
-    let currentX = 0, currentY = 0;
-    let velocityX = 0, velocityY = 0;
-    let lastX = 0, lastY = 0;
-    let hasScrolled = false;
-    let videosLoaded = false;
-    let maxLoadTime = 5500;
-    let exceedsMaxTime = false;
-    const startTime = Date.now();
-
-    // PROPER TILING: Create 3x3 grid (center + 8 surrounding tiles)
-    // Each tile is 6 columns x 11 rows
+    // Calculate dimensions
     const COLS = 6;
-    const ROWS = Math.ceil(allImages.length / COLS); // ~11 rows
+    const ROWS = Math.ceil(allImages.length / COLS);
+    const itemWidth = 256; // 16rem
+    const itemHeight = 384; // 24rem
+    const gap = 56; // 3.5rem
+    const padding = 56;
 
-    // Create 3x3 tiles for seamless wrapping
+    const tileWidth = (itemWidth * COLS) + (gap * (COLS - 1)) + (padding * 2);
+    const tileHeight = (itemHeight * ROWS) + (gap * (ROWS - 1)) + (padding * 2);
+
+    console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
+
+    // Create 3x3 grid (9 copies of the image set)
     for (let tileY = 0; tileY < 3; tileY++) {
         for (let tileX = 0; tileX < 3; tileX++) {
             for (let i = 0; i < allImages.length; i++) {
@@ -84,33 +77,40 @@
         }
     }
 
-    console.log(`📸 LOADER: Created ${3 * 3 * allImages.length} items (3x3 tiles)`);
+    console.log(`📸 CREATED: ${9 * allImages.length} items`);
 
-    // Calculate single tile dimensions
-    const itemWidth = 256; // 16rem
-    const itemHeight = 384; // 24rem
-    const gap = 56; // 3.5rem
-    const padding = 56; // 3.5rem
+    // State - START AT CENTER TILE POSITION
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    // CRITICAL: Start at -tileWidth, -tileHeight so CENTER tile is visible
+    let currentX = -tileWidth;
+    let currentY = -tileHeight;
+    let velocityX = 0, velocityY = 0;
+    let lastX = currentX;
+    let lastY = currentY;
+    let hasScrolled = false;
+    let videosLoaded = false;
+    let maxLoadTime = 5500;
+    let exceedsMaxTime = false;
+    const startTime = Date.now();
 
-    const tileWidth = (itemWidth * COLS) + (gap * (COLS - 1)) + (padding * 2);
-    const tileHeight = (itemHeight * ROWS) + (gap * (ROWS - 1)) + (padding * 2);
+    // Set initial position to show center tile
+    galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
+    console.log(`📍 INITIAL POSITION: (${currentX}, ${currentY})`);
 
-    console.log(`🔲 LOADER: Single tile = ${tileWidth}px × ${tileHeight}px`);
-
-    // WRAP function (like Framer Motion's wrap)
+    // Wrap function (keeps position within one tile range)
     function wrap(min, max, value) {
         const range = max - min;
         return ((value - min) % range + range) % range + min;
     }
 
-    // Apply seamless wrapping in all directions
     function applyWrapping() {
-        // Wrap to keep position within center tile boundaries
-        currentX = wrap(-tileWidth, 0, currentX);
-        currentY = wrap(-tileHeight, 0, currentY);
+        // Wrap X between -2*tileWidth and 0
+        currentX = wrap(-2 * tileWidth, 0, currentX);
+        // Wrap Y between -2*tileHeight and 0
+        currentY = wrap(-2 * tileHeight, 0, currentY);
     }
 
-    // Drag handlers
     function handleDragStart(e) {
         isDragging = true;
         startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
@@ -151,6 +151,8 @@
     function handleDragEnd() {
         isDragging = false;
         dragContainer.classList.remove('dragging');
+        lastX = currentX;
+        lastY = currentY;
         applyMomentum();
     }
 
@@ -163,6 +165,8 @@
         velocityY *= 0.95;
 
         applyWrapping();
+        lastX = currentX;
+        lastY = currentY;
         galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
         requestAnimationFrame(applyMomentum);
     }
@@ -174,6 +178,7 @@
         if (!isDragging) {
             currentY -= e.deltaY * 2.7;
             applyWrapping();
+            lastY = currentY;
             galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
             if (!hasScrolled && Math.abs(e.deltaY) > 5) {
@@ -192,7 +197,7 @@
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
 
-    // Connection detection - UPDATED TEXT
+    // Connection detection
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     let connectionSpeed = 50;
 
@@ -203,24 +208,22 @@
         connectionSpeed = types[conn.effectiveType] || 20;
     }
 
-    // UPDATED: 5.5s minimum for fast, 25s maximum for slow
     if (connectionSpeed >= 10) {
-        maxLoadTime = 5500; // Fast: 5.5 seconds
+        maxLoadTime = 5500;
         connectionBadge.textContent = 'Fast Connection';
         connectionBadge.className = 'connection-badge connection-fast';
     } else if (connectionSpeed >= 3) {
-        maxLoadTime = 10000; // Medium: 10 seconds
+        maxLoadTime = 10000;
         connectionBadge.textContent = 'Slow Connection';
         connectionBadge.className = 'connection-badge connection-medium';
     } else {
-        maxLoadTime = 25000; // Slow: 25 seconds MAX
+        maxLoadTime = 25000;
         connectionBadge.textContent = 'Very Slow Connection';
         connectionBadge.className = 'connection-badge connection-slow';
     }
 
-    console.log(`⏱️ LOADER: Load time set to ${(maxLoadTime/1000).toFixed(1)}s`);
+    console.log(`⏱️ LOAD TIME: ${(maxLoadTime/1000).toFixed(1)}s`);
 
-    // Progress - HONEST & RELIABLE
     function updateProgress(percent) {
         progressBar.style.width = percent + '%';
         progressPercentage.textContent = Math.floor(percent) + '%';
@@ -237,17 +240,14 @@
         }
     }
 
-    // HONEST progress based on actual elapsed time
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const timeProgress = Math.min((elapsed / maxLoadTime) * 100, 100);
 
         updateProgress(timeProgress);
 
-        // Check if exceeded max time
         if (elapsed > maxLoadTime && !exceedsMaxTime) {
             exceedsMaxTime = true;
-            console.log('⚠️ LOADER: Exceeded maximum time');
             updateProgress(100);
         }
 
@@ -257,7 +257,6 @@
         }
     }, 50);
 
-    // Videos
     let landingReady = false;
     let wormholeReady = false;
 
@@ -284,10 +283,9 @@
     }
 
     function completeLoading() {
-        console.log(`✅ LOADER: COMPLETING NOW`);
+        console.log(`✅ LOADER: COMPLETE`);
 
         loadingInfo.querySelector('.loading-title').textContent = 'All Set!';
-        // REMOVED TICK - just plain text
         loadingInfo.querySelector('.loading-subtitle').textContent = 'Loading Complete';
         progressEta.textContent = 'Ready!';
 
@@ -306,10 +304,8 @@
                 window.removeEventListener('touchend', handleDragEnd);
 
                 window.loaderIsComplete = true;
-                console.log(`🔓 LOADER: SET window.loaderIsComplete = true`);
-
                 window.dispatchEvent(new CustomEvent('loaderComplete'));
-                console.log(`📢 LOADER: Dispatched loaderComplete event`);
+                console.log(`🔓 KEYBOARD ENABLED`);
             }, 1000);
         }, 1000);
     }
