@@ -206,29 +206,10 @@
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
 
-    // Initial connection detection (estimate only)
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    let connectionSpeed = 50;
-
-    if (conn && conn.downlink) {
-        connectionSpeed = conn.downlink;
-    } else if (conn && conn.effectiveType) {
-        const types = { 'slow-2g': 0.5, '2g': 1, '3g': 3, '4g': 20 };
-        connectionSpeed = types[conn.effectiveType] || 20;
-    }
-
-    // Start with "Detecting..." until we know actual speed
-    connectionBadge.textContent = 'Detecting Connection...';
-    connectionBadge.className = 'connection-badge connection-medium';
-
-    // Set minimum loading times based on initial estimate
-    if (connectionSpeed >= 10) {
-        maxLoadTime = 8000; // 8s minimum for fast estimate
-    } else if (connectionSpeed >= 3) {
-        maxLoadTime = 15000; // 15s for medium estimate
-    } else {
-        maxLoadTime = 30000; // 30s for slow estimate
-    }
+    // SIMPLE: Just use 8 seconds for everyone - fast and reliable!
+    maxLoadTime = 8000;
+    connectionBadge.textContent = 'Loading...';
+    connectionBadge.className = 'connection-badge connection-fast';
 
     // Track actual loading performance
     let actualLoadSpeed = null;
