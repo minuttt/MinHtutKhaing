@@ -58,29 +58,24 @@
 
     console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
 
-    // Create 2x2 grid (4 copies) for PERFORMANCE - still infinite!
+    // Create SINGLE tile - no copies! Just 63 images for fast loading
     const fragment = document.createDocumentFragment();
-    for (let tileY = 0; tileY < 2; tileY++) {
-        for (let tileX = 0; tileX < 2; tileX++) {
-            for (let i = 0; i < allImages.length; i++) {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
+    for (let i = 0; i < allImages.length; i++) {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
-                const img = document.createElement('img');
-                img.src = allImages[i];
-                img.alt = `Photo ${i + 1}`;
-                img.draggable = false;
-                img.loading = 'lazy'; // Browser loads images only when near viewport!
+        const img = document.createElement('img');
+        img.src = allImages[i];
+        img.alt = `Photo ${i + 1}`;
+        img.draggable = false;
 
-                item.appendChild(img);
-                fragment.appendChild(item);
-            }
-        }
+        item.appendChild(img);
+        fragment.appendChild(item);
     }
     galleryGrid.appendChild(fragment);
 
-    console.log(`📸 CREATED: ${4 * allImages.length} items (2×2 tiles for performance)`);
+    console.log(`📸 CREATED: ${allImages.length} items (single tile for fast loading)`);
 
     // State - START AT CENTER POSITION (2x2 grid)
     let isDragging = false;
