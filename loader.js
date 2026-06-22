@@ -286,14 +286,23 @@
     connectionBadge.textContent = 'Detecting Connection...';
     connectionBadge.className = 'connection-badge connection-medium';
 
-    // Set minimum loading times based on initial estimate
-    // REDUCED times - fewer images = faster load!
+    // Set minimum loading times with BUFFER for videos (88MB total)
+    let connectionType = 'fast';
     if (connectionSpeed >= 10) {
-        maxLoadTime = 5000; // 5s minimum for fast estimate
+        maxLoadTime = 10000; // 10s for fast (buffer for videos)
+        connectionType = 'fast';
+        connectionBadge.textContent = 'Fast Connection';
+        connectionBadge.className = 'connection-badge connection-fast';
     } else if (connectionSpeed >= 3) {
-        maxLoadTime = 10000; // 10s for medium estimate
+        maxLoadTime = 25000; // 25s for medium (more buffer)
+        connectionType = 'medium';
+        connectionBadge.textContent = 'Medium Connection';
+        connectionBadge.className = 'connection-badge connection-medium';
     } else {
-        maxLoadTime = 20000; // 20s for slow estimate
+        maxLoadTime = 45000; // 45s for slow (lots of buffer)
+        connectionType = 'slow';
+        connectionBadge.textContent = 'Slow Connection';
+        connectionBadge.className = 'connection-badge connection-slow';
     }
 
     // Track actual loading performance
@@ -302,6 +311,16 @@
 
     console.log(`⏱️ LOAD TIME: ${(maxLoadTime/1000).toFixed(1)}s`);
 
+    // Loading status messages for engagement
+    const loadingMessages = [
+        'Loading gallery images...',
+        'Preparing video backgrounds...',
+        'Optimizing visuals...',
+        'Almost there...',
+        'Finalizing experience...'
+    ];
+    let currentMessageIndex = 0;
+
     function updateProgress(percent) {
         progressBar.style.width = percent + '%';
         progressPercentage.textContent = Math.floor(percent) + '%';
@@ -309,62 +328,59 @@
         const elapsed = Date.now() - startTime;
         const remaining = Math.max(0, (maxLoadTime - elapsed) / 1000);
 
+        // Honest ETA + engaging status messages
         if (remaining > 0 && !exceedsMaxTime) {
-            progressEta.textContent = `ETA: ${Math.ceil(remaining)}s`;
+            progressEta.textContent = `ETA: ${Math.ceil(remaining)}s • ${loadingMessages[currentMessageIndex]}`;
+
+            // Update message every 20% progress
+            const targetIndex = Math.min(Math.floor(percent / 20), loadingMessages.length - 1);
+            if (targetIndex > currentMessageIndex) {
+                currentMessageIndex = targetIndex;
+            }
         } else if (exceedsMaxTime) {
-            progressEta.textContent = 'Exceeded maximum loading time, continuing with static background';
+            progressEta.textContent = 'Still loading... (slow connection detected)';
         } else if (!videosLoaded) {
-            // Time complete but videos still loading
-            progressEta.textContent = 'Loading visuals...';
+            progressEta.textContent = 'Buffering videos... almost ready!';
         } else {
-            progressEta.textContent = 'Almost ready...';
+            progressEta.textContent = 'Ready to launch!';
         }
     }
 
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
 
-        // Show honest time-based progress, don't wait forever for videos
-        let progress;
+        // HONEST progress based on actual asset loading
+        let progress = 0;
 
-        if (elapsed < maxLoadTime) {
-            // Normal loading: 0-90%
-            progress = (elapsed / maxLoadTime) * 90;
-        } else if (!videosLoaded && elapsed < (maxLoadTime + 5000)) {
-            // Grace period (5s): 90-95%
-            const graceElapsed = elapsed - maxLoadTime;
-            progress = 90 + (graceElapsed / 5000) * 5;
-        } else if (!videosLoaded) {
-            // Give up waiting: 95-100% quickly
-            const giveUpElapsed = elapsed - (maxLoadTime + 5000);
-            progress = Math.min(95 + (giveUpElapsed / 2000) * 5, 100);
-        } else {
-            // Videos loaded!
-            progress = 100;
-        }
+        // Calculate real progress: 50% images + 50% videos
+        const imageProgress = (imagesLoaded / imagesToLoad.length) * 50;
+        const videoProgress = (videosLoaded ? 50 : 0);
+
+        // Blend actual progress with time-based progress for smooth bar
+        const timeBasedProgress = Math.min((elapsed / maxLoadTime) * 90, 90);
+        const actualProgress = imageProgress + videoProgress;
+
+        // Use whichever is higher (honest but never goes backward)
+        progress = Math.max(timeBasedProgress, actualProgress);
 
         updateProgress(progress);
 
         if (elapsed > maxLoadTime && !exceedsMaxTime) {
             exceedsMaxTime = true;
+            console.warn(`⚠️ Exceeded ${maxLoadTime/1000}s minimum time (${connectionType} connection)`);
         }
 
         // Complete when:
-        // 1. Minimum time passed AND videos loaded, OR
+        // 1. Minimum time passed AND videos loaded AND most images loaded, OR
         // 2. Time + grace period exceeded (give up waiting)
-        const gracePeriod = 30000; // 30 seconds grace for 88MB videos
+        const gracePeriod = connectionType === 'slow' ? 60000 : 30000; // 60s for slow, 30s for others
         const minTimePassed = elapsed >= maxLoadTime;
+        const assetsReady = videosLoaded && (imagesLoaded / imagesToLoad.length) >= 0.8; // 80% images OK
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
 
-        // If timing out, at least START loading images so user sees something
-        if (forceComplete && imagesLoaded === 0) {
-            console.warn('⚠️ Timeout - starting image load anyway');
-            loadImageBatch(0);
-        }
-
-        if ((minTimePassed && videosLoaded) || forceComplete) {
+        if ((minTimePassed && assetsReady) || forceComplete) {
             if (forceComplete && !videosLoaded) {
-                console.warn('⚠️ Videos not ready after 30s grace - continuing without them');
+                console.warn(`⚠️ Videos not ready after ${gracePeriod/1000}s grace - continuing without them`);
                 connectionBadge.textContent = 'Videos Unavailable';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
@@ -372,7 +388,7 @@
             updateProgress(100);
             completeLoading();
         }
-    }, 50);
+    }, 100);
 
     let landingReady = false;
     let wormholeReady = false;
