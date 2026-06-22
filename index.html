@@ -3279,6 +3279,9 @@
             }
         }, 30000);
 
+        let videoRetryCount = 0;
+        const MAX_VIDEO_RETRIES = 3;
+
         window.dismissLanding = function() {
             if (transitionStarted) {
                 console.log('⏭️ Transition already started - ignoring duplicate call');
@@ -3289,18 +3292,23 @@
                 return;
             }
 
-            // Check if wormhole video is ready (iOS/mobile needs readyState >= 4)
-            const videoReady = wormholeVideo.readyState >= 4;
-            console.log(`🎬 Wormhole readyState: ${wormholeVideo.readyState} (${videoReady ? 'READY' : 'NOT READY'})`);
+            // Check if wormhole video is ready (prefer readyState >= 4, but allow >= 2 after retries)
+            const minReadyState = videoRetryCount >= MAX_VIDEO_RETRIES ? 2 : 4;
+            const videoReady = wormholeVideo.readyState >= minReadyState;
+            console.log(`🎬 Wormhole readyState: ${wormholeVideo.readyState} (need ${minReadyState}, ${videoReady ? 'READY' : 'NOT READY'})`);
 
-            if (!videoReady) {
-                console.warn('⚠️ Wormhole video not fully ready - waiting 1 second...');
-                // Wait for video to reach HAVE_ENOUGH_DATA state
+            if (!videoReady && videoRetryCount < MAX_VIDEO_RETRIES) {
+                videoRetryCount++;
+                console.warn(`⚠️ Wormhole video not ready - retry ${videoRetryCount}/${MAX_VIDEO_RETRIES}...`);
                 setTimeout(() => {
-                    console.log(`🔄 Retry - Wormhole readyState: ${wormholeVideo.readyState}`);
+                    console.log(`🔄 Retry ${videoRetryCount} - Wormhole readyState: ${wormholeVideo.readyState}`);
                     window.dismissLanding();
                 }, 1000);
                 return;
+            }
+
+            if (!videoReady) {
+                console.warn('⚠️ Video not ready after retries - continuing anyway (may not play smoothly)');
             }
 
             transitionStarted = true;

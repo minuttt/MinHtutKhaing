@@ -292,6 +292,8 @@
 
     let landingReady = false;
     let wormholeReady = false;
+    let landingVideoWorking = false;
+    let wormholeVideoWorking = false;
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
@@ -302,29 +304,34 @@
             const loadTime = (elapsed / 1000).toFixed(1);
             console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
 
-            // Calculate ACTUAL connection speed based on video load time
-            // 88MB total video size
-            const videoSizeMB = 88;
-            const loadTimeSeconds = elapsed / 1000;
-            const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds; // Convert MB to Mbits
+            // Only calculate speed if videos actually loaded (not error fallback)
+            if (landingVideoWorking && wormholeVideoWorking) {
+                // Calculate ACTUAL connection speed based on video load time
+                const videoSizeMB = 88;
+                const loadTimeSeconds = elapsed / 1000;
+                const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
 
-            // Update badge with REAL performance
-            if (actualSpeedMbps >= 10) {
-                connectionBadge.textContent = 'Fast Connection';
-                connectionBadge.className = 'connection-badge connection-fast';
-            } else if (actualSpeedMbps >= 3) {
-                connectionBadge.textContent = 'Moderate Connection';
-                connectionBadge.className = 'connection-badge connection-medium';
+                // Update badge with REAL performance
+                if (actualSpeedMbps >= 10) {
+                    connectionBadge.textContent = 'Fast Connection';
+                    connectionBadge.className = 'connection-badge connection-fast';
+                } else if (actualSpeedMbps >= 3) {
+                    connectionBadge.textContent = 'Moderate Connection';
+                    connectionBadge.className = 'connection-badge connection-medium';
+                } else {
+                    connectionBadge.textContent = 'Slow Connection';
+                    connectionBadge.className = 'connection-badge connection-slow';
+                }
+
+                console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
+
+                if (progressEta) {
+                    progressEta.textContent = 'Visuals loaded!';
+                }
             } else {
-                connectionBadge.textContent = 'Slow Connection';
+                console.warn('⚠️ Videos failed to load - continuing without them');
+                connectionBadge.textContent = 'Videos Unavailable';
                 connectionBadge.className = 'connection-badge connection-slow';
-            }
-
-            console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
-
-            // Update progress message
-            if (progressEta) {
-                progressEta.textContent = 'Visuals loaded!';
             }
         }
     }
@@ -339,6 +346,7 @@
         landingVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Landing video ready (canplaythrough)');
             landingReady = true;
+            landingVideoWorking = true;
             checkVideos();
         }, { once: true });
 
@@ -346,13 +354,15 @@
             if (!landingReady) {
                 console.log('✅ Landing video ready (loadeddata fallback)');
                 landingReady = true;
+                landingVideoWorking = true;
                 checkVideos();
             }
         }, { once: true });
 
         landingVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Landing video load error:', e);
-            landingReady = true; // Continue anyway
+            landingReady = true; // Continue anyway but mark as failed
+            landingVideoWorking = false;
             checkVideos();
         }, { once: true });
 
@@ -371,6 +381,7 @@
         wormholeVideo.addEventListener('canplaythrough', () => {
             console.log('✅ Wormhole video ready (canplaythrough)');
             wormholeReady = true;
+            wormholeVideoWorking = true;
             checkVideos();
         }, { once: true });
 
@@ -378,13 +389,15 @@
             if (!wormholeReady) {
                 console.log('✅ Wormhole video ready (loadeddata fallback)');
                 wormholeReady = true;
+                wormholeVideoWorking = true;
                 checkVideos();
             }
         }, { once: true });
 
         wormholeVideo.addEventListener('error', (e) => {
             console.warn('⚠️ Wormhole video load error:', e);
-            wormholeReady = true; // Continue anyway
+            wormholeReady = true; // Continue anyway but mark as failed
+            wormholeVideoWorking = false;
             checkVideos();
         }, { once: true });
 
