@@ -2,21 +2,86 @@
 (function() {
     console.log('🎨 LOADER: Starting initialization...');
 
-    // Selected 12 images - fewer images = videos load faster!
-    const allImages = [
+    // ALL 63 available images - we'll randomly pick 12 each load!
+    const allAvailableImages = [
         'Loading images/IMG_0173.jpg',
-        'Loading images/IMG_0218.jpg',
-        'Loading images/IMG_0257.jpg',
-        'Loading images/IMG_0303.jpg',
-        'Loading images/IMG_0353.jpg',
-        'Loading images/IMG_4144.jpg',
-        'Loading images/IMG_8008.jpg',
-        'Loading images/IMG_8762.jpg',
-        'Loading images/IMG_8995.jpg',
-        'Loading images/IMG_9905.jpg',
+        'Loading images/IMG_0176.jpg',
+        'Loading images/IMG_0192.jpg',
         'Loading images/IMG_0199.jpg',
-        'Loading images/IMG_0371.jpg'
+        'Loading images/IMG_0201.jpg',
+        'Loading images/IMG_0206.jpg',
+        'Loading images/IMG_0208.jpg',
+        'Loading images/IMG_0212.jpg',
+        'Loading images/IMG_0218.jpg',
+        'Loading images/IMG_0219.jpg',
+        'Loading images/IMG_0220.jpg',
+        'Loading images/IMG_0221.jpg',
+        'Loading images/IMG_0226.jpg',
+        'Loading images/IMG_0236.jpg',
+        'Loading images/IMG_0237.jpg',
+        'Loading images/IMG_0249.jpg',
+        'Loading images/IMG_0250.jpg',
+        'Loading images/IMG_0255.jpg',
+        'Loading images/IMG_0257.jpg',
+        'Loading images/IMG_0267.jpg',
+        'Loading images/IMG_0268.jpg',
+        'Loading images/IMG_0274.jpg',
+        'Loading images/IMG_0275.jpg',
+        'Loading images/IMG_0276.jpg',
+        'Loading images/IMG_0277.jpg',
+        'Loading images/IMG_0283.jpg',
+        'Loading images/IMG_0301.jpg',
+        'Loading images/IMG_0303.jpg',
+        'Loading images/IMG_0307.jpg',
+        'Loading images/IMG_0312.jpg',
+        'Loading images/IMG_0331.jpg',
+        'Loading images/IMG_0333.jpg',
+        'Loading images/IMG_0343.jpg',
+        'Loading images/IMG_0349.jpg',
+        'Loading images/IMG_0351.jpg',
+        'Loading images/IMG_0353.jpg',
+        'Loading images/IMG_0355.jpg',
+        'Loading images/IMG_0357.jpg',
+        'Loading images/IMG_0359.jpg',
+        'Loading images/IMG_0371.jpg',
+        'Loading images/IMG_0395.jpg',
+        'Loading images/IMG_0546.jpg',
+        'Loading images/IMG_4130.jpg',
+        'Loading images/IMG_4144.jpg',
+        'Loading images/IMG_4154.jpg',
+        'Loading images/IMG_7995.jpg',
+        'Loading images/IMG_8008.jpg',
+        'Loading images/IMG_8044.jpg',
+        'Loading images/IMG_8051.jpg',
+        'Loading images/IMG_8053.jpg',
+        'Loading images/IMG_8062.jpg',
+        'Loading images/IMG_8072.jpg',
+        'Loading images/IMG_8762.jpg',
+        'Loading images/IMG_8819.jpg',
+        'Loading images/IMG_8990.jpg',
+        'Loading images/IMG_8995.jpg',
+        'Loading images/IMG_9888.jpg',
+        'Loading images/IMG_9897.jpg',
+        'Loading images/IMG_9905.jpg',
+        'Loading images/Loading images/1354d826-0e6b-43f4-bad2-c49c270e16a1.jpg',
+        'Loading images/Loading images/5DE894B2-3103-4C30-8DFE-08793200DB9A.jpg',
+        'Loading images/Loading images/7e64b24a-4c78-4d02-bf91-79aea9547b8e.jpg',
+        'Loading images/Loading images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg'
     ];
+
+    // Fisher-Yates shuffle algorithm
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    // Randomly pick 12 images from all 63!
+    const allImages = shuffleArray(allAvailableImages).slice(0, 12);
+    console.log(`🎲 RANDOM SELECTION: Picked 12 random images from ${allAvailableImages.length} total`);
 
     const loader = document.getElementById('premium-loader');
     const galleryGrid = document.getElementById('gallery-grid');
