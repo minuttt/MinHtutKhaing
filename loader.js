@@ -286,13 +286,15 @@
         // Complete when:
         // 1. Minimum time passed AND videos loaded, OR
         // 2. Time + grace period exceeded (give up)
-        const gracePeriod = 7000; // 7 seconds grace period
+        // Grace period depends on connection speed estimate
+        const gracePeriod = isLocalFile ? 2000 : 30000; // Local: 2s, Production: 30s
         const minTimePassed = elapsed >= maxLoadTime;
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
 
         if ((minTimePassed && videosLoaded) || forceComplete) {
             if (forceComplete && !videosLoaded) {
-                console.warn('⚠️ Videos not ready after 7s grace - continuing without them');
+                console.warn(`⚠️ Videos not ready after ${gracePeriod/1000}s grace (${(elapsed/1000).toFixed(1)}s total) - continuing without them`);
+                console.warn(`   Landing: ${landingReady}, Wormhole: ${wormholeReady}, Working: ${landingVideoWorking}/${wormholeVideoWorking}`);
                 connectionBadge.textContent = 'Videos Unavailable';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
