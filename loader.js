@@ -380,10 +380,11 @@
     let landingVideoWorking = false;
     let wormholeVideoWorking = false;
 
-    // BATCH LOAD IMAGES: Load in small batches to avoid blocking videos
+    // SMART IMAGE LOADING: Load visible images FIRST, rest after videos
     let imagesLoaded = 0;
-    const BATCH_SIZE = 6; // Load 6 images at a time
-    const BATCH_DELAY = 200; // Wait 200ms between batches
+    const VISIBLE_COUNT = 12; // First 12 images (one full set) - load immediately
+    const BATCH_SIZE = 8; // Rest load in batches of 8
+    const BATCH_DELAY = 150; // 150ms between batches
 
     function loadImageBatch(startIndex) {
         const endIndex = Math.min(startIndex + BATCH_SIZE, imagesToLoad.length);
@@ -395,7 +396,7 @@
                 img.src = src;
                 img.onload = () => {
                     imagesLoaded++;
-                    if (imagesLoaded % 12 === 0) {
+                    if (imagesLoaded % 12 === 0 || imagesLoaded === imagesToLoad.length) {
                         console.log(`📸 Loaded ${imagesLoaded}/${imagesToLoad.length} images`);
                     }
                 };
@@ -410,12 +411,15 @@
         if (endIndex < imagesToLoad.length) {
             setTimeout(() => loadImageBatch(endIndex), BATCH_DELAY);
         } else {
-            console.log(`✅ All ${imagesToLoad.length} images queued!`);
+            console.log(`✅ All ${imagesToLoad.length} images loaded!`);
         }
     }
 
-    // DON'T start loading images yet - wait for videos first!
-    // Images will start loading AFTER videos are ready (see checkVideos function)
+    // IMMEDIATELY load first 12 images (user sees these during loader!)
+    console.log('🎬 Loading first 12 visible images immediately...');
+    loadImageBatch(0);
+
+    // Rest will load AFTER videos complete (see checkVideos function)
 
     function checkVideos() {
         const elapsed = Date.now() - startTime;
@@ -426,9 +430,14 @@
             const loadTime = (elapsed / 1000).toFixed(1);
             console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
 
-            // NOW start loading images - videos are done!
-            console.log('🎬 Videos loaded! Now starting batch image loading...');
-            loadImageBatch(0);
+            // NOW load remaining images (first 12 already loading)
+            if (imagesLoaded < imagesToLoad.length) {
+                const remainingStart = Math.ceil(imagesLoaded / BATCH_SIZE) * BATCH_SIZE;
+                console.log(`🎬 Videos loaded! Loading remaining images from ${remainingStart}...`);
+                if (remainingStart < imagesToLoad.length) {
+                    loadImageBatch(remainingStart);
+                }
+            }
 
             // Only calculate speed if videos actually loaded (not error fallback)
             if (landingVideoWorking && wormholeVideoWorking) {
