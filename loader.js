@@ -285,13 +285,13 @@
 
         // Complete when EITHER:
         // 1. Videos loaded, OR
-        // 2. Time complete + short grace period (7 seconds total)
-        const gracePeriod = 7000; // 7 seconds grace period (shorter!)
+        // 2. Time complete + grace period (enough for 88MB download)
+        const gracePeriod = 45000; // 45 seconds grace for production (88MB needs time!)
         const forceComplete = elapsed > (maxLoadTime + gracePeriod);
 
         if (videosLoaded || forceComplete) {
             if (forceComplete && !videosLoaded) {
-                console.warn('⚠️ Videos not ready after 7s grace - continuing without them');
+                console.warn('⚠️ Videos not ready after 45s grace - continuing without them');
                 connectionBadge.textContent = 'Videos Unavailable';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
