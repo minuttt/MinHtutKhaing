@@ -206,7 +206,7 @@
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
 
-    // Connection detection
+    // Initial connection detection (estimate only)
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     let connectionSpeed = 50;
 
@@ -217,19 +217,22 @@
         connectionSpeed = types[conn.effectiveType] || 20;
     }
 
+    // Start with "Detecting..." until we know actual speed
+    connectionBadge.textContent = 'Detecting Connection...';
+    connectionBadge.className = 'connection-badge connection-medium';
+
+    // Set minimum loading times based on initial estimate
     if (connectionSpeed >= 10) {
-        maxLoadTime = 5500;
-        connectionBadge.textContent = 'Fast Connection';
-        connectionBadge.className = 'connection-badge connection-fast';
+        maxLoadTime = 8000; // 8s minimum for fast estimate
     } else if (connectionSpeed >= 3) {
-        maxLoadTime = 10000;
-        connectionBadge.textContent = 'Slow Connection';
-        connectionBadge.className = 'connection-badge connection-medium';
+        maxLoadTime = 15000; // 15s for medium estimate
     } else {
-        maxLoadTime = 25000;
-        connectionBadge.textContent = 'Very Slow Connection';
-        connectionBadge.className = 'connection-badge connection-slow';
+        maxLoadTime = 30000; // 30s for slow estimate
     }
+
+    // Track actual loading performance
+    let actualLoadSpeed = null;
+    const videoStartTime = Date.now();
 
     console.log(`⏱️ LOAD TIME: ${(maxLoadTime/1000).toFixed(1)}s`);
 
@@ -244,6 +247,9 @@
             progressEta.textContent = `ETA: ${Math.ceil(remaining)}s`;
         } else if (exceedsMaxTime) {
             progressEta.textContent = 'Exceeded maximum loading time, continuing with static background';
+        } else if (!videosLoaded) {
+            // Time complete but videos still loading
+            progressEta.textContent = 'Loading visuals...';
         } else {
             progressEta.textContent = 'Almost ready...';
         }
@@ -251,87 +257,190 @@
 
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        const timeProgress = Math.min((elapsed / maxLoadTime) * 100, 100);
 
-        updateProgress(timeProgress);
+        // Show honest time-based progress, don't wait forever for videos
+        let progress;
+
+        if (elapsed < maxLoadTime) {
+            // Normal loading: 0-90%
+            progress = (elapsed / maxLoadTime) * 90;
+        } else if (!videosLoaded && elapsed < (maxLoadTime + 5000)) {
+            // Grace period (5s): 90-95%
+            const graceElapsed = elapsed - maxLoadTime;
+            progress = 90 + (graceElapsed / 5000) * 5;
+        } else if (!videosLoaded) {
+            // Give up waiting: 95-100% quickly
+            const giveUpElapsed = elapsed - (maxLoadTime + 5000);
+            progress = Math.min(95 + (giveUpElapsed / 2000) * 5, 100);
+        } else {
+            // Videos loaded!
+            progress = 100;
+        }
+
+        updateProgress(progress);
 
         if (elapsed > maxLoadTime && !exceedsMaxTime) {
             exceedsMaxTime = true;
-            updateProgress(100);
         }
 
-        if (timeProgress >= 100) {
+        // Complete when:
+        // 1. Minimum time passed AND videos loaded, OR
+        // 2. Time + grace period exceeded (give up)
+        const gracePeriod = 7000; // 7 seconds grace period
+        const minTimePassed = elapsed >= maxLoadTime;
+        const forceComplete = elapsed > (maxLoadTime + gracePeriod);
+
+        if ((minTimePassed && videosLoaded) || forceComplete) {
+            if (forceComplete && !videosLoaded) {
+                console.warn('⚠️ Videos not ready after 7s grace - continuing without them');
+                connectionBadge.textContent = 'Videos Unavailable';
+                connectionBadge.className = 'connection-badge connection-slow';
+            }
             clearInterval(progressInterval);
+            updateProgress(100);
             completeLoading();
         }
     }, 50);
 
     let landingReady = false;
     let wormholeReady = false;
+    let landingVideoWorking = false;
+    let wormholeVideoWorking = false;
 
     function checkVideos() {
+        const elapsed = Date.now() - startTime;
+        console.log(`🎥 VIDEO CHECK: Landing=${landingReady}, Wormhole=${wormholeReady} (${(elapsed/1000).toFixed(1)}s)`);
+
         if (landingReady && wormholeReady) {
             videosLoaded = true;
+            const loadTime = (elapsed / 1000).toFixed(1);
+            console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
+
+            // Only calculate speed if videos actually loaded (not error fallback)
+            if (landingVideoWorking && wormholeVideoWorking) {
+                // Calculate ACTUAL connection speed based on video load time
+                const videoSizeMB = 88;
+                const loadTimeSeconds = elapsed / 1000;
+                const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
+
+                // Update badge with REAL performance
+                if (actualSpeedMbps >= 10) {
+                    connectionBadge.textContent = 'Fast Connection';
+                    connectionBadge.className = 'connection-badge connection-fast';
+                } else if (actualSpeedMbps >= 3) {
+                    connectionBadge.textContent = 'Moderate Connection';
+                    connectionBadge.className = 'connection-badge connection-medium';
+                } else {
+                    connectionBadge.textContent = 'Slow Connection';
+                    connectionBadge.className = 'connection-badge connection-slow';
+                }
+
+                console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
+
+                if (progressEta) {
+                    progressEta.textContent = 'Visuals loaded!';
+                }
+            } else {
+                console.warn('⚠️ Videos failed to load - continuing without them');
+                connectionBadge.textContent = 'Videos Unavailable';
+                connectionBadge.className = 'connection-badge connection-slow';
+            }
         }
     }
 
+    // Detect if running on file:// protocol (local testing)
+    const isLocalFile = window.location.protocol === 'file:';
+
     if (landingVideo) {
-        console.log('🎥 Setting up landing video listeners...');
+        // iOS-specific: ensure video is properly configured
+        landingVideo.muted = true;
+        landingVideo.playsInline = true;
+        landingVideo.setAttribute('playsinline', '');
+        landingVideo.setAttribute('webkit-playsinline', '');
+
+        // On file:// protocol, don't wait for videos (they may not load properly)
+        if (isLocalFile) {
+            console.log('⚠️ Local file:// detected - skipping video preload wait');
+            setTimeout(() => {
+                if (!landingReady) {
+                    landingReady = true;
+                    landingVideoWorking = true;
+                    checkVideos();
+                }
+            }, 500);
+        }
 
         landingVideo.addEventListener('canplaythrough', () => {
-            console.log('✅ Landing video: canplaythrough event fired');
+            console.log('✅ Landing video ready (canplaythrough)');
             landingReady = true;
+            landingVideoWorking = true;
             checkVideos();
         }, { once: true });
 
         landingVideo.addEventListener('loadeddata', () => {
             if (!landingReady) {
-                console.log('✅ Landing video: loadeddata event fired (fallback)');
+                console.log('✅ Landing video ready (loadeddata fallback)');
                 landingReady = true;
+                landingVideoWorking = true;
                 checkVideos();
             }
         }, { once: true });
 
         landingVideo.addEventListener('error', (e) => {
-            console.error('❌ Landing video load error:', e);
-            landingReady = true; // Continue anyway
+            console.warn('⚠️ Landing video load error:', e);
+            landingReady = true; // Continue anyway but mark as failed
+            landingVideoWorking = false;
             checkVideos();
         }, { once: true });
 
         landingVideo.load();
-        console.log(`🎬 Landing video load() called, src: ${landingVideo.currentSrc || 'none'}`);
     } else {
-        console.warn('⚠️ Landing video element not found');
         landingReady = true;
     }
 
     if (wormholeVideo) {
-        console.log('🎥 Setting up wormhole video listeners...');
+        // iOS-specific: ensure video is properly configured
+        wormholeVideo.muted = true;
+        wormholeVideo.playsInline = true;
+        wormholeVideo.setAttribute('playsinline', '');
+        wormholeVideo.setAttribute('webkit-playsinline', '');
+
+        // On file:// protocol, don't wait for videos (they may not load properly)
+        if (isLocalFile) {
+            setTimeout(() => {
+                if (!wormholeReady) {
+                    wormholeReady = true;
+                    wormholeVideoWorking = true;
+                    checkVideos();
+                }
+            }, 500);
+        }
 
         wormholeVideo.addEventListener('canplaythrough', () => {
-            console.log('✅ Wormhole video: canplaythrough event fired');
+            console.log('✅ Wormhole video ready (canplaythrough)');
             wormholeReady = true;
+            wormholeVideoWorking = true;
             checkVideos();
         }, { once: true });
 
         wormholeVideo.addEventListener('loadeddata', () => {
             if (!wormholeReady) {
-                console.log('✅ Wormhole video: loadeddata event fired (fallback)');
+                console.log('✅ Wormhole video ready (loadeddata fallback)');
                 wormholeReady = true;
+                wormholeVideoWorking = true;
                 checkVideos();
             }
         }, { once: true });
 
         wormholeVideo.addEventListener('error', (e) => {
-            console.error('❌ Wormhole video load error:', e);
-            wormholeReady = true; // Continue anyway
+            console.warn('⚠️ Wormhole video load error:', e);
+            wormholeReady = true; // Continue anyway but mark as failed
+            wormholeVideoWorking = false;
             checkVideos();
         }, { once: true });
 
         wormholeVideo.load();
-        console.log(`🎬 Wormhole video load() called, src: ${wormholeVideo.currentSrc || 'none'}`);
     } else {
-        console.warn('⚠️ Wormhole video element not found');
         wormholeReady = true;
     }
 
@@ -347,13 +456,15 @@
 
         // Wait 1 second to show "All Set!" message
         setTimeout(() => {
-            console.log('🎬 Starting fade-out NOW');
+            const elapsed = Date.now() - startTime;
+            console.log(`🎬 Starting fade-out NOW (total time: ${(elapsed/1000).toFixed(1)}s)`);
             loader.style.transition = 'opacity 1s ease-out';
             loader.classList.add('fade-out');
 
             // After fade-out completes, hide and cleanup
             setTimeout(() => {
-                console.log('👻 Loader hidden - cleaning up');
+                const fadeCompleteTime = Date.now() - startTime;
+                console.log(`👻 Loader hidden - cleaning up (total time: ${(fadeCompleteTime/1000).toFixed(1)}s)`);
                 loader.classList.add('hidden');
                 loader.style.display = 'none';
 
@@ -365,8 +476,10 @@
 
                 // DISPATCH EVENT NOW - so landing animations can start
                 window.loaderIsComplete = true;
+                const eventTime = Date.now() - startTime;
+                console.log(`🔓 DISPATCHING loaderComplete event NOW (at ${(eventTime/1000).toFixed(1)}s)`);
                 window.dispatchEvent(new CustomEvent('loaderComplete'));
-                console.log(`🔓 LOADER FULLY COMPLETE - dispatching event for landing animations`);
+                console.log(`✅ Event dispatched! Landing page should animate now.`);
             }, 1000);
         }, 1000);
     }
