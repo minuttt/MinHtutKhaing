@@ -319,11 +319,15 @@
         if (subtitleEl) subtitleEl.textContent = 'Loading Complete';
         if (progressEta) progressEta.textContent = 'Ready!';
 
+        // Wait 1 second to show "All Set!" message
         setTimeout(() => {
+            console.log('🎬 Starting fade-out NOW');
             loader.style.transition = 'opacity 1s ease-out';
             loader.classList.add('fade-out');
 
+            // After fade-out completes, hide and cleanup
             setTimeout(() => {
+                console.log('👻 Loader hidden - cleaning up');
                 loader.classList.add('hidden');
                 loader.style.display = 'none';
 
@@ -333,9 +337,10 @@
                 window.removeEventListener('mouseup', handleDragEnd);
                 window.removeEventListener('touchend', handleDragEnd);
 
+                // DISPATCH EVENT NOW - so landing animations can start
                 window.loaderIsComplete = true;
                 window.dispatchEvent(new CustomEvent('loaderComplete'));
-                console.log(`🔓 KEYBOARD ENABLED`);
+                console.log(`🔓 LOADER FULLY COMPLETE - dispatching event for landing animations`);
             }, 1000);
         }, 1000);
     }

@@ -3252,16 +3252,11 @@
         // NO BUFFER - Allow transition immediately after loader completes
         let canStartTransition = false;
 
-        // Enable transitions when loader completes + wait for fade out
+        // Start animations IMMEDIATELY when loader is done (loader already waited 2s)
         window.addEventListener('loaderComplete', () => {
-            console.log('🎬 Loader complete - waiting for fade out (2s) before starting animations');
-
-            // Wait 2 seconds (1s fade + 1s hidden transition) before starting animations
-            setTimeout(() => {
-                console.log('✅ Loader fully hidden - starting landing animations NOW');
-                startLandingAnimations();
-                canStartTransition = true;
-            }, 2000);
+            console.log('✅ RECEIVED loaderComplete - starting landing animations NOW');
+            startLandingAnimations();
+            canStartTransition = true;
         }, { once: true });
 
         // Fallback: enable after short delay if no loader
