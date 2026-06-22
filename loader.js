@@ -276,36 +276,62 @@
     }
 
     if (landingVideo) {
+        console.log('🎥 Setting up landing video listeners...');
+
         landingVideo.addEventListener('canplaythrough', () => {
+            console.log('✅ Landing video: canplaythrough event fired');
             landingReady = true;
             checkVideos();
         }, { once: true });
 
+        landingVideo.addEventListener('loadeddata', () => {
+            if (!landingReady) {
+                console.log('✅ Landing video: loadeddata event fired (fallback)');
+                landingReady = true;
+                checkVideos();
+            }
+        }, { once: true });
+
         landingVideo.addEventListener('error', (e) => {
-            console.warn('⚠️ Landing video load error:', e);
+            console.error('❌ Landing video load error:', e);
             landingReady = true; // Continue anyway
             checkVideos();
         }, { once: true });
 
         landingVideo.load();
+        console.log(`🎬 Landing video load() called, src: ${landingVideo.currentSrc || 'none'}`);
     } else {
+        console.warn('⚠️ Landing video element not found');
         landingReady = true;
     }
 
     if (wormholeVideo) {
+        console.log('🎥 Setting up wormhole video listeners...');
+
         wormholeVideo.addEventListener('canplaythrough', () => {
+            console.log('✅ Wormhole video: canplaythrough event fired');
             wormholeReady = true;
             checkVideos();
         }, { once: true });
 
+        wormholeVideo.addEventListener('loadeddata', () => {
+            if (!wormholeReady) {
+                console.log('✅ Wormhole video: loadeddata event fired (fallback)');
+                wormholeReady = true;
+                checkVideos();
+            }
+        }, { once: true });
+
         wormholeVideo.addEventListener('error', (e) => {
-            console.warn('⚠️ Wormhole video load error:', e);
+            console.error('❌ Wormhole video load error:', e);
             wormholeReady = true; // Continue anyway
             checkVideos();
         }, { once: true });
 
         wormholeVideo.load();
+        console.log(`🎬 Wormhole video load() called, src: ${wormholeVideo.currentSrc || 'none'}`);
     } else {
+        console.warn('⚠️ Wormhole video element not found');
         wormholeReady = true;
     }
 
