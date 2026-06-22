@@ -318,26 +318,31 @@
             const loadTime = (elapsed / 1000).toFixed(1);
             console.log(`✅ VIDEOS READY: Both videos loaded in ${loadTime}s!`);
 
+            // On local file://, videos work even if events didn't fire
+            const videosActuallyWorking = isLocalFile || (landingVideoWorking && wormholeVideoWorking);
+
             // Only calculate speed if videos actually loaded (not error fallback)
-            if (landingVideoWorking && wormholeVideoWorking) {
-                // Calculate ACTUAL connection speed based on video load time
-                const videoSizeMB = 88;
-                const loadTimeSeconds = elapsed / 1000;
-                const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
+            if (videosActuallyWorking) {
+                // Don't calculate speed for local files (meaningless)
+                if (!isLocalFile) {
+                    const videoSizeMB = 88;
+                    const loadTimeSeconds = elapsed / 1000;
+                    const actualSpeedMbps = (videoSizeMB * 8) / loadTimeSeconds;
 
-                // Update badge with REAL performance
-                if (actualSpeedMbps >= 10) {
-                    connectionBadge.textContent = 'Fast Connection';
-                    connectionBadge.className = 'connection-badge connection-fast';
-                } else if (actualSpeedMbps >= 3) {
-                    connectionBadge.textContent = 'Moderate Connection';
-                    connectionBadge.className = 'connection-badge connection-medium';
-                } else {
-                    connectionBadge.textContent = 'Slow Connection';
-                    connectionBadge.className = 'connection-badge connection-slow';
+                    // Update badge with REAL performance
+                    if (actualSpeedMbps >= 10) {
+                        connectionBadge.textContent = 'Fast Connection';
+                        connectionBadge.className = 'connection-badge connection-fast';
+                    } else if (actualSpeedMbps >= 3) {
+                        connectionBadge.textContent = 'Moderate Connection';
+                        connectionBadge.className = 'connection-badge connection-medium';
+                    } else {
+                        connectionBadge.textContent = 'Slow Connection';
+                        connectionBadge.className = 'connection-badge connection-slow';
+                    }
+
+                    console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
                 }
-
-                console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
 
                 if (progressEta) {
                     progressEta.textContent = 'Visuals loaded!';
