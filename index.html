@@ -1122,6 +1122,7 @@
             display: grid;
             grid-template-columns: repeat(18, 16rem);
             grid-auto-rows: 24rem;
+            grid-auto-flow: row;
             gap: 3.5rem;
             padding: 3.5rem;
             width: fit-content;
@@ -1148,9 +1149,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
         }
 
-        .gallery-item:nth-child(even) {
-            margin-top: 60%;
-        }
+        /* Removed masonry offset - let grid flow naturally */
 
         .gallery-item img {
             width: 100%;
@@ -3192,39 +3191,22 @@
             }, 1500);
         }, 3900); // 1200ms (subtitle) + 2500ms (buffer) = 3700ms, rounded to 3900ms
 
-        // Transition control - enable after "Press any key" is visible for 2.5s
+        // NO BUFFER - Allow transition immediately after loader completes
         let canStartTransition = false;
-        let transitionTimer = null;
 
-        // Start the timer when landing overlay becomes visible (after loader is done)
-        function enableTransitionsAfterDelay() {
-            if (transitionTimer) return; // Already started
+        // Enable transitions when loader completes
+        window.addEventListener('loaderComplete', () => {
+            console.log('🎬 Loader complete - enabling transitions NOW');
+            canStartTransition = true;
+        }, { once: true });
 
-            const timerStartTime = Date.now();
-            console.log('⏱️ [NOW] Starting 6.4s buffer timer (3.9s for hint + 2.5s buffer)');
-            transitionTimer = setTimeout(() => {
-                const elapsed = ((Date.now() - timerStartTime) / 1000).toFixed(1);
+        // Fallback: enable after short delay if no loader
+        setTimeout(() => {
+            if (!canStartTransition) {
+                console.log('⚠️ No loader detected - enabling transitions');
                 canStartTransition = true;
-                console.log(`✅ [+${elapsed}s] Interaction NOW ENABLED - press any key to continue!`);
-            }, 6400); // 3900ms (hint appears) + 2500ms (buffer) = 6400ms
-        }
-
-        // Observe when loader is removed and landing is shown
-        const loaderElement = document.getElementById('premium-loader');
-        if (loaderElement) {
-            console.log('👀 Watching for loader to be hidden...');
-            const loaderObserver = new MutationObserver(() => {
-                if (loaderElement.classList.contains('hidden')) {
-                    console.log('🎬 Loader is hidden - landing page now visible!');
-                    enableTransitionsAfterDelay();
-                    loaderObserver.disconnect();
-                }
-            });
-            loaderObserver.observe(loaderElement, { attributes: true, attributeFilter: ['class'] });
-        } else {
-            console.log('⚠️ No loader element found - starting transition timer immediately');
-            enableTransitionsAfterDelay();
-        }
+            }
+        }, 2000);
 
         window.dismissLanding = function() {
             if (transitionStarted) {
