@@ -85,6 +85,7 @@
     function handleDragMove(e) {
         if (!isDragging) return;
         e.preventDefault();
+        e.stopPropagation();
 
         const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
         const clientY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
@@ -127,10 +128,13 @@
         requestAnimationFrame(applyMomentum);
     }
 
-    // Wheel scroll
+    // Wheel scroll - prevent from propagating to landing page
     function handleWheel(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
         if (!isDragging) {
-            e.preventDefault();
             currentY -= e.deltaY * 2.7;
             galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
@@ -138,6 +142,18 @@
                 hasScrolled = true;
                 loadingInfo.classList.add('scrolled');
             }
+        }
+
+        return false;
+    }
+
+    // Block keyboard events during loading to prevent landing page skip
+    function blockKeyboard(e) {
+        if (loader && !loader.classList.contains('hidden')) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
         }
     }
 
@@ -149,8 +165,11 @@
     window.addEventListener('mouseup', handleDragEnd);
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('keydown', blockKeyboard, { passive: false, capture: true });
+    window.addEventListener('keypress', blockKeyboard, { passive: false, capture: true });
+    window.addEventListener('keyup', blockKeyboard, { passive: false, capture: true });
 
-    // Connection detection
+    // Connection detection with minimum 5.5s load time
     function detectConnection() {
         try {
             const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -162,21 +181,23 @@
             }
 
             const estimatedSeconds = (88 * 8) / connectionSpeed;
-            maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, 10000), 30000);
+            // Minimum 5.5 seconds, maximum 30 seconds
+            maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, 5500), 30000);
 
             if (connectionSpeed >= 20) {
-                connectionBadge.textContent = '🚀 Lightning Fast';
+                connectionBadge.textContent = 'Lightning Fast';
                 connectionBadge.className = 'connection-badge connection-fast';
             } else if (connectionSpeed >= 5) {
-                connectionBadge.textContent = '⚡ Smooth Connection';
+                connectionBadge.textContent = 'Smooth Connection';
                 connectionBadge.className = 'connection-badge connection-medium';
             } else {
-                connectionBadge.textContent = '🐌 Hang tight...';
+                connectionBadge.textContent = 'Loading...';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
         } catch (err) {
-            connectionBadge.textContent = '⚡ Loading...';
+            connectionBadge.textContent = 'Loading...';
             connectionBadge.className = 'connection-badge connection-medium';
+            maxLoadTime = 5500; // Minimum 5.5 seconds
         }
     }
 
@@ -250,17 +271,25 @@
         wormholeVideo.load();
     }
 
-    // Complete loading
+    // Complete loading with smooth fade
     function completeLoading() {
         loadingInfo.querySelector('.loading-title').textContent = 'All Set!';
         loadingInfo.querySelector('.loading-subtitle').innerHTML = '<span class="loading-complete">✓ Loading Complete</span><br>Welcome to my portfolio...';
         progressEta.textContent = 'Ready!';
 
+        // Smooth fade out after 1 second
         setTimeout(() => {
+            loader.style.transition = 'opacity 1s ease-out';
             loader.classList.add('fade-out');
             setTimeout(() => {
                 loader.classList.add('hidden');
-            }, 800);
-        }, 1500);
+                // Clean up event listeners
+                window.removeEventListener('wheel', handleWheel);
+                window.removeEventListener('mousemove', handleDragMove);
+                window.removeEventListener('touchmove', handleDragMove);
+                window.removeEventListener('mouseup', handleDragEnd);
+                window.removeEventListener('touchend', handleDragEnd);
+            }, 1000);
+        }, 1000);
     }
 })();
