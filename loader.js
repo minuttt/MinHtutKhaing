@@ -58,24 +58,28 @@
 
     console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
 
-    // Create SINGLE tile - no copies! Just 63 images for fast loading
+    // Create 2x2 grid (4 copies) for PERFORMANCE - still infinite!
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < allImages.length; i++) {
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
-        item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
+    for (let tileY = 0; tileY < 2; tileY++) {
+        for (let tileX = 0; tileX < 2; tileX++) {
+            for (let i = 0; i < allImages.length; i++) {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
-        const img = document.createElement('img');
-        img.src = allImages[i];
-        img.alt = `Photo ${i + 1}`;
-        img.draggable = false;
+                const img = document.createElement('img');
+                img.src = allImages[i];
+                img.alt = `Photo ${i + 1}`;
+                img.draggable = false;
 
-        item.appendChild(img);
-        fragment.appendChild(item);
+                item.appendChild(img);
+                fragment.appendChild(item);
+            }
+        }
     }
     galleryGrid.appendChild(fragment);
 
-    console.log(`📸 CREATED: ${allImages.length} items (single tile for fast loading)`);
+    console.log(`📸 CREATED: ${4 * allImages.length} items (2×2 tiles for performance)`);
 
     // State - START AT CENTER POSITION (2x2 grid)
     let isDragging = false;
@@ -202,10 +206,29 @@
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
 
-    // SIMPLE: Just use 8 seconds for everyone - fast and reliable!
-    maxLoadTime = 8000;
-    connectionBadge.textContent = 'Loading...';
-    connectionBadge.className = 'connection-badge connection-fast';
+    // Initial connection detection (estimate only)
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    let connectionSpeed = 50;
+
+    if (conn && conn.downlink) {
+        connectionSpeed = conn.downlink;
+    } else if (conn && conn.effectiveType) {
+        const types = { 'slow-2g': 0.5, '2g': 1, '3g': 3, '4g': 20 };
+        connectionSpeed = types[conn.effectiveType] || 20;
+    }
+
+    // Start with "Detecting..." until we know actual speed
+    connectionBadge.textContent = 'Detecting Connection...';
+    connectionBadge.className = 'connection-badge connection-medium';
+
+    // Set minimum loading times based on initial estimate
+    if (connectionSpeed >= 10) {
+        maxLoadTime = 8000; // 8s minimum for fast estimate
+    } else if (connectionSpeed >= 3) {
+        maxLoadTime = 15000; // 15s for medium estimate
+    } else {
+        maxLoadTime = 30000; // 30s for slow estimate
+    }
 
     // Track actual loading performance
     let actualLoadSpeed = null;
@@ -234,7 +257,25 @@
 
     const progressInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        const progress = Math.min((elapsed / maxLoadTime) * 100, 100);
+
+        // Show honest time-based progress, don't wait forever for videos
+        let progress;
+
+        if (elapsed < maxLoadTime) {
+            // Normal loading: 0-90%
+            progress = (elapsed / maxLoadTime) * 90;
+        } else if (!videosLoaded && elapsed < (maxLoadTime + 5000)) {
+            // Grace period (5s): 90-95%
+            const graceElapsed = elapsed - maxLoadTime;
+            progress = 90 + (graceElapsed / 5000) * 5;
+        } else if (!videosLoaded) {
+            // Give up waiting: 95-100% quickly
+            const giveUpElapsed = elapsed - (maxLoadTime + 5000);
+            progress = Math.min(95 + (giveUpElapsed / 2000) * 5, 100);
+        } else {
+            // Videos loaded!
+            progress = 100;
+        }
 
         updateProgress(progress);
 
@@ -242,9 +283,20 @@
             exceedsMaxTime = true;
         }
 
-        // SIMPLE: Complete when time passes, videos download in background!
-        if (progress >= 100) {
+        // Complete when EITHER:
+        // 1. Videos loaded, OR
+        // 2. Time complete + short grace period (7 seconds total)
+        const gracePeriod = 7000; // 7 seconds grace period (shorter!)
+        const forceComplete = elapsed > (maxLoadTime + gracePeriod);
+
+        if (videosLoaded || forceComplete) {
+            if (forceComplete && !videosLoaded) {
+                console.warn('⚠️ Videos not ready after 7s grace - continuing without them');
+                connectionBadge.textContent = 'Videos Unavailable';
+                connectionBadge.className = 'connection-badge connection-slow';
+            }
             clearInterval(progressInterval);
+            updateProgress(100);
             completeLoading();
         }
     }, 50);
