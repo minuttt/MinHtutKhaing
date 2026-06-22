@@ -1120,13 +1120,14 @@
 
         .drag-gallery-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(18, 16rem);
+            grid-auto-rows: 24rem;
             gap: 3.5rem;
             padding: 3.5rem;
             width: fit-content;
             height: fit-content;
             will-change: transform;
-            transition: transform 0.1s ease-out;
+            transition: none;
             background: #0a0a0a;
         }
 
@@ -3544,51 +3545,55 @@
             let musicStarted = false;
 
             const startMusicDirectly = (e) => {
+                console.log(`🎹 KEY PRESSED: ${e.type}, loaderIsComplete=${window.loaderIsComplete}, musicStarted=${musicStarted}`);
+
                 // CRITICAL: Check if loader is complete
                 if (!window.loaderIsComplete) {
-                    console.log('⏸️ Loader not complete yet - ignoring interaction');
+                    console.log('⏸️ BLOCKED: Loader not complete yet');
                     return;
                 }
 
                 if (musicStarted) {
-                    console.log('⏸️ Music already started - ignoring duplicate');
+                    console.log('⏸️ BLOCKED: Music already started');
                     return;
                 }
 
                 musicStarted = true;
-                console.log(`🎵 VALID user interaction detected: ${e.type} - starting music NOW`);
+                console.log(`🎵 TRIGGERING: ${e.type}`);
 
-                // Dismiss landing overlay
+                // Dismiss landing overlay FIRST
                 if (window.dismissLanding) {
-                    console.log('🚀 Calling dismissLanding()...');
+                    console.log('🚀 CALLING dismissLanding()');
                     window.dismissLanding();
                 } else {
-                    console.error('❌ window.dismissLanding is not defined!');
+                    console.error('❌ ERROR: window.dismissLanding NOT DEFINED!');
                 }
 
-                // Play must be called DIRECTLY in event handler
+                // Play audio
                 audio.play().then(() => {
-                    console.log('✅ Music started successfully!');
+                    console.log('✅ MUSIC STARTED');
                     updatePlayPauseIcon(false);
                     albumArt.classList.add('spinning');
                     hasStarted = true;
                 }).catch(err => {
-                    console.error('❌ Failed to start music:', err);
+                    console.error('❌ MUSIC FAILED:', err);
                 });
             };
 
-            // Set up listeners immediately, but check loader completion in handler
+            // Set up listeners
             document.addEventListener('click', startMusicDirectly);
             document.addEventListener('mousedown', startMusicDirectly);
             document.addEventListener('keydown', startMusicDirectly);
             document.addEventListener('keypress', startMusicDirectly);
+            document.addEventListener('keyup', startMusicDirectly);
             document.addEventListener('touchstart', startMusicDirectly);
 
-            console.log('🎵 Interaction listeners active (waiting for loader to complete)');
+            console.log('🎵 MUSIC: Listeners installed');
 
-            // Also listen for loaderComplete event
+            // Listen for loader completion
             window.addEventListener('loaderComplete', () => {
-                console.log('📢 Received loaderComplete event - keyboard should work now!');
+                console.log('📢 MUSIC: Received loaderComplete - keyboard enabled!');
+                console.log(`🔓 MUSIC: window.loaderIsComplete = ${window.loaderIsComplete}`);
             }, { once: true });
         }
 
