@@ -3196,6 +3196,16 @@
             ensureLandingVideoPlays();
         }, 1000);
 
+        // Mobile: also try on ANY user interaction (tap/touch/click)
+        const tryPlayOnInteraction = () => {
+            if (!transitionStarted) {
+                ensureLandingVideoPlays();
+            }
+        };
+
+        document.addEventListener('touchstart', tryPlayOnInteraction, { once: true, passive: true });
+        document.addEventListener('click', tryPlayOnInteraction, { once: true });
+
         // Retry on visibility change
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && !transitionStarted) {
@@ -3354,7 +3364,7 @@
 
                     console.log(`🎬 Attempting wormhole play (readyState: ${wormholeVideo.readyState})`);
 
-                    // Aggressive play attempt - try multiple times if needed
+                    // VERY aggressive play attempt for mobile - keep retrying
                     const tryPlayWormhole = (attempt = 1) => {
                         const playPromise = wormholeVideo.play();
                         if (playPromise !== undefined) {
@@ -3362,12 +3372,17 @@
                                 console.log(`✅ Wormhole playing (attempt ${attempt})`);
                             }).catch(err => {
                                 console.warn(`⚠️ Wormhole play attempt ${attempt} failed:`, err.message);
-                                if (attempt < 3) {
-                                    // Try reloading and playing again
-                                    wormholeVideo.load();
-                                    setTimeout(() => tryPlayWormhole(attempt + 1), 100);
+                                if (attempt < 10) {
+                                    // Keep trying - mobile needs this!
+                                    const delay = attempt <= 3 ? 100 : 500; // Slower after 3 tries
+                                    setTimeout(() => tryPlayWormhole(attempt + 1), delay);
                                 } else {
-                                    console.error('❌ Wormhole play failed after 3 attempts');
+                                    console.error('❌ Wormhole play failed after 10 attempts');
+                                    // Try one final time with reload
+                                    wormholeVideo.load();
+                                    setTimeout(() => {
+                                        wormholeVideo.play().catch(e => console.error('❌ Final attempt failed'));
+                                    }, 1000);
                                 }
                             });
                         }

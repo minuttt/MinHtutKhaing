@@ -243,10 +243,8 @@
         const elapsed = Date.now() - startTime;
         const remaining = Math.max(0, (maxLoadTime - elapsed) / 1000);
 
-        if (remaining > 0 && !exceedsMaxTime) {
+        if (remaining > 0) {
             progressEta.textContent = `ETA: ${Math.ceil(remaining)}s`;
-        } else if (exceedsMaxTime) {
-            progressEta.textContent = 'Exceeded maximum loading time, continuing with static background';
         } else if (!videosLoaded) {
             // Time complete but videos still loading
             progressEta.textContent = 'Loading visuals...';
@@ -260,10 +258,6 @@
         const timeProgress = Math.min((elapsed / maxLoadTime) * 100, 100);
 
         updateProgress(timeProgress);
-
-        if (elapsed > maxLoadTime && !exceedsMaxTime) {
-            exceedsMaxTime = true;
-        }
 
         // SIMPLE: Just complete when minimum time passes
         // Don't wait for videos - they'll load in background
