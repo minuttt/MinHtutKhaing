@@ -1138,17 +1138,15 @@
             height: 24rem;
             border-radius: 0.5rem;
             overflow: hidden;
-            opacity: 0;
-            transform: scale(0.3);
-            animation: galleryItemFadeIn 1.4s cubic-bezier(0.18, 0.71, 0.11, 1) forwards;
+            opacity: 1;
+            transform: scale(1);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease-out;
+            will-change: transform;
+            contain: layout style paint;
+            content-visibility: auto;
         }
 
-        .gallery-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-        }
+        /* Removed hover effect for performance */
 
         /* Removed masonry offset - let grid flow naturally */
 
@@ -1157,18 +1155,13 @@
             height: 100%;
             object-fit: cover;
             pointer-events: none;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            backface-visibility: hidden;
+            transform: translateZ(0);
         }
 
-        @keyframes galleryItemFadeIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+        /* Removed animation for performance */
 
         /* Loading Info Overlay - Simple Grey & White */
         .loading-info-overlay {

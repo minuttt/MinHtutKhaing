@@ -58,24 +58,26 @@
 
     console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
 
-    // Create 3x3 grid (9 copies of the image set)
+    // Create 3x3 grid (9 copies of the image set) - NO ANIMATIONS
+    const fragment = document.createDocumentFragment();
     for (let tileY = 0; tileY < 3; tileY++) {
         for (let tileX = 0; tileX < 3; tileX++) {
             for (let i = 0; i < allImages.length; i++) {
                 const item = document.createElement('div');
                 item.className = 'gallery-item';
-                item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
                 const img = document.createElement('img');
                 img.src = allImages[i];
-                img.alt = `Photo ${i + 1}`;
+                img.alt = '';
                 img.draggable = false;
+                img.loading = 'lazy';
 
                 item.appendChild(img);
-                galleryGrid.appendChild(item);
+                fragment.appendChild(item);
             }
         }
     }
+    galleryGrid.appendChild(fragment);
 
     console.log(`📸 CREATED: ${9 * allImages.length} items`);
 
@@ -94,8 +96,8 @@
     let exceedsMaxTime = false;
     const startTime = Date.now();
 
-    // Set initial position to show center tile
-    galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
+    // Set initial position to show center tile - use translate3d for GPU acceleration
+    galleryGrid.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
     console.log(`📍 INITIAL POSITION: (${currentX}, ${currentY})`);
 
     // Wrap function (keeps position within one tile range)
@@ -122,6 +124,7 @@
         velocityY = 0;
     }
 
+    let rafId = null;
     function handleDragMove(e) {
         if (!isDragging) return;
         e.preventDefault();
@@ -139,8 +142,12 @@
         velocityX = deltaX * 0.05;
         velocityY = deltaY * 0.05;
 
-        applyWrapping();
-        galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        // Use RAF for smooth transform updates
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+            applyWrapping();
+            galleryGrid.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+        });
 
         if (!hasScrolled && (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20)) {
             hasScrolled = true;
@@ -167,7 +174,7 @@
         applyWrapping();
         lastX = currentX;
         lastY = currentY;
-        galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        galleryGrid.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
         requestAnimationFrame(applyMomentum);
     }
 
@@ -179,7 +186,7 @@
             currentY -= e.deltaY * 2.7;
             applyWrapping();
             lastY = currentY;
-            galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            galleryGrid.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
 
             if (!hasScrolled && Math.abs(e.deltaY) > 5) {
                 hasScrolled = true;
