@@ -2,34 +2,37 @@
 (function() {
     console.log('🎨 Initializing infinite drag gallery loader...');
 
-    // All 59 personal photos from Loading images folder (converted to JPG)
-    const personalPhotos = [
-        'Loading%20images/IMG_0173.jpg', 'Loading%20images/IMG_0176.jpg', 'Loading%20images/IMG_0192.jpg',
-        'Loading%20images/IMG_0199.jpg', 'Loading%20images/IMG_0201.jpg', 'Loading%20images/IMG_0206.jpg',
-        'Loading%20images/IMG_0208.jpg', 'Loading%20images/IMG_0212.jpg', 'Loading%20images/IMG_0218.jpg',
-        'Loading%20images/IMG_0219.jpg', 'Loading%20images/IMG_0220.jpg', 'Loading%20images/IMG_0221.jpg',
-        'Loading%20images/IMG_0226.jpg', 'Loading%20images/IMG_0236.jpg', 'Loading%20images/IMG_0237.jpg',
-        'Loading%20images/IMG_0249.jpg', 'Loading%20images/IMG_0250.jpg', 'Loading%20images/IMG_0255.jpg',
-        'Loading%20images/IMG_0257.jpg', 'Loading%20images/IMG_0267.jpg', 'Loading%20images/IMG_0268.jpg',
-        'Loading%20images/IMG_0274.jpg', 'Loading%20images/IMG_0275.jpg', 'Loading%20images/IMG_0276.jpg',
-        'Loading%20images/IMG_0277.jpg', 'Loading%20images/IMG_0283.jpg', 'Loading%20images/IMG_0301.jpg',
-        'Loading%20images/IMG_0303.jpg', 'Loading%20images/IMG_0307.jpg', 'Loading%20images/IMG_0312.jpg',
-        'Loading%20images/IMG_0331.jpg', 'Loading%20images/IMG_0333.jpg', 'Loading%20images/IMG_0343.jpg',
-        'Loading%20images/IMG_0349.jpg', 'Loading%20images/IMG_0351.jpg', 'Loading%20images/IMG_0353.jpg',
-        'Loading%20images/IMG_0355.jpg', 'Loading%20images/IMG_0357.jpg', 'Loading%20images/IMG_0359.jpg',
-        'Loading%20images/IMG_0371.jpg', 'Loading%20images/IMG_0395.jpg', 'Loading%20images/IMG_0546.jpg',
-        'Loading%20images/IMG_4130.jpg', 'Loading%20images/IMG_4144.jpg', 'Loading%20images/IMG_4154.jpg',
-        'Loading%20images/IMG_7995.jpg', 'Loading%20images/IMG_8008.jpg', 'Loading%20images/IMG_8044.jpg',
-        'Loading%20images/IMG_8051.jpg', 'Loading%20images/IMG_8053.jpg', 'Loading%20images/IMG_8062.jpg',
-        'Loading%20images/IMG_8072.jpg', 'Loading%20images/IMG_8762.jpg', 'Loading%20images/IMG_8819.jpg',
-        'Loading%20images/IMG_8990.jpg', 'Loading%20images/IMG_8995.jpg', 'Loading%20images/IMG_9888.jpg',
-        'Loading%20images/IMG_9897.jpg', 'Loading%20images/IMG_9905.jpg'
+    // Get ALL images from both folders
+    const allImages = [
+        // Main Loading images folder
+        'Loading images/IMG_0173.jpg', 'Loading images/IMG_0176.jpg', 'Loading images/IMG_0192.jpg',
+        'Loading images/IMG_0199.jpg', 'Loading images/IMG_0201.jpg', 'Loading images/IMG_0206.jpg',
+        'Loading images/IMG_0208.jpg', 'Loading images/IMG_0212.jpg', 'Loading images/IMG_0218.jpg',
+        'Loading images/IMG_0219.jpg', 'Loading images/IMG_0220.jpg', 'Loading images/IMG_0221.jpg',
+        'Loading images/IMG_0226.jpg', 'Loading images/IMG_0236.jpg', 'Loading images/IMG_0237.jpg',
+        'Loading images/IMG_0249.jpg', 'Loading images/IMG_0250.jpg', 'Loading images/IMG_0255.jpg',
+        'Loading images/IMG_0257.jpg', 'Loading images/IMG_0267.jpg', 'Loading images/IMG_0268.jpg',
+        'Loading images/IMG_0274.jpg', 'Loading images/IMG_0275.jpg', 'Loading images/IMG_0276.jpg',
+        'Loading images/IMG_0277.jpg', 'Loading images/IMG_0283.jpg', 'Loading images/IMG_0301.jpg',
+        'Loading images/IMG_0303.jpg', 'Loading images/IMG_0307.jpg', 'Loading images/IMG_0312.jpg',
+        'Loading images/IMG_0331.jpg', 'Loading images/IMG_0333.jpg', 'Loading images/IMG_0343.jpg',
+        'Loading images/IMG_0349.jpg', 'Loading images/IMG_0351.jpg', 'Loading images/IMG_0353.jpg',
+        'Loading images/IMG_0355.jpg', 'Loading images/IMG_0357.jpg', 'Loading images/IMG_0359.jpg',
+        'Loading images/IMG_0371.jpg', 'Loading images/IMG_0395.jpg', 'Loading images/IMG_0546.jpg',
+        'Loading images/IMG_4130.jpg', 'Loading images/IMG_4144.jpg', 'Loading images/IMG_4154.jpg',
+        'Loading images/IMG_7995.jpg', 'Loading images/IMG_8008.jpg', 'Loading images/IMG_8044.jpg',
+        'Loading images/IMG_8051.jpg', 'Loading images/IMG_8053.jpg', 'Loading images/IMG_8062.jpg',
+        'Loading images/IMG_8072.jpg', 'Loading images/IMG_8762.jpg', 'Loading images/IMG_8819.jpg',
+        'Loading images/IMG_8990.jpg', 'Loading images/IMG_8995.jpg', 'Loading images/IMG_9888.jpg',
+        'Loading images/IMG_9897.jpg', 'Loading images/IMG_9905.jpg',
+        // Nested Loading images/Loading images folder
+        'Loading images/Loading images/1354d826-0e6b-43f4-bad2-c49c270e16a1.jpg',
+        'Loading images/Loading images/5DE894B2-3103-4C30-8DFE-08793200DB9A.jpg',
+        'Loading images/Loading images/7e64b24a-4c78-4d02-bf91-79aea9547b8e.jpg',
+        'Loading images/Loading images/99bb0256-edc8-4e65-8cae-5ed7cc35ea88.jpg'
     ];
 
-    // Use all photos directly - no duplication needed!
-    const photos = personalPhotos;
-
-    console.log(`📸 Loaded ${photos.length} unique personal photos for gallery`);
+    console.log(`📸 Loaded ${allImages.length} personal photos for infinite gallery`);
 
     // Elements
     const loader = document.getElementById('premium-loader');
@@ -46,7 +49,6 @@
     // Check if all elements exist
     if (!loader || !galleryGrid || !dragContainer || !loadingInfo) {
         console.error('❌ Required loader elements not found!');
-        console.log('loader:', !!loader, 'galleryGrid:', !!galleryGrid, 'dragContainer:', !!dragContainer, 'loadingInfo:', !!loadingInfo);
         return;
     }
 
@@ -65,24 +67,30 @@
     let maxLoadTime = 15000;
     const startTime = Date.now();
 
-    // Populate gallery with photos (4 rows for infinite scroll effect)
-    for (let row = 0; row < 4; row++) {
-        photos.forEach((photo, index) => {
+    // Create truly infinite grid - 6 columns x 4 rows per section, repeat 4 times
+    const imagesPerRow = 6;
+    const rowsPerSection = 4;
+    const sections = 4; // Repeat 4 times for seamless infinite effect
+
+    for (let section = 0; section < sections; section++) {
+        for (let i = 0; i < allImages.length; i++) {
             const item = document.createElement('div');
             item.className = 'gallery-item';
             item.style.animationDelay = `${Math.random() * 1.5 + 1.5}s`;
 
             const img = document.createElement('img');
-            img.src = photo;
-            img.alt = `Personal photo ${index + 1}`;
+            img.src = allImages[i];
+            img.alt = `Personal photo ${i + 1}`;
             img.draggable = false;
 
             item.appendChild(img);
             galleryGrid.appendChild(item);
-        });
+        }
     }
 
-    // Drag functionality
+    console.log(`📸 Created ${sections * allImages.length} gallery items for infinite scroll`);
+
+    // Drag functionality with momentum
     function handleDragStart(e) {
         isDragging = true;
         startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
@@ -113,7 +121,7 @@
 
         galleryGrid.style.transform = `translate(${currentX}px, ${currentY}px)`;
 
-        // Move info overlay down when user interacts
+        // Move info overlay when user scrolls
         if (!hasScrolled && (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20)) {
             hasScrolled = true;
             loadingInfo.classList.add('scrolled');
@@ -140,11 +148,10 @@
         requestAnimationFrame(applyMomentum);
     }
 
-    // Wheel scroll - prevent from propagating to landing page
+    // Wheel scroll
     function handleWheel(e) {
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
 
         if (!isDragging) {
             currentY -= e.deltaY * 2.7;
@@ -159,36 +166,7 @@
         return false;
     }
 
-    // Block keyboard events during loading to prevent landing page skip
-    const blockKeydown = (e) => {
-        if (loader && !loader.classList.contains('hidden')) {
-            console.log('🚫 Blocked keydown during loading');
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            return false;
-        }
-    };
-
-    const blockKeypress = (e) => {
-        if (loader && !loader.classList.contains('hidden')) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            return false;
-        }
-    };
-
-    const blockKeyup = (e) => {
-        if (loader && !loader.classList.contains('hidden')) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            return false;
-        }
-    };
-
-    // Event listeners
+    // Event listeners for dragging
     dragContainer.addEventListener('mousedown', handleDragStart);
     dragContainer.addEventListener('touchstart', handleDragStart, { passive: false });
     window.addEventListener('mousemove', handleDragMove);
@@ -196,20 +174,14 @@
     window.addEventListener('mouseup', handleDragEnd);
     window.addEventListener('touchend', handleDragEnd);
     window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('keydown', blockKeydown, { passive: false, capture: true });
-    window.addEventListener('keypress', blockKeypress, { passive: false, capture: true });
-    window.addEventListener('keyup', blockKeyup, { passive: false, capture: true });
 
-    console.log('🔒 Keyboard blockers installed (will unblock when loader hidden)');
-
-    // Connection detection with smart minimum load times
+    // Connection detection
     function detectConnection() {
         try {
             const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-            // Set default to high speed if API unavailable
             if (!conn) {
-                connectionSpeed = 50; // Assume fast if unknown
+                connectionSpeed = 50;
                 console.log('📡 Connection API unavailable, assuming fast connection');
             } else if (conn.downlink && conn.downlink > 0) {
                 connectionSpeed = conn.downlink;
@@ -219,39 +191,34 @@
                 connectionSpeed = types[conn.effectiveType] || 20;
                 console.log(`📡 Detected speed: ${connectionSpeed.toFixed(1)} Mbps (${conn.effectiveType})`);
             } else {
-                connectionSpeed = 50; // Assume fast
+                connectionSpeed = 50;
                 console.log('📡 No speed info, assuming fast connection');
             }
 
             const estimatedSeconds = (88 * 8) / connectionSpeed;
 
-            // Smart minimum times based on connection:
-            // Fast (20+ Mbps): 4.5s minimum
-            // Medium (5-20 Mbps): 5.5s minimum
-            // Slow (<5 Mbps): 7s minimum, up to 30s max
             let minLoadTime;
             if (connectionSpeed >= 20) {
-                minLoadTime = 4500; // 4.5 seconds for fast connections
+                minLoadTime = 4500;
                 connectionBadge.textContent = 'Lightning Fast';
                 connectionBadge.className = 'connection-badge connection-fast';
             } else if (connectionSpeed >= 5) {
-                minLoadTime = 5500; // 5.5 seconds for medium
+                minLoadTime = 5500;
                 connectionBadge.textContent = 'Smooth Connection';
                 connectionBadge.className = 'connection-badge connection-medium';
             } else {
-                minLoadTime = 7000; // 7 seconds for slow
+                minLoadTime = 7000;
                 connectionBadge.textContent = 'Loading...';
                 connectionBadge.className = 'connection-badge connection-slow';
             }
 
             maxLoadTime = Math.min(Math.max(estimatedSeconds * 1000 * 1.2, minLoadTime), 30000);
-            console.log(`⏱️ Final load time: ${(maxLoadTime/1000).toFixed(1)}s (min: ${(minLoadTime/1000).toFixed(1)}s, estimated: ${estimatedSeconds.toFixed(1)}s)`);
+            console.log(`⏱️ Final load time: ${(maxLoadTime/1000).toFixed(1)}s (min: ${(minLoadTime/1000).toFixed(1)}s)`);
         } catch (err) {
             console.error('❌ Connection detection error:', err);
             connectionSpeed = 50;
             connectionBadge.textContent = 'Loading...';
-            connectionBadge.className = 'connection-badge connection-medium';
-            maxLoadTime = 4500; // Default 4.5 seconds for fast
+            maxLoadTime = 4500;
             console.log(`⏱️ Fallback load time: ${(maxLoadTime/1000).toFixed(1)}s`);
         }
     }
@@ -273,7 +240,7 @@
         }
     }
 
-    // Smooth progress animation - ENFORCE MINIMUM TIME
+    // Smooth progress animation
     let animProgress = 0;
     let canComplete = false;
 
@@ -282,10 +249,8 @@
         const timeProgress = (elapsed / maxLoadTime) * 100;
 
         if (videosLoaded && canComplete) {
-            // Videos loaded AND minimum time reached - accelerate to 100%
             animProgress += (100 - animProgress) * 0.15;
         } else {
-            // Still loading or waiting for minimum time
             animProgress += (Math.min(timeProgress, 95) - animProgress) * 0.1;
         }
 
@@ -297,14 +262,14 @@
         }
     }, 50);
 
-    // ENFORCE MINIMUM TIME - only allow completion after maxLoadTime
+    // Enforce minimum time
     setTimeout(() => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
         canComplete = true;
         if (!videosLoaded) {
             videosLoaded = true;
         }
-        console.log(`⏰ Minimum time ${elapsed}s reached - completion now allowed`);
+        console.log(`⏰ Minimum time ${elapsed}s reached - completion allowed`);
     }, maxLoadTime);
 
     // Track videos
@@ -333,46 +298,40 @@
         wormholeVideo.load();
     }
 
-    // Complete loading with smooth fade
+    // Complete loading
     function completeLoading() {
         const loadCompleteTime = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(`✅ Loading complete at ${loadCompleteTime}s - showing completion message`);
+        console.log(`✅ Loading complete at ${loadCompleteTime}s`);
 
         loadingInfo.querySelector('.loading-title').textContent = 'All Set!';
         loadingInfo.querySelector('.loading-subtitle').innerHTML = '<span class="loading-complete">✓ Loading Complete</span><br>Welcome to my portfolio...';
         progressEta.textContent = 'Ready!';
 
-        // Smooth fade out after 1 second
+        // Fade out after 1 second
         setTimeout(() => {
-            console.log('🎭 Starting loader fade-out (1s transition)...');
+            console.log('🎭 Starting loader fade-out...');
             loader.style.transition = 'opacity 1s ease-out';
             loader.classList.add('fade-out');
 
             setTimeout(() => {
-                console.log('👻 Loader now hidden - removing from DOM');
+                console.log('👻 Loader now hidden');
                 loader.classList.add('hidden');
+                loader.style.display = 'none';
 
-                // CRITICAL: Clean up ALL event listeners including keyboard blockers
-                console.log('🧹 Starting cleanup of event listeners...');
-
+                // Clean up event listeners
                 window.removeEventListener('wheel', handleWheel);
                 window.removeEventListener('mousemove', handleDragMove);
                 window.removeEventListener('touchmove', handleDragMove);
                 window.removeEventListener('mouseup', handleDragEnd);
                 window.removeEventListener('touchend', handleDragEnd);
-                window.removeEventListener('keydown', blockKeydown, { capture: true });
-                window.removeEventListener('keypress', blockKeypress, { capture: true });
-                window.removeEventListener('keyup', blockKeyup, { capture: true });
 
                 const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-                console.log(`✅ All loader event listeners removed at ${totalTime}s`);
-                console.log('🔓 KEYBOARD UNBLOCKED - keys should work now!');
-                console.log('📍 Landing page should now be visible and accepting input');
+                console.log(`✅ Loader cleanup complete at ${totalTime}s`);
+                console.log('🔓 Landing page is now active!');
 
-                // CRITICAL FIX: Signal to landing page that it can now accept keyboard input
-                // Dispatch custom event to notify landing/music that loader is done
+                // Signal completion
+                window.loaderComplete = true;
                 window.dispatchEvent(new CustomEvent('loaderComplete'));
-                console.log('📢 Dispatched loaderComplete event to wake up landing page');
             }, 1000);
         }, 1000);
     }
