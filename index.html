@@ -3162,14 +3162,29 @@
         // Lock scroll during transitions
         document.body.classList.add('no-scroll');
 
-        // Simple video autoplay - play immediately after loader
+        // Check if connection is VERY slow (only skip videos then)
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        let isVerySlow = false;
+
+        if (conn) {
+            // Only consider it "very slow" if 2G or slower
+            if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g') {
+                isVerySlow = true;
+                console.warn('⚠️ Very slow connection detected - videos may not play');
+            } else if (conn.downlink && conn.downlink < 1) {
+                isVerySlow = true;
+                console.warn('⚠️ Very slow connection (<1 Mbps) - videos may not play');
+            }
+        }
+
+        // Simple video autoplay - play immediately after loader (unless VERY slow)
         function ensureLandingVideoPlays() {
-            if (landingVideo) {
+            if (landingVideo && !isVerySlow) {
                 console.log(`🎬 Landing video readyState: ${landingVideo.readyState}`);
                 landingVideo.muted = true;
                 landingVideo.playsInline = true;
 
-                // Aggressive play attempt - mobile needs multiple retries
+                // VERY aggressive play attempt - mobile needs multiple retries
                 const tryPlayLanding = (attempt = 1) => {
                     const playPromise = landingVideo.play();
                     if (playPromise !== undefined) {
@@ -3177,17 +3192,28 @@
                             console.log(`✅ Landing video playing (attempt ${attempt})`);
                         }).catch(err => {
                             console.warn(`⚠️ Landing play attempt ${attempt} failed:`, err.message);
-                            if (attempt < 5) {
-                                // Mobile often needs multiple tries
-                                setTimeout(() => tryPlayLanding(attempt + 1), 200);
+                            if (attempt < 15) {
+                                // Mobile often needs multiple tries - increased to 15!
+                                const delay = attempt < 5 ? 100 : (attempt < 10 ? 300 : 500);
+                                setTimeout(() => tryPlayLanding(attempt + 1), delay);
                             } else {
-                                console.error('❌ Landing video failed after 5 attempts');
+                                console.error('❌ Landing video failed after 15 attempts');
                             }
                         });
                     }
                 };
 
                 tryPlayLanding();
+
+                // Also retry on ANY user interaction (mobile often needs this)
+                const retryOnInteraction = () => {
+                    if (landingVideo.paused) {
+                        console.log('🔄 User interacted - retrying landing video');
+                        tryPlayLanding();
+                    }
+                };
+                document.addEventListener('touchstart', retryOnInteraction, { once: true });
+                document.addEventListener('click', retryOnInteraction, { once: true });
             }
         }
 
@@ -3346,6 +3372,13 @@
                     wormholeOverlay.classList.add('visible');
 
                     // Ensure wormhole video plays immediately (already preloaded)
+                    // Skip only if VERY slow connection (2G or slower)
+                    if (isVerySlow) {
+                        console.warn('⚠️ Very slow connection - skipping wormhole video');
+                        // Just show static background instead
+                        return;
+                    }
+
                     wormholeVideo.muted = true;
                     wormholeVideo.playsInline = true;
                     wormholeVideo.setAttribute('playsinline', '');
@@ -3354,7 +3387,7 @@
 
                     console.log(`🎬 Attempting wormhole play (readyState: ${wormholeVideo.readyState})`);
 
-                    // Aggressive play attempt - try multiple times if needed
+                    // VERY aggressive play attempt - try multiple times if needed
                     const tryPlayWormhole = (attempt = 1) => {
                         const playPromise = wormholeVideo.play();
                         if (playPromise !== undefined) {
@@ -3362,12 +3395,15 @@
                                 console.log(`✅ Wormhole playing (attempt ${attempt})`);
                             }).catch(err => {
                                 console.warn(`⚠️ Wormhole play attempt ${attempt} failed:`, err.message);
-                                if (attempt < 3) {
-                                    // Try reloading and playing again
-                                    wormholeVideo.load();
-                                    setTimeout(() => tryPlayWormhole(attempt + 1), 100);
+                                if (attempt < 15) {
+                                    // Try reloading and playing again - increased to 15!
+                                    if (attempt % 3 === 0) {
+                                        wormholeVideo.load(); // Reload every 3rd attempt
+                                    }
+                                    const delay = attempt < 5 ? 100 : (attempt < 10 ? 200 : 400);
+                                    setTimeout(() => tryPlayWormhole(attempt + 1), delay);
                                 } else {
-                                    console.error('❌ Wormhole play failed after 3 attempts');
+                                    console.error('❌ Wormhole play failed after 15 attempts');
                                 }
                             });
                         }
