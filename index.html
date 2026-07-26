@@ -75,19 +75,21 @@
         /* Scroll Reveal */
         .reveal {
             opacity: 0; transform: translateY(40px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
         }
         .reveal.active {
-            opacity: 1; transform: translateY(0);
+            animation: revealUp 0.6s ease forwards;
+        }
+        @keyframes revealUp {
+            to { opacity: 1; transform: translateY(0); }
         }
         .reveal-bounce {
             opacity: 0; transform: translateY(40px) scale(0.97);
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
-                        border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .reveal-bounce.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
+            animation: revealBounce 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+        }
+        @keyframes revealBounce {
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* Card wrapper (kept for layout/positioning of inner effects like scan-lines & terminal scroll) */
@@ -98,6 +100,7 @@
         /* Glow Hover + 3D Tilt */
         .glow-hover {
             border: 1px solid rgba(255,255,255,0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             transform-style: preserve-3d;
         }
         .glow-hover:hover {
@@ -1682,7 +1685,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
  
             <!-- CSIT Scholarship -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="relative">
                     <div class="circuit-line" style="top:10px; left:0; width:60%;"></div>
                     <div class="circuit-line" style="top:30px; left:20%; width:80%; animation-delay: 1.5s;"></div>
@@ -1704,7 +1707,7 @@
             </div>
  
             <!-- Intel AI -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="brain" class="w-6 h-6 text-purple-400"></i>
@@ -1727,7 +1730,7 @@
             </div>
  
             <!-- DSTA Brainhack -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.3s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="terminal" class="w-6 h-6 text-emerald-400"></i>
@@ -1757,7 +1760,7 @@
             </div>
  
             <!-- NUS Humanity Challenge -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.15s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.15s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="globe" class="w-6 h-6 text-blue-400 globe-rotate" style="animation-duration:8s;"></i>
@@ -1775,7 +1778,7 @@
             </div>
  
             <!-- Queens Commonwealth -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0 feather-write">
                         <i data-lucide="pen-tool" class="w-6 h-6 text-amber-400"></i>
@@ -1797,7 +1800,7 @@
             </div>
  
             <!-- NP Math Challenge -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.25s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.25s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0 trophy-morph">
                         <i data-lucide="trophy" class="w-6 h-6 text-teal-400"></i>
@@ -1819,7 +1822,7 @@
             </div>
  
             <!-- NYAA -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center flex-shrink-0 medal-unfurl">
                         <i data-lucide="award" class="w-6 h-6 text-yellow-400"></i>
@@ -1840,7 +1843,7 @@
             </div>
  
             <!-- Bebras Challenge -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 puzzle-fit">
                         <i data-lucide="puzzle" class="w-6 h-6 text-indigo-400"></i>
@@ -1862,7 +1865,7 @@
             </div>
  
             <!-- ICDL -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.3s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="bar-chart-3" class="w-6 h-6 text-rose-400"></i>
@@ -1886,7 +1889,7 @@
             </div>
  
             <!-- BuildingBloCS Conference -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.15s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.15s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="code-2" class="w-6 h-6 text-cyan-400"></i>
@@ -1904,7 +1907,7 @@
             </div>
 
             <!-- Singapore Junior Chemistry Olympiad -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="flask-conical" class="w-6 h-6 text-purple-400"></i>
@@ -1922,7 +1925,7 @@
             </div>
 
             <!-- Live On Festival Essay -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.25s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.25s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="file-text" class="w-6 h-6 text-green-400"></i>
@@ -1940,7 +1943,7 @@
             </div>
 
             <!-- CDC Education Merit Award - FULL WIDTH PREMIUM -->
-            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-amber-500/5 border-2 border-amber-500/20 lg:col-span-3 reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-amber-500/5 border-2 border-amber-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
                     <div class="flex items-start gap-4 flex-1">
@@ -1968,7 +1971,7 @@
             </div>
 
             <!-- Nee Soon AI & Innovation Challenge - 1ST PLACE -->
-            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-emerald-500/5 border-2 border-amber-400/25 lg:col-span-3 reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-emerald-500/5 border-2 border-amber-400/25 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
                     <div class="flex items-start gap-4 flex-1">
@@ -2011,7 +2014,7 @@
             </div>
 
             <!-- Google AI Professional Certificate -->
-            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 border-2 border-blue-500/20 lg:col-span-3 reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 border-2 border-blue-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
                     <div class="flex items-start gap-4 flex-1">
@@ -2049,7 +2052,7 @@
             </div>
 
             <!-- Google Cybersecurity Professional Certificate -->
-            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-cyan-500/5 border-2 border-emerald-500/20 lg:col-span-3 reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-cyan-500/5 border-2 border-emerald-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
                     <div class="flex items-start gap-4 flex-1">
@@ -2087,7 +2090,7 @@
             </div>
 
             <!-- HubSpot Digital Marketing Professional Certificate -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-red-500/5 border-2 border-orange-500/20 lg:col-span-3 reveal-bounce" style="transition-delay: 1.1s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-red-500/5 border-2 border-orange-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
                     <div class="flex items-start gap-4 flex-1">
@@ -2197,7 +2200,7 @@
             </div>
 
             <!-- Yuan Ching -->
-            <div class="relative flex flex-col md:flex-row items-center gap-8 mb-16 reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="relative flex flex-col md:flex-row items-center gap-8 mb-16 reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="md:w-1/2 md:pr-12"></div>
                 <div class="hidden md:flex items-center justify-center z-10">
                     <div class="timeline-dot"></div>
@@ -2249,7 +2252,7 @@
             </div>
  
             <!-- YIJC -->
-            <div class="relative flex flex-col md:flex-row items-center gap-8 reveal-bounce" style="transition-delay: 0.3s;">
+            <div class="relative flex flex-col md:flex-row items-center gap-8 reveal-bounce" style="animation-delay: 0.3s;">
                 <div class="md:w-1/2 md:text-right md:pr-12">
                     <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03]">
                         <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">2025 – 2026</span>
@@ -2346,7 +2349,7 @@
  
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Basketball Upper Executive -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
                         <svg class="w-6 h-6 text-orange-400" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2C12 2 14 6 14 12C14 18 12 22 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2C12 2 10 6 10 12C10 18 12 22 12 22" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>
@@ -2369,7 +2372,7 @@
             </div>
 
             <!-- YIJC Orientation -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="compass" class="w-6 h-6 text-violet-400"></i>
@@ -2387,7 +2390,7 @@
             </div>
 
             <!-- Makers' Academy -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.3s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="settings" class="w-6 h-6 text-cyan-400 gear-spin" style="animation-duration:8s;"></i>
@@ -2480,7 +2483,7 @@
         </div>
  
         <!-- Cognivis -->
-        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce mb-6" style="transition-delay: 0.1s;">
+        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce mb-6" style="animation-delay: 0.1s;">
             <div class="scan-line"></div>
             <div class="flex flex-col md:flex-row items-start gap-8 relative z-10">
                 <div class="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
@@ -2555,7 +2558,7 @@
         </div>
 
         <!-- GitHub -->
-        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
             <div class="flex flex-col md:flex-row items-center gap-6">
                 <div class="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center flex-shrink-0">
                     <svg class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -2577,7 +2580,7 @@
         </div>
 
         <!-- Replit -->
-        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce mt-6" style="transition-delay: 0.3s;">
+        <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce mt-6" style="animation-delay: 0.3s;">
             <div class="flex flex-col md:flex-row items-center gap-6">
                 <div class="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
                     <svg class="w-7 h-7" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" aria-hidden="true">
@@ -2649,7 +2652,7 @@
  
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- VIA Project -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="animation-delay: 0.1s;">
                 <div class="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-5 leaf-transform cursor-pointer">
                     <i data-lucide="trees" class="w-8 h-8 text-green-400"></i>
                 </div>
@@ -2664,7 +2667,7 @@
             </div>
  
             <!-- Reading Ambassador -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="animation-delay: 0.2s;">
                 <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-5 book-flip cursor-pointer">
                     <div class="book-inner">
                         <i data-lucide="book-open" class="w-8 h-8 text-amber-400"></i>
@@ -2681,7 +2684,7 @@
             </div>
  
             <!-- Coding Outreach -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="transition-delay: 0.3s;">
+            <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03] reveal-bounce text-center" style="animation-delay: 0.3s;">
                 <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-5 cursor-pointer">
                     <i data-lucide="code" class="w-8 h-8 text-cyan-400"></i>
                 </div>
@@ -2742,7 +2745,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
  
             <!-- Piano -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.1s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="flex items-start gap-4 mb-4 piano-keys">
                     <div class="w-12 h-12 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="music" class="w-6 h-6 text-fuchsia-400 piano-key"></i>
@@ -2759,7 +2762,7 @@
             </div>
  
             <!-- Roblox Coding -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="blocks" class="w-6 h-6 text-red-400 puzzle-fit"></i>
@@ -2773,7 +2776,7 @@
             </div>
  
             <!-- Content Creation -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.3s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.3s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="video" class="w-6 h-6 text-indigo-400 joystick-wiggle"></i>
@@ -2790,7 +2793,7 @@
             </div>
  
             <!-- Taekwondo -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.15s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.15s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="swords" class="w-6 h-6 text-red-400"></i>
@@ -2805,7 +2808,7 @@
             </div>
  
             <!-- Editing & Cinematography -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.2s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.2s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="clapperboard" class="w-6 h-6 text-purple-400 reel-spin"></i>
@@ -2819,7 +2822,7 @@
             </div>
  
             <!-- Producing Music -->
-            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="transition-delay: 0.25s;">
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce" style="animation-delay: 0.25s;">
                 <div class="flex items-start gap-4 mb-4">
                     <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="disc-3" class="w-6 h-6 text-teal-400 vinyl-spin"></i>
@@ -2863,7 +2866,7 @@
         </div>
  
         <!-- Contact Form -->
-        <form id="contact-form" action="https://formspree.io/f/xanyegye" method="POST" class="space-y-5 text-left reveal-bounce" style="transition-delay: 0.2s;">
+        <form id="contact-form" action="https://formspree.io/f/xanyegye" method="POST" class="space-y-5 text-left reveal-bounce" style="animation-delay: 0.2s;">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                     <label class="text-[10px] font-semibold tracking-widest uppercase text-slate-500 mb-2 block">Name</label>
@@ -3274,8 +3277,6 @@
 
         cards.forEach(card => {
             if (card.querySelector('iframe')) return;
-            // Skip tiny cards (GitHub, Replit-style small ones without much content)
-            if (card.offsetHeight < 120) return;
 
             let rafId = null;
             let targetX = 0, targetY = 0;
