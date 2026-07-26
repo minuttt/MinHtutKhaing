@@ -3268,7 +3268,14 @@
         });
     }, observerOptions);
 
-    document.querySelectorAll('.reveal, .reveal-bounce').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal, .reveal-bounce').forEach(el => {
+        observer.observe(el);
+        el.addEventListener('animationend', () => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0) scale(1)';
+            el.style.animation = 'none';
+        });
+    });
 
     // 3D Tilt Effect on cards (big awards + all other sections except small profile cards)
     (function() {
