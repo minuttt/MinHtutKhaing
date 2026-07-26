@@ -2090,7 +2090,7 @@
             </div>
 
             <!-- HubSpot Digital Marketing Professional Certificate -->
-            <div class="shine-card glow-hover rounded-2xl p-8 bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-red-500/5 border-2 border-orange-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
+            <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-red-500/5 border-2 border-orange-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
                     <div class="flex items-start gap-4 flex-1">
@@ -3329,7 +3329,7 @@
                             card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1, 1, 1)`;
                             rafId = requestAnimationFrame(reset);
                         } else {
-                            card.style.transform = '';
+                            card.style.transform = 'translateY(0) scale(1)';
                             rafId = null;
                         }
                     });
