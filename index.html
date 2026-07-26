@@ -97,24 +97,25 @@
             position: relative; overflow: hidden;
         }
  
-        /* Glow Hover */
+        /* Glow Hover + 3D Tilt */
         .glow-hover {
             border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.2s ease,
-                        border-color 0.2s ease,
-                        box-shadow 0.2s ease;
+            transition: border-color 0.3s ease,
+                        box-shadow 0.3s ease,
+                        transform 0.15s ease;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
         .glow-hover:hover {
             border-color: rgba(34,211,238,0.3);
             box-shadow: 0 0 30px rgba(34,211,238,0.15), inset 0 0 20px rgba(34,211,238,0.05);
-            transform: translateY(-4px);
         }
 
         /* Override reveal-bounce transition after active */
         .reveal-bounce.active.glow-hover {
-            transition: transform 0.2s ease,
-                        border-color 0.2s ease,
-                        box-shadow 0.2s ease;
+            transition: border-color 0.3s ease,
+                        box-shadow 0.3s ease,
+                        transform 0.15s ease;
         }
  
         /* Circuit Lines */
@@ -3253,6 +3254,65 @@
     }, observerOptions);
 
     document.querySelectorAll('.reveal, .reveal-bounce').forEach(el => observer.observe(el));
+
+    // 3D Tilt Effect on all cards
+    (function() {
+        const cards = document.querySelectorAll('.glow-hover');
+        const MAX_TILT = 8;
+
+        cards.forEach(card => {
+            let rafId = null;
+            let targetX = 0, targetY = 0;
+            let currentX = 0, currentY = 0;
+
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                targetX = x;
+                targetY = y;
+
+                if (!rafId) {
+                    rafId = requestAnimationFrame(function animate() {
+                        currentX += (targetX - currentX) * 0.15;
+                        currentY += (targetY - currentY) * 0.15;
+
+                        const rotY = currentX * MAX_TILT;
+                        const rotX = -currentY * MAX_TILT;
+                        card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+                        if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
+                            rafId = requestAnimationFrame(animate);
+                        } else {
+                            rafId = null;
+                        }
+                    });
+                }
+            });
+
+            card.addEventListener('mouseleave', () => {
+                targetX = 0;
+                targetY = 0;
+                if (!rafId) {
+                    rafId = requestAnimationFrame(function reset() {
+                        currentX += (0 - currentX) * 0.1;
+                        currentY += (0 - currentY) * 0.1;
+
+                        const rotY = currentX * MAX_TILT;
+                        const rotX = -currentY * MAX_TILT;
+
+                        if (Math.abs(currentX) > 0.001 || Math.abs(currentY) > 0.001) {
+                            card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1, 1, 1)`;
+                            rafId = requestAnimationFrame(reset);
+                        } else {
+                            card.style.transform = '';
+                            rafId = null;
+                        }
+                    });
+                }
+            });
+        });
+    })();
 
     // Timeline dot animation + scroll-driven glow line
     const timelineDots = document.querySelectorAll('.timeline-dot');
