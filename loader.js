@@ -90,9 +90,9 @@
     const galleryGrid = document.getElementById('gallery-grid');
     const dragContainer = document.getElementById('drag-gallery');
     const loadingInfo = document.getElementById('loading-info');
-    const progressBar = document.getElementById('progress-bar');
-    const progressPercentage = document.getElementById('progress-percentage');
-    const progressEta = document.getElementById('progress-eta');
+    const progressBar = document.getElementById('loader-progress-bar');
+    const progressPercentage = document.getElementById('loader-progress-percentage');
+    const progressEta = document.getElementById('loader-progress-eta');
     const connectionBadge = document.getElementById('connection-badge');
     const landingVideo = document.getElementById('landing-video');
     const wormholeVideo = document.getElementById('wormhole-video');
@@ -102,18 +102,22 @@
         return;
     }
 
-    // Calculate dimensions
-    const COLS = 6;
-    const ROWS = Math.ceil(allImages.length / COLS);
+    // Calculate dimensions — must match CSS grid-template-columns: repeat(12, 16rem)
+    const GRID_COLS = 12;
+    const TOTAL_ITEMS = allImages.length * 4; // 4 tile copies
+    const GRID_ROWS = Math.ceil(TOTAL_ITEMS / GRID_COLS);
     const itemWidth = 256; // 16rem
     const itemHeight = 384; // 24rem
     const gap = 56; // 3.5rem
     const padding = 56;
 
-    const tileWidth = (itemWidth * COLS) + (gap * (COLS - 1)) + (padding * 2);
-    const tileHeight = (itemHeight * ROWS) + (gap * (ROWS - 1)) + (padding * 2);
+    const gridWidth = (itemWidth * GRID_COLS) + (gap * (GRID_COLS - 1)) + (padding * 2);
+    const gridHeight = (itemHeight * GRID_ROWS) + (gap * (GRID_ROWS - 1)) + (padding * 2);
+    // Wrap at half the grid (2×2 tiling: each half is one tile repeat)
+    const tileWidth = Math.floor(gridWidth / 2);
+    const tileHeight = Math.floor(gridHeight / 2);
 
-    console.log(`🔲 TILE: ${tileWidth}px × ${tileHeight}px`);
+    console.log(`🔲 GRID: ${gridWidth}px × ${gridHeight}px, TILE: ${tileWidth}px × ${tileHeight}px`);
 
     // Create 2x2 grid (4 copies) - each tile shuffled differently!
     // STRATEGY: Load images AFTER videos start loading (lazy loading)
