@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -2989,7 +2990,7 @@
 <div id="toast" class="toast">
     <div class="flex items-center gap-3">
         <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
-        <span class="text-sm font-medium text-emerald-300">Message sent successfully!</span>
+        <span class="text-sm font-medium text-emerald-300">Opening email client — sending message...</span>
     </div>
 </div>
 
@@ -3440,10 +3441,26 @@
         const message = form.querySelector('[name="message"]').value.trim();
         const subject = encodeURIComponent('Portfolio Contact from ' + name);
         const body = encodeURIComponent('From: ' + name + ' (' + email + ')\n\n' + message);
+
+        const btn = form.querySelector('button[type="submit"]');
+        const rect = btn.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+        const end = Date.now() + 2000;
+        const colors = ['#22d3ee', '#10b981', '#a78bfa', '#f472b6', '#facc15'];
+        (function frame() {
+            if (Date.now() > end) return;
+            confetti({ particleCount: 3, angle: 60, spread: 55, startVelocity: 50, origin: { x: 0, y: 0.6 }, colors });
+            confetti({ particleCount: 3, angle: 120, spread: 55, startVelocity: 50, origin: { x: 1, y: 0.6 }, colors });
+            confetti({ particleCount: 2, spread: 360, startVelocity: 20, gravity: 0.5, origin: { x, y }, colors, ticks: 80, scalar: 1.2 });
+            requestAnimationFrame(frame);
+        })();
+
         window.location.href = 'mailto:minuteistime@gmail.com?subject=' + subject + '&body=' + body;
         const toast = document.getElementById('toast');
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        setTimeout(() => toast.classList.remove('show'), 4000);
     });
  
     // Navbar scroll effect & scroll indicator
