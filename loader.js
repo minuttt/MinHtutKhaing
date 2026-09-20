@@ -507,6 +507,17 @@
 
                 console.log(`📊 ACTUAL SPEED: ${actualSpeedMbps.toFixed(1)} Mbps (${videoSizeMB}MB in ${loadTimeSeconds.toFixed(1)}s)`);
 
+                // Recalculate maxLoadTime based on REAL speed
+                const oldMax = maxLoadTime;
+                if (actualSpeedMbps >= 10) {
+                    maxLoadTime = Math.min(maxLoadTime, Math.max(elapsed + 1500, 5000));
+                } else if (actualSpeedMbps >= 3) {
+                    maxLoadTime = Math.min(maxLoadTime, Math.max(elapsed + 3000, 10000));
+                }
+                if (maxLoadTime !== oldMax) {
+                    console.log(`⚡ ADJUSTED maxLoadTime: ${oldMax/1000}s → ${(maxLoadTime/1000).toFixed(1)}s (actual speed: ${actualSpeedMbps.toFixed(0)} Mbps)`);
+                }
+
                 if (progressEta) {
                     progressEta.textContent = 'Visuals loaded!';
                 }
