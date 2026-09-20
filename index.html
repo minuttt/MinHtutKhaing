@@ -1622,7 +1622,7 @@
     <div class="hero-stage-3 absolute inset-0 z-10 flex items-center justify-center w-screen px-4 gsap-reveal">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-6xl w-full">
             <div class="stat-card stat-1 text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20">
-                <div class="stat-number text-4xl md:text-6xl font-black text-cinematic-hero mb-2">21+</div>
+                <div class="stat-number text-4xl md:text-6xl font-black text-cinematic-hero mb-2">23+</div>
                 <div class="stat-label text-[10px] md:text-sm font-semibold uppercase tracking-wider text-cyan-400/70">Awards & Certs</div>
             </div>
             <div class="stat-card stat-2 text-center p-4 md:p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
@@ -2934,7 +2934,7 @@
         </div>
  
         <!-- Contact Form -->
-        <form id="contact-form" action="https://formspree.io/f/xanyegye" method="POST" class="space-y-5 text-left reveal-bounce" style="animation-delay: 0.2s;">
+        <form id="contact-form" class="space-y-5 text-left reveal-bounce" style="animation-delay: 0.2s;">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                     <label class="text-[10px] font-semibold tracking-widest uppercase text-slate-500 mb-2 block">Name</label>
@@ -2949,8 +2949,6 @@
                 <label class="text-[10px] font-semibold tracking-widest uppercase text-slate-500 mb-2 block">Message</label>
                 <textarea name="message" class="glow-input w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 h-32 resize-none" placeholder="Say hello..." required></textarea>
             </div>
-            <input type="hidden" name="_subject" value="New Portfolio Contact from Website">
-            <input type="hidden" name="_replyto" value="minuteistime@gmail.com">
             <div class="text-center">
                 <button type="submit" class="px-8 py-3.5 rounded-xl text-sm font-semibold text-white transition-all inline-flex items-center gap-2"
                         style="background: linear-gradient(to right, #0891b2, #059669); box-shadow: 0 0 30px rgba(34,211,238,0.3);"
@@ -3433,44 +3431,19 @@
         });
     }
 
-    // Contact Form (Formspree Integration)
-    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    // Contact Form (mailto)
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const form = this;
+        const name = form.querySelector('[name="name"]').value.trim();
+        const email = form.querySelector('[name="email"]').value.trim();
+        const message = form.querySelector('[name="message"]').value.trim();
+        const subject = encodeURIComponent('Portfolio Contact from ' + name);
+        const body = encodeURIComponent('From: ' + name + ' (' + email + ')\n\n' + message);
+        window.location.href = 'mailto:minuteistime@gmail.com?subject=' + subject + '&body=' + body;
         const toast = document.getElementById('toast');
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-
-        // Show loading state
-        submitBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Sending...';
-        submitBtn.disabled = true;
-
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                // Success
-                toast.classList.add('show');
-                form.reset();
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            } else {
-                // Error
-                alert('Oops! There was a problem sending your message. Please try emailing minuteistime@gmail.com directly.');
-            }
-        } catch (error) {
-            alert('Oops! There was a problem sending your message. Please try emailing minuteistime@gmail.com directly.');
-        } finally {
-            // Restore button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
     });
  
     // Navbar scroll effect & scroll indicator
