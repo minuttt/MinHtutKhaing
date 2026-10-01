@@ -20,6 +20,7 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="assets/testimonials.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html {
@@ -525,6 +526,18 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             filter: drop-shadow(0px 10px 30px rgba(34,211,238,0.4)) drop-shadow(0px 2px 8px rgba(16,185,129,0.3));
+        }
+
+        /* Keep the scrolling portfolio hero readable over the animated black hole. */
+        #hero .text-cinematic-hero {
+            filter: drop-shadow(0 1px 2px rgba(1,4,9,.98))
+                    drop-shadow(0 0 7px rgba(1,4,9,.9))
+                    drop-shadow(0 0 18px rgba(1,4,9,.7));
+        }
+        #hero .name-intro > div, #hero .stat-label,
+        #hero .stat-card > div:last-child, #hero .cta-text,
+        #hero .cta-buttons, #hero .scroll-text {
+            text-shadow: 0 1px 3px rgba(1,4,9,.98), 0 0 10px rgba(1,4,9,.9);
         }
 
         .premium-depth-card {
@@ -1560,6 +1573,7 @@
         <a href="#cca" class="nav-link">CCA</a>
         <a href="#leadership" class="nav-link">Leadership</a>
         <a href="#projects" class="nav-link">Projects</a>
+        <a href="#testimonials" class="nav-link">Testimonials</a>
         <a href="#community" class="nav-link">Community</a>
         <a href="#hobbies" class="nav-link">Hobbies</a>
         <a href="#contact" class="nav-link">Contact</a>
@@ -2586,7 +2600,7 @@
 
                     <!-- Video Embed -->
                     <div class="mt-6 rounded-xl overflow-hidden border border-purple-500/20 bg-black/20" style="position: relative; padding-bottom: 56.25%; height: 0;">
-                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://www.youtube.com/embed/4h49C3pdRak?si=R7sxm8DkAbWzLvLa" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" width="560" height="315" src="https://www.youtube.com/embed/4h49C3pdRak?si=Vjbx8bj_3QVDvhy-" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
 
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2684,6 +2698,22 @@
  
 <div class="section-divider max-w-5xl mx-auto"></div>
  
+<!-- School Testimonials -->
+<section id="testimonials" class="relative py-16 px-6" aria-labelledby="testimonials-heading">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-10 reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-semibold tracking-widest uppercase text-cyan-400 mb-4"><i data-lucide="quote" class="w-3 h-3"></i> Testimonials</div>
+            <h2 id="testimonials-heading" class="text-3xl md:text-5xl font-bold tracking-tight">School <span class="gradient-text">Testimonials</span></h2>
+        </div>
+        <div id="testimonials-root">
+            <p class="text-center text-sm text-slate-400">Loading school testimonials…</p>
+            <noscript><p>Enable JavaScript to browse the two school testimonials.</p></noscript>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider max-w-5xl mx-auto"></div>
+
 <!-- Work-Learn Scheme -->
 <section id="work-learn" class="relative py-24 px-6">
     <div class="max-w-5xl mx-auto">
@@ -4302,145 +4332,252 @@
         const canvas = document.getElementById('blackhole-canvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        let W, H, centerX, centerY;
-        const particles = [];
-        const PARTICLE_COUNT = 600;
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-        function resize() {
-            W = window.innerWidth;
-            H = window.innerHeight;
-            canvas.width = W * dpr;
-            canvas.height = H * dpr;
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            centerX = W / 2;
-            centerY = H / 2;
-        }
-        resize();
-        window.addEventListener('resize', resize);
-
-        function hslToRgb(h, s, l) {
-            s /= 100; l /= 100;
-            const a = s * Math.min(l, 1 - l);
-            const f = n => { const k = (n + h / 30) % 12; return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); };
-            return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
-        }
-
-        function spawnParticle() {
-            const angle = Math.random() * Math.PI * 2;
-            const maxR = Math.max(W, H) * 0.7;
-            const dist = maxR * (0.3 + Math.random() * 0.7);
-            const hue = Math.random() < 0.6 ? 185 + Math.random() * 15 : 155 + Math.random() * 15;
-            const [r, g, b] = hslToRgb(hue, 70 + Math.random() * 30, 50 + Math.random() * 30);
-            return {
-                x: centerX + Math.cos(angle) * dist,
-                y: centerY + Math.sin(angle) * dist,
-                size: Math.random() * 2 + 0.5,
-                speed: 0.15 + Math.random() * 0.35,
-                orbitSpeed: (0.002 + Math.random() * 0.004) * (Math.random() < 0.5 ? 1 : -1),
-                r, g, b,
-                alpha: 0.1 + Math.random() * 0.5,
-                trail: []
-            };
+        if (!ctx) return;
+        const hero = canvas.parentElement;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const texture = document.createElement('canvas');
+        const textureCtx = texture.getContext('2d');
+        let W = 0, H = 0, radius = 0, frame = 0, lastTime = 0, time = 0;
+        let inView = false;
+        const tilt = -0.12;
+        const TAU = Math.PI * 2;
+        const clamp = v => Math.max(0, Math.min(1, v));
+        const smooth = (a, b, v) => {
+            const t = clamp((v - a) / (b - a));
+            return t * t * (3 - 2 * t);
+        };
+        const hash = (x, y) => {
+            const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+            return n - Math.floor(n);
+        };
+        function noise(x, y) {
+            const ix = Math.floor(x), iy = Math.floor(y);
+            const fx = smooth(0, 1, x - ix), fy = smooth(0, 1, y - iy);
+            const a = hash(ix, iy), b = hash(ix + 1, iy);
+            const c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
+            return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy;
         }
 
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            const p = spawnParticle();
-            const angle = Math.random() * Math.PI * 2;
-            const dist = Math.random() * Math.max(W, H) * 0.5;
-            p.x = centerX + Math.cos(angle) * dist;
-            p.y = centerY + Math.sin(angle) * dist;
-            particles.push(p);
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, W, H);
-
-            const eventHorizon = Math.min(W, H) * 0.04;
-            const glowRadius = Math.min(W, H) * 0.25;
-
-            // Accretion disk glow
-            const diskGrad = ctx.createRadialGradient(centerX, centerY, eventHorizon, centerX, centerY, glowRadius);
-            diskGrad.addColorStop(0, 'rgba(2, 2, 4, 0.8)');
-            diskGrad.addColorStop(0.15, 'rgba(34, 211, 238, 0.06)');
-            diskGrad.addColorStop(0.4, 'rgba(16, 185, 129, 0.03)');
-            diskGrad.addColorStop(1, 'rgba(2, 2, 4, 0)');
-            ctx.fillStyle = diskGrad;
-            ctx.fillRect(0, 0, W, H);
-
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                const dx = centerX - p.x;
-                const dy = centerY - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < eventHorizon || dist < 2) {
-                    const np = spawnParticle();
-                    particles[i] = np;
-                    continue;
-                }
-
-                const angle = Math.atan2(dy, dx);
-                const pull = (80 / (dist + 50)) * p.speed;
-                const tangentX = -Math.sin(angle) * p.orbitSpeed * dist;
-                const tangentY = Math.cos(angle) * p.orbitSpeed * dist;
-
-                p.x += Math.cos(angle) * pull + tangentX;
-                p.y += Math.sin(angle) * pull + tangentY;
-
-                const brightnessMult = Math.max(0.2, Math.min(1, 200 / dist));
-                const alpha = p.alpha * brightnessMult;
-
-                p.trail.push({ x: p.x, y: p.y });
-                if (p.trail.length > 8) p.trail.shift();
-
-                // Draw trail with fading segments
-                if (p.trail.length > 1) {
-                    for (let t = 1; t < p.trail.length; t++) {
-                        const segAlpha = alpha * 0.4 * (t / p.trail.length);
-                        ctx.beginPath();
-                        ctx.moveTo(p.trail[t - 1].x, p.trail[t - 1].y);
-                        ctx.lineTo(p.trail[t].x, p.trail[t].y);
-                        ctx.strokeStyle = `rgba(${p.r},${p.g},${p.b},${segAlpha})`;
-                        ctx.lineWidth = p.size * 0.5 * (t / p.trail.length);
-                        ctx.stroke();
+        // Bake the fine gas structure once per size, not once per frame.
+        // This keeps the soft volume and subpixel filaments without hundreds
+        // of glowing particle paths competing with the hero typography.
+        function bake() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const scale = Math.min(dpr, 1800 / W, 1200 / H);
+            texture.width = Math.max(1, Math.round(W * scale));
+            texture.height = Math.max(1, Math.round(H * scale));
+            const img = textureCtx.createImageData(texture.width, texture.height);
+            const data = img.data;
+            const c = Math.cos(tilt), s = Math.sin(tilt);
+            for (let py = 0; py < texture.height; py++) {
+                for (let px = 0; px < texture.width; px++) {
+                    const u = (px / scale - W / 2) / radius;
+                    const v = (py / scale - H * 0.51) / radius;
+                    const x = u * c + v * s, y = -u * s + v * c;
+                    const r = Math.hypot(x, y);
+                    const diskR = Math.hypot(x, y / 0.23);
+                    const angle = Math.atan2(y / 0.23, x);
+                    const envelope = smooth(1.12, 1.36, diskR) * (1 - smooth(1.55, 3.5, diskR));
+                    let disk = 0;
+                    if (envelope > 0) {
+                        const turbulence = noise(diskR * 13, angle * 7);
+                        const bands = noise(diskR * 95 + turbulence * 1.6, angle * 9);
+                        const fine = noise(diskR * 210, angle * 16 + turbulence * 2);
+                        const doppler = 0.7 + 0.3 * clamp(-x / 2 + 0.5);
+                        disk = envelope * (0.10 + bands * 0.42 + fine * 0.16) * (0.55 + turbulence * 0.7) * doppler;
+                    }
+                    // The far side is hidden by the event horizon. The near
+                    // side crosses in front, with a lensed arc above it.
+                    const shadow = smooth(0.97, 1.025, r);
+                    disk *= y < 0 ? shadow : 1;
+                    const lensR = Math.hypot(x, y / 1.04);
+                    const upper = 1 - smooth(-0.12, 0.18, y);
+                    const lensBand = Math.exp(-Math.pow((lensR - 1.065) / 0.047, 2));
+                    const lensDetail = 0.9 + 0.1 * Math.sin(lensR * 180 + Math.atan2(y, x) * 5);
+                    const lens = lensBand * lensDetail * (0.22 + upper * 0.45);
+                    const photon = Math.exp(-Math.pow((r - 1.014) / 0.012, 2)) * (0.19 + upper * 0.25);
+                    const halo = Math.exp(-Math.pow((r - 1.1) / 0.32, 2)) * 0.095 * shadow;
+                    const diskGlow = Math.exp(-Math.pow(y / 0.20, 2)) * Math.exp(-Math.pow(x / 2.9, 4)) * 0.08 * shadow;
+                    const light = disk + lens + photon;
+                    const glow = halo + diskGlow;
+                    const hot = smooth(0.28, 0.9, light);
+                    const edge = (1 - smooth(0.40, 0.50, Math.abs(px / texture.width - 0.5))) *
+                        (1 - smooth(0.38, 0.50, Math.abs(py / texture.height - 0.5)));
+                    const alpha = clamp((light * 0.85 + glow) * edge);
+                    const i = (py * texture.width + px) * 4;
+                    data[i] = 65 + hot * 157;
+                    data[i + 1] = 173 + hot * 65;
+                    data[i + 2] = 189 + hot * 57;
+                    data[i + 3] = Math.round(alpha * 255);
+                    // Opaque ink core masks the site's existing background paths.
+                    if (r < 1.012) {
+                        const cover = 1 - smooth(0.985, 1.012, r);
+                        const a = alpha + cover * (1 - alpha);
+                        data[i] = (data[i] * alpha + 2 * cover * (1 - alpha)) / a;
+                        data[i + 1] = (data[i + 1] * alpha + 5 * cover * (1 - alpha)) / a;
+                        data[i + 2] = (data[i + 2] * alpha + 8 * cover * (1 - alpha)) / a;
+                        data[i + 3] = Math.round(a * 255);
                     }
                 }
-
-                // Draw particle with glow
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size * brightnessMult + 2, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${alpha * 0.15})`;
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size * brightnessMult, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${p.r},${p.g},${p.b},${alpha})`;
-                ctx.fill();
             }
-
-            // Inner dark core
-            const coreGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, eventHorizon * 3);
-            coreGrad.addColorStop(0, 'rgba(2, 2, 4, 0.95)');
-            coreGrad.addColorStop(0.4, 'rgba(2, 2, 4, 0.6)');
-            coreGrad.addColorStop(1, 'rgba(2, 2, 4, 0)');
-            ctx.fillStyle = coreGrad;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, eventHorizon * 3, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Subtle rim glow
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, eventHorizon * 1.3, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(34, 211, 238, 0.1)';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            requestAnimationFrame(draw);
+            textureCtx.putImageData(img, 0, 0);
         }
 
-        requestAnimationFrame(draw);
+        // Stable seeds keep the field coherent across frames and resizes.
+        const streams = Array.from({ length: 110 }, (_, i) => ({
+            orbit: 1.2 + hash(i, 31) * 2.05,
+            phase: hash(i, 32) * TAU,
+            length: 0.18 + hash(i, 33) * 0.65,
+            width: 0.5 + hash(i, 34) * 1.2,
+            alpha: 0.06 + hash(i, 35) * 0.15
+        }));
+        const motes = Array.from({ length: 170 }, (_, i) => ({
+            phase: hash(i, 41) * TAU,
+            life: hash(i, 42),
+            speed: 0.025 + hash(i, 43) * 0.024,
+            size: 0.55 + hash(i, 44) * 1.15,
+            depth: i % 5 === 0 ? 0.48 : 0.23,
+            alpha: 0.25 + hash(i, 45) * 0.55
+        }));
+        const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+        hero.addEventListener('pointermove', event => {
+            if (reducedMotion.matches || event.pointerType === 'touch') return;
+            const bounds = hero.getBoundingClientRect();
+            pointer.targetX = clamp((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+            pointer.targetY = clamp((event.clientY - bounds.top) / bounds.height) * 2 - 1;
+        }, { passive: true });
+        const releasePointer = () => { pointer.targetX = 0; pointer.targetY = 0; };
+        hero.addEventListener('pointerleave', releasePointer);
+        hero.addEventListener('pointercancel', releasePointer);
+
+        function projected(orbit, angle, depth = 0.23) {
+            const x = Math.cos(angle) * orbit;
+            const y = Math.sin(angle) * orbit * depth;
+            return { x: x * radius, y: y * radius, visible: y >= 0 || Math.hypot(x, y) > 1.035 };
+        }
+        function render() {
+            if (!W || !H) return;
+            ctx.clearRect(0, 0, W, H);
+            ctx.save();
+            // Gentle camera drift and eased parallax move the entire scene
+            // together, so the event horizon never separates from its disk.
+            const motion = reducedMotion.matches ? 0 : 1;
+            ctx.translate(W / 2 + pointer.x * 12 * motion,
+                H * 0.51 + (pointer.y * 9 + Math.sin(time * 0.38) * 3) * motion);
+            ctx.rotate(pointer.x * 0.018 * motion + Math.sin(time * 0.16) * 0.008 * motion);
+            ctx.drawImage(texture, -W / 2, -H * 0.51, W, H);
+            ctx.rotate(tilt);
+            ctx.globalCompositeOperation = 'screen';
+
+            // Differential rotation: hot inner gas travels faster than the
+            // outer disk. Long, tapered ribbons read as flowing gas, not dots.
+            for (const stream of streams) {
+                const speed = 0.9 / Math.pow(stream.orbit, 1.5);
+                const head = stream.phase + time * speed;
+                for (let band = 0; band < 3; band++) {
+                    ctx.beginPath();
+                    let penDown = false;
+                    for (let j = 0; j <= 22; j++) {
+                        const a = head - stream.length + stream.length * j / 22;
+                        const orbit = stream.orbit + Math.sin(a * 3 + stream.phase + time * 0.17) * 0.018;
+                        const p = projected(orbit, a);
+                        if (!p.visible) { penDown = false; continue; }
+                        if (penDown) ctx.lineTo(p.x, p.y);
+                        else ctx.moveTo(p.x, p.y);
+                        penDown = true;
+                    }
+                    const fade = 1 - smooth(2.2, 3.4, stream.orbit);
+                    const shimmer = 0.75 + 0.25 * Math.sin(head * 2 + stream.phase);
+                    ctx.strokeStyle = `rgba(116, 220, 229, ${stream.alpha * fade * shimmer * (band === 2 ? 1 : 0.16)})`;
+                    ctx.lineWidth = stream.width * (band === 0 ? 7 : band === 1 ? 3 : 1);
+                    ctx.stroke();
+                }
+            }
+
+            // Dust spirals inward, brightens near the core, then fades before
+            // recycling at the outer edge. Sample past positions for real tails.
+            for (const mote of motes) {
+                const life = (mote.life + time * mote.speed) % 1;
+                const orbit = 3.65 - life * 2.56;
+                const angle = mote.phase + time * 0.30 + life * 7.5;
+                const opacity = smooth(0, 0.10, life) * (1 - smooth(0.88, 1, life)) * mote.alpha;
+                const head = projected(orbit, angle, mote.depth);
+                if (!head.visible || opacity < 0.01) continue;
+                for (let j = 0; j < 7; j++) {
+                    const lag = (7 - j) * 0.012;
+                    const a = projected(orbit + lag * 0.23, angle - lag, mote.depth);
+                    const b = projected(orbit + (lag - 0.012) * 0.23, angle - lag + 0.012, mote.depth);
+                    if (!a.visible || !b.visible) continue;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+                    ctx.lineWidth = mote.size * (0.3 + j / 10);
+                    ctx.strokeStyle = `rgba(137, 227, 235, ${opacity * j / 12})`;
+                    ctx.stroke();
+                }
+                ctx.fillStyle = `rgba(87, 203, 222, ${opacity * 0.12})`;
+                ctx.beginPath(); ctx.arc(head.x, head.y, mote.size * 3, 0, TAU); ctx.fill();
+                ctx.fillStyle = `rgba(195, 246, 249, ${opacity})`;
+                ctx.beginPath(); ctx.arc(head.x, head.y, mote.size, 0, TAU); ctx.fill();
+            }
+
+            // Light sweeps around the photon ring, with a broad soft bloom.
+            for (let i = 0; i < 3; i++) {
+                const a = time * 0.28 + i * TAU / 3;
+                for (let j = 0; j < 12; j++) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, radius * 1.045, a + j * 0.032, a + (j + 1) * 0.032);
+                    ctx.strokeStyle = `rgba(176, 236, 243, ${j / 12 * 0.15})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+            ctx.restore();
+        }
+
+        function animate(now) {
+            frame = 0;
+            if (!inView || document.hidden || !hero.classList.contains('visible') || reducedMotion.matches) return;
+            const delta = lastTime ? Math.min((now - lastTime) / 1000, 0.05) : 0;
+            time += delta;
+            const ease = 1 - Math.exp(-delta * 5);
+            pointer.x += (pointer.targetX - pointer.x) * ease;
+            pointer.y += (pointer.targetY - pointer.y) * ease;
+            lastTime = now;
+            render();
+            frame = requestAnimationFrame(animate);
+        }
+        function sync() {
+            cancelAnimationFrame(frame);
+            frame = 0;
+            lastTime = 0;
+            if (inView && !document.hidden && hero.classList.contains('visible')) {
+                render();
+                if (!reducedMotion.matches) frame = requestAnimationFrame(animate);
+            }
+        }
+        const resizeObserver = new ResizeObserver(() => {
+            const width = Math.round(hero.clientWidth), height = Math.round(hero.clientHeight);
+            if (!width || !height || (W === width && H === height)) return;
+            W = width; H = height;
+            radius = Math.min(W * 0.145, H * 0.235);
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(W * dpr);
+            canvas.height = Math.round(H * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            bake();
+            render();
+            sync();
+        });
+        resizeObserver.observe(hero);
+        new IntersectionObserver(entries => {
+            inView = entries[0].isIntersecting;
+            sync();
+        }).observe(hero);
+        new MutationObserver(sync).observe(hero, { attributes: true, attributeFilter: ['class'] });
+        document.addEventListener('visibilitychange', sync);
+        reducedMotion.addEventListener('change', sync);
     })();
+
 
     // ===== CURSOR SPOTLIGHT =====
     (function() {
@@ -4553,6 +4690,7 @@
 
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js"></script>
+<script src="assets/testimonials.js" defer></script>
 
 </body>
 </html>

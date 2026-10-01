@@ -1,0 +1,26 @@
+{
+  "name": "min-portfolio",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/testimonials.tsx --bundle --loader:.png=dataurl --minify --format=iife --target=es2020 --outfile=assets/testimonials.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^13.4.6",
+    "gsap": "3.12.5",
+    "lucide-react": "^1.49.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "swiper": "^14.3.0",
+    "tailwind-merge": "^3.3.1",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/three": "^0.180.0",
+    "esbuild": "^0.25.10",
+    "typescript": "^5.9.3"
+  }
+}
