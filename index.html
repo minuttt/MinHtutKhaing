@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Min Htut Khaing – Scholar, Sportsman, Innovator, Environmental Advocate</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -375,6 +375,45 @@
         }
         #nav-pill .nav-link.active {
             color: #22d3ee;
+        }
+
+        .nav-mobile-toggle { display: none; }
+        @media (max-width: 900px) {
+            #nav-pill, #nav-pill.collapsed {
+                top: max(.75rem, env(safe-area-inset-top));
+                width: min(420px, calc(100% - 24px)) !important;
+                height: auto;
+                min-height: 52px;
+                max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+                display: grid;
+                grid-template-columns: 1fr auto;
+                border-radius: 22px;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                white-space: normal;
+            }
+            #nav-pill.collapsed:hover { transform: translateX(-50%); }
+            #nav-pill .nav-logo, #nav-pill.collapsed .nav-logo {
+                opacity: 1; transform: none; padding: 10px 14px;
+            }
+            #nav-pill .nav-collapsed-icon { display: none; }
+            #nav-pill .nav-mobile-toggle {
+                display: flex; align-items: center; gap: 9px;
+                min-height: 44px; margin: 4px 8px; padding: 0 12px;
+                color: #cbd5e1; font: inherit; font-size: 13px;
+                border: 0; border-radius: 14px; background: rgba(255,255,255,.05);
+            }
+            #nav-pill .nav-mobile-toggle:focus-visible, #nav-pill .nav-link:focus-visible {
+                outline: 2px solid #22d3ee; outline-offset: -2px;
+            }
+            #nav-pill .nav-links, #nav-pill.collapsed .nav-links {
+                display: none; grid-column: 1 / -1; grid-template-columns: repeat(2,minmax(0,1fr));
+                padding: 6px 12px 14px; gap: 4px; opacity: 1; transform: none;
+                pointer-events: auto; border-top: 1px solid rgba(255,255,255,.08);
+            }
+            #nav-pill.mobile-open .nav-links { display: grid; }
+            #nav-pill .nav-link { min-height: 44px; display: flex; align-items: center; padding: 10px 12px; font-size: 13px; }
+            #nav-pill .nav-link.active { background: rgba(34,211,238,.08); }
         }
 
         /* Cursor spotlight canvas */
@@ -1560,14 +1599,18 @@
  
  
 <!-- Animated Navigation Pill -->
-<nav id="nav-pill">
+<nav id="nav-pill" aria-label="Main navigation">
     <div class="nav-logo">
         <a href="#hero" class="flex items-center gap-2">
             <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
                  style="background: linear-gradient(to bottom right, #22d3ee, #10b981);">MK</div>
         </a>
     </div>
-    <div class="nav-links">
+    <button type="button" class="nav-mobile-toggle" aria-expanded="false" aria-controls="portfolio-nav-links" aria-label="Open navigation menu">
+        <span>Menu</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+    </button>
+    <div class="nav-links" id="portfolio-nav-links">
         <a href="#awards" class="nav-link">Awards</a>
         <a href="#academics" class="nav-link">Academics</a>
         <a href="#cca" class="nav-link">CCA</a>
@@ -3279,20 +3322,51 @@
     (function() {
         const navPill = document.getElementById('nav-pill');
         if (!navPill) return;
+        const mobileNav = window.matchMedia('(max-width: 900px)');
+        const mobileToggle = navPill.querySelector('.nav-mobile-toggle');
+        function closeMobileMenu() {
+            navPill.classList.remove('mobile-open');
+            mobileToggle.setAttribute('aria-expanded', 'false');
+            mobileToggle.setAttribute('aria-label', 'Open navigation menu');
+        }
+        mobileToggle.addEventListener('click', () => {
+            const open = navPill.classList.toggle('mobile-open');
+            mobileToggle.setAttribute('aria-expanded', String(open));
+            mobileToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+        });
+        document.addEventListener('pointerdown', event => {
+            if (mobileNav.matches && !navPill.contains(event.target)) closeMobileMenu();
+        });
+        navPill.addEventListener('keydown', event => {
+            if (mobileNav.matches && event.key === 'Escape') {
+                closeMobileMenu(); mobileToggle.focus();
+            }
+        });
         let lastScrollY = window.scrollY;
         let collapsed = false;
         let collapseTimer = null;
         const AUTO_COLLAPSE_DELAY = 2500;
 
         function measureWidth() {
+            if (mobileNav.matches) { navPill.style.removeProperty('width'); return; }
             if (!collapsed) {
                 navPill.style.width = navPill.scrollWidth + 'px';
             }
         }
         measureWidth();
         window.addEventListener('resize', measureWidth);
+        mobileNav.addEventListener('change', () => {
+            clearTimeout(collapseTimer);
+            closeMobileMenu();
+            collapsed = false;
+            navPill.classList.remove('collapsed');
+            navPill.style.removeProperty('width');
+            lastScrollY = window.scrollY;
+            measureWidth();
+        });
 
         function collapse() {
+            if (mobileNav.matches) return;
             if (!collapsed && window.scrollY > 100) {
                 collapsed = true;
                 navPill.classList.add('collapsed');
@@ -3300,6 +3374,7 @@
         }
 
         function expand() {
+            if (mobileNav.matches) return;
             if (collapsed) {
                 collapsed = false;
                 navPill.classList.remove('collapsed');
@@ -3310,7 +3385,7 @@
 
         function resetAutoCollapse() {
             clearTimeout(collapseTimer);
-            if (window.scrollY > 100) {
+            if (!mobileNav.matches && window.scrollY > 100) {
                 collapseTimer = setTimeout(collapse, AUTO_COLLAPSE_DELAY);
             }
         }
@@ -3332,6 +3407,10 @@
         });
 
         navPill.addEventListener('click', (e) => {
+            if (mobileNav.matches) {
+                if (e.target.closest('a')) closeMobileMenu();
+                return;
+            }
             if (collapsed) {
                 e.preventDefault();
                 expand();
