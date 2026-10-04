@@ -4252,7 +4252,25 @@
             { file: 'music/toby fox - UNDERTALE Soundtrack - 12 Home.mp3', name: 'Home', composer: 'Toby Fox', album: 'music/undertale.jpg' },
             { file: 'music/toby fox - UNDERTALE Soundtrack - 17 Snowy.mp3', name: 'Snowy', composer: 'Toby Fox', album: 'music/undertale.jpg' },
             { file: 'music/toby fox - UNDERTALE Soundtrack - 54 Hotel.mp3', name: 'Hotel', composer: 'Toby Fox', album: 'music/undertale.jpg' },
-            { file: 'music/toby fox - UNDERTALE Soundtrack - 63 It\'s Raining Somewhere Else.mp3', name: 'It\'s Raining Somewhere Else', composer: 'Toby Fox', album: 'music/undertale.jpg' }
+            { file: 'music/toby fox - UNDERTALE Soundtrack - 63 It\'s Raining Somewhere Else.mp3', name: 'It\'s Raining Somewhere Else', composer: 'Toby Fox', album: 'music/undertale.jpg' },
+            {"file": "music/Almost Closing Time, from Work At A Pizza Place.mp3", "name": "Almost Closing Time", "composer": "Work at a Pizza Place"},
+            {"file": "music/Circles (Instrumental) by Post Malone .mp3", "name": "Circles (Instrumental)", "composer": "Post Malone"},
+            {"file": "music/Drake - Passionfruit (instrumental).mp3", "name": "Passionfruit (Instrumental)", "composer": "Drake"},
+            {"file": "music/Frank Ocean - Pink + White(instrumental).mp3", "name": "Pink + White (Instrumental)", "composer": "Frank Ocean"},
+            {"file": "music/Friday Theme, From 3008.mp3", "name": "Friday Theme", "composer": "3008"},
+            {"file": "music/Gone Fishing, by Martin John Kershaw.mp3", "name": "Gone Fishing", "composer": "Martin John Kershaw"},
+            {"file": "music/Gualala, by Mac DeMarco.mp3", "name": "Gualala", "composer": "Mac DeMarco"},
+            {"file": "music/Kanye West - I Wonder (Official Instrumental).mp3", "name": "I Wonder (Instrumental)", "composer": "Kanye West"},
+            {"file": "music/L.E.S. Instrumental, by Childish Gambino .mp3", "name": "L.E.S. (Instrumental)", "composer": "Childish Gambino"},
+            {"file": "music/New Look (Wii U Mii Maker Lofi Mix).mp3", "name": "New Look", "composer": "Wii U Mii Maker (Lofi Mix)"},
+            {"file": "music/Pure Imagination (Orchestra Version) by Adonai Michel.mp3", "name": "Pure Imagination (Orchestra Version)", "composer": "Adonai Michel"},
+            {"file": "music/Stars Shine Like Pepperonis, from Work At A Pizza Place.mp3", "name": "Stars Shine Like Pepperonis", "composer": "Work at a Pizza Place"},
+            {"file": "music/The Orb Of Dreamers by Daniel Pemberton.mp3", "name": "The Orb of Dreamers", "composer": "Daniel Pemberton"},
+            {"file": "music/Timely, From Meepcity.mp3", "name": "Timely", "composer": "MeepCity"},
+            {"file": "music/White Space, from OMORI.mp3", "name": "White Space", "composer": "OMORI"},
+            {"file": "music/Ylang Ylang, by FKJ.mp3", "name": "Ylang Ylang", "composer": "FKJ"},
+            {"file": "music/beginning of the dream, by AZALI.mp3", "name": "Beginning of the Dream", "composer": "AZALI"},
+            {"file": "music/orchestral practice by AZALI.mp3", "name": "Orchestral Practice", "composer": "AZALI"}
         ];
 
         const audio = document.getElementById('audio-player');
@@ -4277,7 +4295,6 @@
         let currentPlaylist = [];
         let currentIndex = 0;
         let isExpanded = false;
-        let openingMusicPlayed = false;
         let hasStarted = false;
 
         // Initialize
@@ -4431,10 +4448,18 @@
         }
 
         function playNext() {
-            if (currentIndex === 0 && !openingMusicPlayed) {
-                openingMusicPlayed = true;
+            if (currentIndex + 1 < currentPlaylist.length) {
+                currentIndex += 1;
+            } else {
+                // Start a fresh shuffled rotation; the opening is only played on launch.
+                const previousTrack = currentPlaylist[currentIndex];
+                currentPlaylist = shuffleArray([...playlist]);
+                if (currentPlaylist.length > 1 && currentPlaylist[0].file === previousTrack.file) {
+                    const swapIndex = 1 + Math.floor(Math.random() * (currentPlaylist.length - 1));
+                    [currentPlaylist[0], currentPlaylist[swapIndex]] = [currentPlaylist[swapIndex], currentPlaylist[0]];
+                }
+                currentIndex = 0;
             }
-            currentIndex = (currentIndex + 1) % currentPlaylist.length;
             loadTrack(currentIndex);
             if (hasStarted) playAudio();
         }
