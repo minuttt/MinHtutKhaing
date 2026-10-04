@@ -20,7 +20,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="assets/testimonials.css">
+    <link rel="stylesheet" href="assets/testimonials.css?v=readability-20261004">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html {
@@ -415,6 +415,18 @@
             #nav-pill .nav-link { min-height: 44px; display: flex; align-items: center; padding: 10px 12px; font-size: 13px; }
             #nav-pill .nav-link.active { background: rgba(34,211,238,.08); }
         }
+
+        /* Readable supporting copy and labels throughout the portfolio cards. */
+        section:not(#hero) .text-xs {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        section:not(#hero) :is(.text-\[9px\], .text-\[10px\], .text-\[11px\]) {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        #hobbies dl dd { flex-shrink: 0; }
+        #awards .flex-1 > div { min-width: 0; }
 
         /* Separate character slots keep animated artwork contained on every screen. */
         #hobbies .gaming-characters {
@@ -2033,12 +2045,12 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-amber-500/5 border-2 border-amber-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border-2 border-amber-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
                             <i data-lucide="award" class="w-8 h-8 text-amber-300 lightbulb-glow"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <span class="text-[11px] font-bold tracking-widest uppercase text-amber-300">🏆 PRESTIGIOUS MERIT AWARD</span>
                                 <span class="px-2 py-0.5 rounded-md bg-amber-400/20 border border-amber-400/30 text-[9px] font-bold text-amber-200">2022</span>
                             </div>
@@ -2061,7 +2073,7 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-emerald-500/5 border-2 border-amber-400/25 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-yellow-500/20 border-2 border-amber-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
                             <i data-lucide="trophy" class="w-8 h-8 text-amber-300 lightbulb-glow"></i>
                         </div>
@@ -2104,12 +2116,12 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 border-2 border-blue-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-2 border-blue-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/20">
                             <i data-lucide="award" class="w-8 h-8 text-blue-300 lightbulb-glow"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <span class="text-[11px] font-bold tracking-widest uppercase text-blue-300">🏆 Professional Certification</span>
                                 <span class="px-2 py-0.5 rounded-md bg-blue-400/20 border border-blue-400/30 text-[9px] font-bold text-blue-200">VERIFIED</span>
                             </div>
@@ -2142,12 +2154,12 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-cyan-500/5 border-2 border-emerald-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border-2 border-emerald-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/20">
                             <i data-lucide="shield-check" class="w-8 h-8 text-emerald-300 lightbulb-glow"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <span class="text-[11px] font-bold tracking-widest uppercase text-emerald-300">🏆 Professional Certification</span>
                                 <span class="px-2 py-0.5 rounded-md bg-emerald-400/20 border border-emerald-400/30 text-[9px] font-bold text-emerald-200">VERIFIED</span>
                             </div>
@@ -2180,12 +2192,12 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-orange-500/5 via-amber-500/5 to-red-500/5 border-2 border-orange-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border-2 border-orange-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/20">
                             <i data-lucide="megaphone" class="w-8 h-8 text-orange-300 lightbulb-glow"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <span class="text-[11px] font-bold tracking-widest uppercase text-orange-300">🏆 Professional Certification</span>
                                 <span class="px-2 py-0.5 rounded-md bg-orange-400/20 border border-orange-400/30 text-[9px] font-bold text-orange-200">VERIFIED</span>
                             </div>
@@ -2218,12 +2230,12 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-rose-500/5 via-amber-500/5 to-rose-500/5 border-2 border-rose-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500/20 to-amber-500/20 border-2 border-rose-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-500/20">
                             <i data-lucide="terminal" class="w-8 h-8 text-rose-300 lightbulb-glow"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <span class="text-[11px] font-bold tracking-widest uppercase text-rose-300">🏆 Professional Certification</span>
                                 <span class="px-2 py-0.5 rounded-md bg-rose-400/20 border border-rose-400/30 text-[9px] font-bold text-rose-200">VERIFIED</span>
                             </div>
@@ -2255,7 +2267,7 @@
             <div class="shine-card glow-hover tilt-3d rounded-2xl p-8 bg-gradient-to-br from-sky-500/5 via-indigo-500/5 to-sky-500/5 border-2 border-sky-500/20 lg:col-span-3 reveal-bounce" style="animation-delay: 0.1s;">
                 <div class="scan-line"></div>
                 <div class="flex flex-col md:flex-row items-start gap-6 relative z-10">
-                    <div class="flex items-start gap-4 flex-1">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 flex-1 min-w-0 w-full">
                         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 border-2 border-sky-400/30 flex items-center justify-center flex-shrink-0 shadow-lg shadow-sky-500/20">
                             <i data-lucide="cpu" class="w-8 h-8 text-sky-300 lightbulb-glow"></i>
                         </div>
