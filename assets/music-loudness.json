@@ -1,0 +1,264 @@
+{
+  "targetLufs": -20,
+  "peakCeilingDbtp": -1,
+  "tracks": {
+    "music/03 - Subwoofer Lullaby.mp3": {
+      "lufs": -16.83,
+      "truePeak": -0.41,
+      "gainDb": -3.17,
+      "gain": 0.694225
+    },
+    "music/04. clavar la espada.mp3": {
+      "lufs": -11.41,
+      "truePeak": 1.07,
+      "gainDb": -8.59,
+      "gain": 0.371963
+    },
+    "music/05 - Living Mice.mp3": {
+      "lufs": -17.04,
+      "truePeak": -0.72,
+      "gainDb": -2.96,
+      "gain": 0.711214
+    },
+    "music/07 - Haggstrom.mp3": {
+      "lufs": -17.47,
+      "truePeak": -0.2,
+      "gainDb": -2.53,
+      "gain": 0.747309
+    },
+    "music/10. Suite ''Never Meant to Belong'' 2nd Mouvement- Cello&Orchestra.mp3": {
+      "lufs": -13.9,
+      "truePeak": -0.42,
+      "gainDb": -6.1,
+      "gain": 0.49545
+    },
+    "music/11 - Mice on Venus.mp3": {
+      "lufs": -14.66,
+      "truePeak": 0.36,
+      "gainDb": -5.34,
+      "gain": 0.540754
+    },
+    "music/14 - Clark.mp3": {
+      "lufs": -15.63,
+      "truePeak": -0.34,
+      "gainDb": -4.37,
+      "gain": 0.604644
+    },
+    "music/14. Suite ''Will of the Heart'' 1st Mouvement- Cello&Orchestra.mp3": {
+      "lufs": -16.81,
+      "truePeak": -1.41,
+      "gainDb": -3.19,
+      "gain": 0.692628
+    },
+    "music/172 - DUET.mp3": {
+      "lufs": -12.04,
+      "truePeak": -0.43,
+      "gainDb": -7.96,
+      "gain": 0.399945
+    },
+    "music/2.22 Rito Village.mp3": {
+      "lufs": -16.0,
+      "truePeak": -1.64,
+      "gainDb": -4.0,
+      "gain": 0.630957
+    },
+    "music/43 Castle Funk.mp3": {
+      "lufs": -11.68,
+      "truePeak": 0.04,
+      "gainDb": -8.32,
+      "gain": 0.383707
+    },
+    "music/Almost Closing Time, from Work At A Pizza Place.mp3": {
+      "lufs": -18.51,
+      "truePeak": -0.24,
+      "gainDb": -1.49,
+      "gain": 0.842364
+    },
+    "music/beginning of the dream, by AZALI.mp3": {
+      "lufs": -12.58,
+      "truePeak": -0.31,
+      "gainDb": -7.42,
+      "gain": 0.425598
+    },
+    "music/Circles (Instrumental) by Post Malone .mp3": {
+      "lufs": -6.99,
+      "truePeak": 1.27,
+      "gainDb": -13.01,
+      "gain": 0.223615
+    },
+    "music/Drake - Passionfruit (instrumental).mp3": {
+      "lufs": -25.51,
+      "truePeak": -10.7,
+      "gainDb": 5.51,
+      "gain": 1.885819
+    },
+    "music/Frank Ocean - Pink + White(instrumental).mp3": {
+      "lufs": -13.46,
+      "truePeak": -1.01,
+      "gainDb": -6.54,
+      "gain": 0.470977
+    },
+    "music/Friday Theme, From 3008.mp3": {
+      "lufs": -12.04,
+      "truePeak": 0.6,
+      "gainDb": -7.96,
+      "gain": 0.399945
+    },
+    "music/Gone Fishing, by Martin John Kershaw.mp3": {
+      "lufs": -17.5,
+      "truePeak": 0.19,
+      "gainDb": -2.5,
+      "gain": 0.749894
+    },
+    "music/gregorquendel-liszt-liebestraum-no-3-love-dream-s-541-187239.mp3": {
+      "lufs": -24.85,
+      "truePeak": -5.3,
+      "gainDb": 4.3,
+      "gain": 1.64059
+    },
+    "music/Gualala, by Mac DeMarco.mp3": {
+      "lufs": -11.75,
+      "truePeak": 0.39,
+      "gainDb": -8.25,
+      "gain": 0.386812
+    },
+    "music/gymnopedie-gymnopedie-no-1-erik-satie-351s-12664.mp3": {
+      "lufs": -27.18,
+      "truePeak": -8.24,
+      "gainDb": 7.18,
+      "gain": 2.285599
+    },
+    "music/Hip Shop.mp3": {
+      "lufs": -14.72,
+      "truePeak": 0.39,
+      "gainDb": -5.28,
+      "gain": 0.544503
+    },
+    "music/Kanye West - I Wonder (Official Instrumental).mp3": {
+      "lufs": -12.44,
+      "truePeak": 0.03,
+      "gainDb": -7.56,
+      "gain": 0.418794
+    },
+    "music/L.E.S. Instrumental, by Childish Gambino .mp3": {
+      "lufs": -19.17,
+      "truePeak": -3.0,
+      "gainDb": -0.83,
+      "gain": 0.908866
+    },
+    "music/My Castle Town.mp3": {
+      "lufs": -14.25,
+      "truePeak": -0.19,
+      "gainDb": -5.75,
+      "gain": 0.515822
+    },
+    "music/New Look (Wii U Mii Maker Lofi Mix).mp3": {
+      "lufs": -8.34,
+      "truePeak": -0.36,
+      "gainDb": -11.66,
+      "gain": 0.261216
+    },
+    "music/orchestral practice by AZALI.mp3": {
+      "lufs": -15.32,
+      "truePeak": -0.3,
+      "gainDb": -4.68,
+      "gain": 0.583445
+    },
+    "music/Pure Imagination (Orchestra Version) by Adonai Michel.mp3": {
+      "lufs": -13.98,
+      "truePeak": 0.12,
+      "gainDb": -6.02,
+      "gain": 0.500035
+    },
+    "music/Scarlet Forest.mp3": {
+      "lufs": -13.24,
+      "truePeak": 0.04,
+      "gainDb": -6.76,
+      "gain": 0.459198
+    },
+    "music/Stars Shine Like Pepperonis, from Work At A Pizza Place.mp3": {
+      "lufs": -17.71,
+      "truePeak": -0.29,
+      "gainDb": -2.29,
+      "gain": 0.768245
+    },
+    "music/The Orb Of Dreamers by Daniel Pemberton.mp3": {
+      "lufs": -15.17,
+      "truePeak": -2.1,
+      "gainDb": -4.83,
+      "gain": 0.573456
+    },
+    "music/Timely, From Meepcity.mp3": {
+      "lufs": -14.66,
+      "truePeak": 0.22,
+      "gainDb": -5.34,
+      "gain": 0.540754
+    },
+    "music/Title Theme - The Legend of Zelda_ Ocarina of Time Piano Cover  Sheet Music.mp3": {
+      "lufs": -23.82,
+      "truePeak": -5.58,
+      "gainDb": 3.82,
+      "gain": 1.552387
+    },
+    "music/toby fox - UNDERTALE Soundtrack - 12 Home.mp3": {
+      "lufs": -16.56,
+      "truePeak": -1.04,
+      "gainDb": -3.44,
+      "gain": 0.672977
+    },
+    "music/toby fox - UNDERTALE Soundtrack - 17 Snowy.mp3": {
+      "lufs": -14.92,
+      "truePeak": -0.36,
+      "gainDb": -5.08,
+      "gain": 0.557186
+    },
+    "music/toby fox - UNDERTALE Soundtrack - 54 Hotel.mp3": {
+      "lufs": -12.22,
+      "truePeak": -0.07,
+      "gainDb": -7.78,
+      "gain": 0.408319
+    },
+    "music/toby fox - UNDERTALE Soundtrack - 63 It's Raining Somewhere Else.mp3": {
+      "lufs": -14.12,
+      "truePeak": 0.05,
+      "gainDb": -5.88,
+      "gain": 0.508159
+    },
+    "music/White Space, from OMORI.mp3": {
+      "lufs": -32.81,
+      "truePeak": -18.96,
+      "gainDb": 12.81,
+      "gain": 4.370187
+    },
+    "music/Ylang Ylang, by FKJ.mp3": {
+      "lufs": -12.46,
+      "truePeak": 0.27,
+      "gainDb": -7.54,
+      "gain": 0.419759
+    },
+    "music/Zelda_ Great Fairy Fountain (Piano Etude).mp3": {
+      "lufs": -16.4,
+      "truePeak": -0.59,
+      "gainDb": -3.6,
+      "gain": 0.660693
+    },
+    "opening music/1.02 Opening.mp3": {
+      "lufs": -14.19,
+      "truePeak": -1.56,
+      "gainDb": -5.81,
+      "gain": 0.512271
+    },
+    "opening music/14 Welcome to the Green Room.mp3": {
+      "lufs": -13.64,
+      "truePeak": -0.22,
+      "gainDb": -6.36,
+      "gain": 0.480839
+    },
+    "opening music/153 - Do You Remember.mp3": {
+      "lufs": -21.59,
+      "truePeak": -6.36,
+      "gainDb": 1.59,
+      "gain": 1.200881
+    }
+  }
+}

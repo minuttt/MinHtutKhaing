@@ -3066,8 +3066,9 @@
                     </div>
                 </div>
                 <p class="text-sm text-slate-400 font-light mb-3">5 years of playing, learning, and solving. My Chess.com ratings:</p>
+                <p class="text-sm font-semibold text-emerald-300 mb-3">Top 0.9% &middot; Elite</p>
                 <dl class="text-xs text-slate-400 space-y-2">
-                    <div class="flex justify-between gap-4"><dt>Blitz &amp; Live960</dt><dd class="text-emerald-300 font-semibold tabular-nums">1809</dd></div>
+                    <div class="flex justify-between gap-4"><dt>Blitz &amp; Live960</dt><dd class="text-emerald-300 font-semibold tabular-nums">1899</dd></div>
                     <div class="flex justify-between gap-4"><dt>Puzzles</dt><dd class="text-emerald-300 font-semibold tabular-nums">1663</dd></div>
                     <div class="flex justify-between gap-4"><dt>Daily, Bullet &amp; Daily960</dt><dd class="text-emerald-300 font-semibold tabular-nums">1600</dd></div>
                     <div class="flex justify-between gap-4"><dt>Rapid</dt><dd class="text-emerald-300 font-semibold tabular-nums">1575</dd></div>
@@ -4273,6 +4274,54 @@
             {"file": "music/orchestral practice by AZALI.mp3", "name": "Orchestral Practice", "composer": "AZALI"}
         ];
 
+        // Measured with FFmpeg: -20 LUFS background listening, capped at -1 dBTP.
+        // Per-track gain preserves musical dynamics without rewriting the source files.
+        const trackGains = {
+            "music/03 - Subwoofer Lullaby.mp3": 0.694225,
+            "music/04. clavar la espada.mp3": 0.371963,
+            "music/05 - Living Mice.mp3": 0.711214,
+            "music/07 - Haggstrom.mp3": 0.747309,
+            "music/10. Suite ''Never Meant to Belong'' 2nd Mouvement- Cello&Orchestra.mp3": 0.49545,
+            "music/11 - Mice on Venus.mp3": 0.540754,
+            "music/14 - Clark.mp3": 0.604644,
+            "music/14. Suite ''Will of the Heart'' 1st Mouvement- Cello&Orchestra.mp3": 0.692628,
+            "music/172 - DUET.mp3": 0.399945,
+            "music/2.22 Rito Village.mp3": 0.630957,
+            "music/43 Castle Funk.mp3": 0.383707,
+            "music/Almost Closing Time, from Work At A Pizza Place.mp3": 0.842364,
+            "music/beginning of the dream, by AZALI.mp3": 0.425598,
+            "music/Circles (Instrumental) by Post Malone .mp3": 0.223615,
+            "music/Drake - Passionfruit (instrumental).mp3": 1.885819,
+            "music/Frank Ocean - Pink + White(instrumental).mp3": 0.470977,
+            "music/Friday Theme, From 3008.mp3": 0.399945,
+            "music/Gone Fishing, by Martin John Kershaw.mp3": 0.749894,
+            "music/gregorquendel-liszt-liebestraum-no-3-love-dream-s-541-187239.mp3": 1.64059,
+            "music/Gualala, by Mac DeMarco.mp3": 0.386812,
+            "music/gymnopedie-gymnopedie-no-1-erik-satie-351s-12664.mp3": 2.285599,
+            "music/Hip Shop.mp3": 0.544503,
+            "music/Kanye West - I Wonder (Official Instrumental).mp3": 0.418794,
+            "music/L.E.S. Instrumental, by Childish Gambino .mp3": 0.908866,
+            "music/My Castle Town.mp3": 0.515822,
+            "music/New Look (Wii U Mii Maker Lofi Mix).mp3": 0.261216,
+            "music/orchestral practice by AZALI.mp3": 0.583445,
+            "music/Pure Imagination (Orchestra Version) by Adonai Michel.mp3": 0.500035,
+            "music/Scarlet Forest.mp3": 0.459198,
+            "music/Stars Shine Like Pepperonis, from Work At A Pizza Place.mp3": 0.768245,
+            "music/The Orb Of Dreamers by Daniel Pemberton.mp3": 0.573456,
+            "music/Timely, From Meepcity.mp3": 0.540754,
+            "music/Title Theme - The Legend of Zelda_ Ocarina of Time Piano Cover  Sheet Music.mp3": 1.552387,
+            "music/toby fox - UNDERTALE Soundtrack - 12 Home.mp3": 0.672977,
+            "music/toby fox - UNDERTALE Soundtrack - 17 Snowy.mp3": 0.557186,
+            "music/toby fox - UNDERTALE Soundtrack - 54 Hotel.mp3": 0.408319,
+            "music/toby fox - UNDERTALE Soundtrack - 63 It's Raining Somewhere Else.mp3": 0.508159,
+            "music/White Space, from OMORI.mp3": 4.370187,
+            "music/Ylang Ylang, by FKJ.mp3": 0.419759,
+            "music/Zelda_ Great Fairy Fountain (Piano Etude).mp3": 0.660693,
+            "opening music/1.02 Opening.mp3": 0.512271,
+            "opening music/14 Welcome to the Green Room.mp3": 0.480839,
+            "opening music/153 - Do You Remember.mp3": 1.200881
+};
+
         const audio = document.getElementById('audio-player');
         const musicPlayer = document.getElementById('music-player');
         const albumCoverContainer = document.getElementById('album-cover-container');
@@ -4296,6 +4345,35 @@
         let currentIndex = 0;
         let isExpanded = false;
         let hasStarted = false;
+        let audioContext = null;
+        let loudnessGain = null;
+
+        function applyTrackVolume() {
+            const track = currentPlaylist[currentIndex];
+            const gain = (trackGains[track?.file] ?? 1) * (Number(volumeSlider.value) / 100);
+            if (loudnessGain) {
+                audio.volume = 1;
+                loudnessGain.gain.setValueAtTime(gain, audioContext.currentTime);
+            } else {
+                // Older browsers can still attenuate loud tracks without Web Audio.
+                audio.volume = Math.min(1, gain);
+            }
+        }
+
+        function prepareAudio() {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!audioContext && AudioContextClass) {
+                audioContext = new AudioContextClass();
+                const source = audioContext.createMediaElementSource(audio);
+                loudnessGain = audioContext.createGain();
+                source.connect(loudnessGain);
+                loudnessGain.connect(audioContext.destination);
+            }
+            applyTrackVolume();
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume().catch(err => console.warn('Audio context could not resume:', err));
+            }
+        }
 
         // Initialize
         function init() {
@@ -4309,7 +4387,7 @@
             console.log('🎵 Opening track:', currentPlaylist[0].name);
 
             // Set initial volume
-            audio.volume = 0.7;
+            applyTrackVolume();
 
             // Load first track
             loadTrack(currentIndex);
@@ -4356,7 +4434,8 @@
                     console.error('❌ ERROR: window.dismissLanding NOT DEFINED!');
                 }
 
-                // Play audio
+                // Initialize audio gain within the launch gesture, including on mobile.
+                prepareAudio();
                 audio.play().then(() => {
                     console.log('✅ MUSIC STARTED');
                     updatePlayPauseIcon(false);
@@ -4395,6 +4474,7 @@
         function loadTrack(index) {
             const track = currentPlaylist[index];
             audio.src = track.file;
+            applyTrackVolume();
             songTitle.textContent = track.name;
             songComposer.textContent = track.composer;
 
@@ -4408,6 +4488,7 @@
         }
 
         function playAudio() {
+            prepareAudio();
             const playPromise = audio.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
@@ -4493,7 +4574,7 @@
 
         function updateVolume() {
             const volume = volumeSlider.value / 100;
-            audio.volume = volume;
+            applyTrackVolume();
             volumePercent.textContent = volumeSlider.value + '%';
         }
 
