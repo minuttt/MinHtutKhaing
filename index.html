@@ -714,6 +714,16 @@
             width: 100%; height: 100%;
             will-change: auto;
         }
+        #portfolio-meteors {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #portfolio-meteors { display: none; }
+        }
         .bg-flow-path {
             fill: none;
             stroke-dasharray: var(--dash-len, 800) var(--dash-gap, 400);
@@ -1635,6 +1645,7 @@
         <g id="bgPathsA"></g>
         <g id="bgPathsB"></g>
     </svg>
+    <canvas id="portfolio-meteors" aria-hidden="true"></canvas>
 </div>
  
  
@@ -4101,6 +4112,7 @@
                             // Unlock scroll after everything is ready
                             document.body.classList.remove('no-scroll');
                             removeScrollPrevention();
+                            window.dispatchEvent(new Event('portfolioReady'));
                             console.log('🎭 Smooth transition complete - scroll unlocked');
                         }, 800);
                     }, 500);
@@ -4980,6 +4992,7 @@
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js"></script>
 <script src="assets/testimonials.js" defer></script>
+<script src="assets/portfolio-meteors.js" defer></script>
 
 </body>
 </html>
