@@ -756,6 +756,19 @@
             border-radius: 16px;
         }
 
+        @media (max-width: 600px) {
+            #music-player {
+                right: max(12px, env(safe-area-inset-right));
+                bottom: max(12px, env(safe-area-inset-bottom));
+                max-height: calc(100dvh - 24px);
+                overflow-y: auto;
+            }
+            #music-player.expanded { width: min(320px, calc(100vw - 30px)); }
+        }
+        #album-cover-container:focus-visible, #close-player-btn:focus-visible {
+            outline: 2px solid #22d3ee;
+            outline-offset: -4px;
+        }
         .album-cover {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
@@ -3196,19 +3209,19 @@
 <!-- Music Player -->
 <div id="music-player" class="collapsed overflow-hidden" style="background: linear-gradient(145deg, #0a1628 0%, #020815 100%); box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); opacity: 0; position: relative; display: none;">
     <!-- Minimize Button -->
-    <div class="close-player-btn" id="close-player-btn" title="Minimize">
+    <button type="button" class="close-player-btn" id="close-player-btn" title="Minimize" aria-label="Minimize music player" tabindex="-1">
         <i data-lucide="minimize-2" class="w-3.5 h-3.5 text-white opacity-70"></i>
-    </div>
+    </button>
 
     <!-- Collapsed View: Album Cover -->
-    <div id="album-cover-container" class="album-cover w-full h-full flex items-center justify-center p-2">
+    <button type="button" id="album-cover-container" aria-label="Open music player" aria-expanded="false" aria-controls="music-player-controls" class="album-cover w-full h-full flex items-center justify-center p-2">
         <div id="album-art" class="w-full h-full rounded-full bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 flex items-center justify-center overflow-hidden">
             <i data-lucide="music" class="w-6 h-6 text-cyan-400"></i>
         </div>
-    </div>
+    </button>
 
     <!-- Expanded View: Full Player -->
-    <div class="player-content p-5">
+    <div id="music-player-controls" class="player-content p-5" inert>
         <!-- Song Info -->
         <div class="mb-3 text-center">
             <div id="song-title" class="text-base font-bold text-white truncate mb-1">Song Title</div>
@@ -3237,23 +3250,23 @@
 
         <!-- Controls -->
         <div class="flex items-center justify-center gap-2 mb-3">
-            <div class="control-btn" id="prev-btn" title="Previous">
+            <button type="button" class="control-btn" id="prev-btn" title="Previous" aria-label="Previous track">
                 <i data-lucide="skip-back" class="w-4 h-4 text-cyan-400"></i>
-            </div>
-            <div class="control-btn play-pause" id="play-pause-btn" title="Play/Pause">
+            </button>
+            <button type="button" class="control-btn play-pause" id="play-pause-btn" title="Play/Pause" aria-label="Play or pause music">
                 <svg id="play-icon" class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                 </svg>
-            </div>
-            <div class="control-btn" id="next-btn" title="Next">
+            </button>
+            <button type="button" class="control-btn" id="next-btn" title="Next" aria-label="Next track">
                 <i data-lucide="skip-forward" class="w-4 h-4 text-cyan-400"></i>
-            </div>
+            </button>
         </div>
 
         <!-- Volume Control -->
         <div class="flex items-center gap-2">
             <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-400"></i>
-            <input type="range" min="0" max="100" value="70" class="volume-slider" id="volume-slider">
+            <input type="range" min="0" max="100" value="70" class="volume-slider" id="volume-slider" aria-label="Music volume">
             <span class="text-[10px] text-slate-500 w-8" id="volume-percent">70%</span>
         </div>
     </div>
@@ -4356,6 +4369,7 @@
         let currentPlaylist = [];
         let currentIndex = 0;
         let isExpanded = false;
+        let playerPinned = false;
         let hasStarted = false;
         let audioContext = null;
         let loudnessGain = null;
@@ -4374,7 +4388,10 @@
 
         function prepareAudio() {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            if (!audioContext && AudioContextClass) {
+            // Local file origins can make MediaElementAudioSource output silence.
+            // Keep native media playback for double-clicked index.html previews.
+            const supportsAudioRouting = location.protocol === 'http:' || location.protocol === 'https:';
+            if (!audioContext && AudioContextClass && supportsAudioRouting) {
                 audioContext = new AudioContextClass();
                 const source = audioContext.createMediaElementSource(audio);
                 loudnessGain = audioContext.createGain();
@@ -4406,7 +4423,7 @@
 
             // Show player immediately - FORCE VISIBILITY
             console.log('🎵 Showing player...');
-            musicPlayer.style.cssText = 'display: block !important; opacity: 1 !important; visibility: visible !important; position: fixed !important; bottom: 30px !important; right: 30px !important; z-index: 100 !important;';
+            musicPlayer.style.cssText = 'display: block !important; opacity: 1 !important; visibility: visible !important; position: fixed !important; z-index: 100 !important;';
             musicPlayer.classList.add('show');
             console.log('🎵 Player is now visible', musicPlayer.style.display, musicPlayer.style.opacity);
 
@@ -4485,7 +4502,7 @@
 
         function loadTrack(index) {
             const track = currentPlaylist[index];
-            audio.src = track.file;
+            audio.src = encodeURI(track.file);
             applyTrackVolume();
             songTitle.textContent = track.name;
             songComposer.textContent = track.composer;
@@ -4585,18 +4602,26 @@
         }
 
         function updateVolume() {
-            const volume = volumeSlider.value / 100;
             applyTrackVolume();
             volumePercent.textContent = volumeSlider.value + '%';
         }
 
         function expandPlayer() {
+            document.getElementById('music-player-controls').inert = false;
+            albumCoverContainer.setAttribute('aria-expanded', 'true');
+            albumCoverContainer.tabIndex = -1;
+            closePlayerBtn.tabIndex = 0;
             isExpanded = true;
             musicPlayer.classList.remove('collapsed');
             musicPlayer.classList.add('expanded');
         }
 
         function collapsePlayer() {
+            playerPinned = false;
+            document.getElementById('music-player-controls').inert = true;
+            albumCoverContainer.setAttribute('aria-expanded', 'false');
+            albumCoverContainer.tabIndex = 0;
+            closePlayerBtn.tabIndex = -1;
             isExpanded = false;
             musicPlayer.classList.remove('expanded');
             musicPlayer.classList.add('collapsed');
@@ -4608,8 +4633,13 @@
         }
 
         // Event Listeners
-        musicPlayer.addEventListener('mouseenter', expandPlayer);
-        musicPlayer.addEventListener('mouseleave', collapsePlayer);
+        albumCoverContainer.addEventListener('click', () => { playerPinned = true; expandPlayer(); });
+        const hoverPlayer = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 601px)');
+        musicPlayer.addEventListener('mouseenter', () => { if (hoverPlayer.matches) expandPlayer(); });
+        musicPlayer.addEventListener('mouseleave', () => { if (hoverPlayer.matches && !playerPinned && !musicPlayer.contains(document.activeElement)) collapsePlayer(); });
+        musicPlayer.addEventListener('keydown', event => {
+            if (event.key === 'Escape') { collapsePlayer(); albumCoverContainer.focus(); }
+        });
         closePlayerBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             minimizePlayer();
@@ -4992,7 +5022,7 @@
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js"></script>
 <script src="assets/testimonials.js" defer></script>
-<script src="assets/portfolio-meteors.js" defer></script>
+<script src="assets/portfolio-meteors.js?v=comets-2" defer></script>
 
 </body>
 </html>
