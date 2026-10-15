@@ -4370,8 +4370,11 @@
         let currentIndex = 0;
         let isExpanded = false;
         let playerPinned = false;
-        let hasStarted = false;
         let playbackRequested = false;
+        let playbackBlocked = false;
+        let playbackPending = false;
+        let playbackGeneration = 0;
+        let mediaPlaying = false;
         let audioContext = null;
         let loudnessGain = null;
 
@@ -4380,7 +4383,7 @@
             const gain = (trackGains[track?.file] ?? 1) * (Number(volumeSlider.value) / 100);
             if (loudnessGain) {
                 audio.volume = 1;
-                loudnessGain.gain.setValueAtTime(gain, audioContext.currentTime);
+                loudnessGain.gain.setValueAtTime(playbackRequested && !document.hidden ? gain : 0, audioContext.currentTime);
             } else {
                 // Older browsers can still attenuate loud tracks without Web Audio.
                 audio.volume = Math.min(1, gain);
@@ -4394,6 +4397,7 @@
             const supportsAudioRouting = location.protocol === 'http:' || location.protocol === 'https:';
             if (!audioContext && AudioContextClass && supportsAudioRouting) {
                 audioContext = new AudioContextClass();
+                audioContext.addEventListener('statechange', syncPlaybackUI);
                 const source = audioContext.createMediaElementSource(audio);
                 loudnessGain = audioContext.createGain();
                 source.connect(loudnessGain);
@@ -4457,9 +4461,7 @@
             // A mobile audio session can be interrupted by the transition sound.
             // Recover only music the user requested, never music they paused.
             window.addEventListener('portfolioReady', () => {
-                if (playbackRequested && (audio.paused || (audioContext && audioContext.state !== 'running'))) {
-                    playAudio().catch(() => {});
-                }
+                recoverPlayback();
             }, { once: true });
         }
 
@@ -4472,6 +4474,7 @@
         }
 
         function loadTrack(index) {
+            stopOutput();
             const track = currentPlaylist[index];
             audio.src = encodeURI(track.file);
             applyTrackVolume();
@@ -4487,34 +4490,92 @@
             }
         }
 
+        function canPauseAudio() {
+            return playbackRequested && !playbackBlocked && (playbackPending ||
+                (!audio.paused && (!audioContext || audioContext.state === 'running')));
+        }
+
+        function syncPlaybackUI() {
+            const audible = playbackRequested && !document.hidden && !playbackBlocked &&
+                mediaPlaying && !audio.paused && (!audioContext || audioContext.state === 'running');
+            updatePlayPauseIcon(!audible);
+            albumArt.classList.toggle('spinning', audible);
+            playPauseBtn.setAttribute('aria-label', canPauseAudio()
+                ? 'Pause music' : 'Play music');
+        }
+
+        function stopOutput() {
+            // Silence the output before pausing the decoder, including a stalled mobile buffer.
+            playbackGeneration += 1;
+            playbackPending = false;
+            audio.muted = true;
+            if (loudnessGain) {
+                loudnessGain.gain.cancelScheduledValues(audioContext.currentTime);
+                loudnessGain.gain.setValueAtTime(0, audioContext.currentTime);
+            }
+            audio.pause();
+            mediaPlaying = false;
+            syncPlaybackUI();
+        }
+
         function playAudio() {
             playbackRequested = true;
+            playbackBlocked = false;
+            if (document.hidden) return Promise.resolve();
+            const generation = ++playbackGeneration;
+            playbackPending = true;
+            audio.muted = false;
             let ready;
             try {
-                const contextReady = prepareAudio();
-                const mediaReady = audio.play();
-                ready = Promise.all([contextReady, mediaReady]);
+                // Both calls must happen synchronously within a launch/resume gesture.
+                ready = Promise.all([prepareAudio(), audio.play()]);
             } catch (error) {
                 ready = Promise.reject(error);
             }
             const started = ready.then(() => {
+                if (generation !== playbackGeneration) return;
                 if (audioContext && audioContext.state !== 'running') {
                     throw new Error('Audio context is not running');
                 }
-                if (!playbackRequested) return;
                 if (audio.paused) throw new Error('Media playback was interrupted');
-                updatePlayPauseIcon(false);
-                albumArt.classList.add('spinning');
-                hasStarted = true;
+                playbackPending = false;
+                mediaPlaying = true;
+                syncPlaybackUI();
             });
-            // Attach a handler for controls that do not consume the returned promise.
             started.catch(err => {
-                updatePlayPauseIcon(true);
-                albumArt.classList.remove('spinning');
+                // Old play promises must not overwrite a later pause, track, or play request.
+                if (generation !== playbackGeneration) return;
+                playbackBlocked = true;
+                stopOutput();
                 console.warn('Playback prevented; tap to retry:', err);
             });
             return started;
         }
+
+        function recoverPlayback() {
+            if (document.hidden || !playbackRequested || playbackPending) return;
+            if (audio.paused || !mediaPlaying || (audioContext && audioContext.state !== 'running')) {
+                playAudio().catch(() => {});
+            }
+        }
+
+        // Preserve the user's intent and track position while the OS backgrounds the page.
+        // Explicitly stop before suspension so mobile cannot retain a looping audio buffer.
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) stopOutput();
+            else recoverPlayback();
+        });
+        window.addEventListener('pagehide', stopOutput);
+        window.addEventListener('pageshow', recoverPlayback);
+        window.addEventListener('focus', recoverPlayback);
+        audio.addEventListener('playing', () => {
+            if (!playbackRequested || document.hidden) { stopOutput(); return; }
+            mediaPlaying = true;
+            syncPlaybackUI();
+        });
+        ['pause', 'waiting', 'stalled', 'ended', 'error', 'emptied'].forEach(type => {
+            audio.addEventListener(type, () => { mediaPlaying = false; syncPlaybackUI(); });
+        });
 
         function updatePlayPauseIcon(isPaused) {
             if (isPaused) {
@@ -4529,17 +4590,14 @@
 
         function pauseAudio() {
             playbackRequested = false;
-            audio.pause();
-            updatePlayPauseIcon(true); // true = paused, show play
-            albumArt.classList.remove('spinning');
+            playbackBlocked = false;
+            stopOutput();
         }
 
         function togglePlayPause() {
-            if (audio.paused || (audioContext && audioContext.state !== 'running')) {
-                playAudio();
-            } else {
-                pauseAudio();
-            }
+            // A second tap cancels even an unresolved play/resume request.
+            if (canPauseAudio()) pauseAudio();
+            else playAudio();
         }
 
         function playNext() {
@@ -4556,13 +4614,13 @@
                 currentIndex = 0;
             }
             loadTrack(currentIndex);
-            if (hasStarted) playAudio();
+            if (playbackRequested) playAudio();
         }
 
         function playPrev() {
             currentIndex = (currentIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
             loadTrack(currentIndex);
-            if (hasStarted) playAudio();
+            if (playbackRequested) playAudio();
         }
 
         function formatTime(seconds) {
