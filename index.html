@@ -1147,6 +1147,27 @@
             transition: opacity 1s ease-out;
         }
 
+        /* Native mobile pinning avoids fixed-layer flicker during touch scrolling.
+           svh stays stable when the browser address bar expands or collapses. */
+        #hero-scroll-scene.mobile-hero-scroll {
+            height: calc(100svh + 6000px);
+            position: relative;
+        }
+        .mobile-hero-scroll #hero {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100svh;
+            perspective: none !important;
+            isolation: isolate;
+        }
+        .mobile-hero-scroll [class*="hero-stage-"] { perspective: 1500px; }
+        .mobile-hero-scroll #scroll-indicator { position: absolute; }
+        /* hidden creates a scrolling ancestor that breaks position: sticky. */
+        @supports (overflow: clip) {
+            body { overflow-x: clip; }
+        }
+
         /* Premium landing impact overlay */
         #landing-dust-overlay {
             position: fixed;
@@ -1700,6 +1721,7 @@
 <canvas id="star-trail"></canvas>
  
 <!-- Cinematic Text Hero Section -->
+<div id="hero-scroll-scene">
 <section id="hero" class="relative w-screen h-screen overflow-hidden flex items-center justify-center" style="perspective: 1500px;">
     <canvas id="blackhole-canvas" aria-hidden="true"></canvas>
     <div class="film-grain-hero" aria-hidden="true"></div>
@@ -1793,6 +1815,7 @@
         </div>
     </div>
 </section>
+</div>
 
 <!-- Awards Section -->
 <section id="awards" class="relative py-24 px-6">
@@ -3286,7 +3309,7 @@
     let heroAnimationsReady = false;
     let startHeroAnimations = null;
 
-    if (typeof gsap !== 'undefined') {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         gsap.registerPlugin(ScrollTrigger);
 
         const heroSection = document.getElementById('hero');
@@ -3320,6 +3343,8 @@
         startHeroAnimations = () => {
             if (!heroAnimationsReady) {
                 heroAnimationsReady = true;
+                setupHeroScroll();
+                ScrollTrigger.refresh();
                 introTl.play();
 
                 // Show scroll indicator after intro animation completes
@@ -3348,99 +3373,110 @@
                 duration: 1.2, ease: "expo.out"
             }, "-=0.9");
 
-        // Scroll timeline - fixed
-        const scrollTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: heroSection,
-                start: "top top",
-                end: "+=6000",
-                pin: true,
-                scrub: 1,
-                anticipatePin: 1,
-                invalidateOnRefresh: true,
-            },
-        });
+        // Build the scroll geometry only after the fixed launch body is unlocked.
+        function setupHeroScroll() {
+            gsap.matchMedia().add({
+                mobile: '(max-width: 900px), (hover: none) and (pointer: coarse)',
+                desktop: '(min-width: 901px)'
+            }, context => {
+                const mobile = context.conditions.mobile;
+                const scene = document.getElementById('hero-scroll-scene');
+                scene.classList.toggle('mobile-hero-scroll', mobile);
+                const scrollTl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: mobile ? scene : heroSection,
+                        start: "top top",
+                        end: "+=6000",
+                        pin: !mobile,
+                        scrub: 1,
+                        anticipatePin: 1,
+                        invalidateOnRefresh: true,
+                    },
+                });
 
-        scrollTl
-            // Fade out Stage 1 (Name)
-            .to(".hero-stage-1", {
-                autoAlpha: 0,
-                scale: 0.8,
-                y: -100,
-                filter: "blur(20px)",
-                duration: 1.5,
-                ease: "power2.in"
-            }, 0)
+                scrollTl
+                    // Fade out Stage 1 (Name)
+                    .to(".hero-stage-1", {
+                        autoAlpha: 0,
+                        scale: 0.8,
+                        y: -100,
+                        filter: "blur(20px)",
+                        duration: 1.5,
+                        ease: "power2.in"
+                    }, 0)
 
-            // Fade in Stage 2 (Roles)
-            .to(".hero-stage-2", { autoAlpha: 1, duration: 0.5 }, 1)
-            .to(".role-1", {
-                autoAlpha: 1, x: 0, scale: 1,
-                duration: 1, ease: "expo.out"
-            }, 1.2)
-            .to(".role-2", {
-                autoAlpha: 1, x: 0, scale: 1,
-                duration: 1, ease: "expo.out"
-            }, 1.4)
-            .to(".role-3", {
-                autoAlpha: 1, x: 0, scale: 1,
-                duration: 1, ease: "expo.out"
-            }, 1.6)
-            .to(".role-4", {
-                autoAlpha: 1, x: 0, scale: 1,
-                duration: 1, ease: "expo.out"
-            }, 1.8)
-            .to({}, { duration: 1.5 })
+                    // Fade in Stage 2 (Roles)
+                    .to(".hero-stage-2", { autoAlpha: 1, duration: 0.5 }, 1)
+                    .to(".role-1", {
+                        autoAlpha: 1, x: 0, scale: 1,
+                        duration: 1, ease: "expo.out"
+                    }, 1.2)
+                    .to(".role-2", {
+                        autoAlpha: 1, x: 0, scale: 1,
+                        duration: 1, ease: "expo.out"
+                    }, 1.4)
+                    .to(".role-3", {
+                        autoAlpha: 1, x: 0, scale: 1,
+                        duration: 1, ease: "expo.out"
+                    }, 1.6)
+                    .to(".role-4", {
+                        autoAlpha: 1, x: 0, scale: 1,
+                        duration: 1, ease: "expo.out"
+                    }, 1.8)
+                    .to({}, { duration: 1.5 })
 
-            // Fade out Stage 2, Fade in Stage 3 (Stats)
-            .to(".hero-stage-2", {
-                autoAlpha: 0,
-                scale: 1.2,
-                filter: "blur(30px)",
-                duration: 1.5,
-                ease: "power2.in"
-            }, 4)
-            .to(".hero-stage-3", { autoAlpha: 1, duration: 0.5 }, 4.5)
-            .to(".stat-1", {
-                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
-                duration: 1, ease: "back.out(1.5)"
-            }, 4.7)
-            .to(".stat-2", {
-                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
-                duration: 1, ease: "back.out(1.5)"
-            }, 4.85)
-            .to(".stat-3", {
-                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
-                duration: 1, ease: "back.out(1.5)"
-            }, 5)
-            .to(".stat-4", {
-                autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
-                duration: 1, ease: "back.out(1.5)"
-            }, 5.15)
-            .to({}, { duration: 2 })
+                    // Fade out Stage 2, Fade in Stage 3 (Stats)
+                    .to(".hero-stage-2", {
+                        autoAlpha: 0,
+                        scale: 1.2,
+                        filter: "blur(30px)",
+                        duration: 1.5,
+                        ease: "power2.in"
+                    }, 4)
+                    .to(".hero-stage-3", { autoAlpha: 1, duration: 0.5 }, 4.5)
+                    .to(".stat-1", {
+                        autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                        duration: 1, ease: "back.out(1.5)"
+                    }, 4.7)
+                    .to(".stat-2", {
+                        autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                        duration: 1, ease: "back.out(1.5)"
+                    }, 4.85)
+                    .to(".stat-3", {
+                        autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                        duration: 1, ease: "back.out(1.5)"
+                    }, 5)
+                    .to(".stat-4", {
+                        autoAlpha: 1, y: 0, scale: 1, rotationY: 0,
+                        duration: 1, ease: "back.out(1.5)"
+                    }, 5.15)
+                    .to({}, { duration: 2 })
 
-            // Fade out Stage 3, Fade in Stage 4 (CTA)
-            .to(".hero-stage-3", {
-                autoAlpha: 0,
-                y: -80,
-                scale: 0.9,
-                duration: 1.2,
-                ease: "power2.in"
-            }, 7.5)
-            .to(".hero-stage-4", { autoAlpha: 1, duration: 0.5 }, 8)
-            .to(".cta-heading", {
-                autoAlpha: 1, y: 0, scale: 1,
-                duration: 1.5, ease: "expo.out"
-            }, 8.2)
-            .to(".cta-text", {
-                autoAlpha: 1, y: 0,
-                duration: 1.2, ease: "power3.out"
-            }, 8.5)
-            .to(".cta-buttons", {
-                autoAlpha: 1, y: 0, scale: 1,
-                duration: 1.2, ease: "back.out(1.3)"
-            }, 8.7)
-            .to({}, { duration: 2 });
+                    // Fade out Stage 3, Fade in Stage 4 (CTA)
+                    .to(".hero-stage-3", {
+                        autoAlpha: 0,
+                        y: -80,
+                        scale: 0.9,
+                        duration: 1.2,
+                        ease: "power2.in"
+                    }, 7.5)
+                    .to(".hero-stage-4", { autoAlpha: 1, duration: 0.5 }, 8)
+                    .to(".cta-heading", {
+                        autoAlpha: 1, y: 0, scale: 1,
+                        duration: 1.5, ease: "expo.out"
+                    }, 8.2)
+                    .to(".cta-text", {
+                        autoAlpha: 1, y: 0,
+                        duration: 1.2, ease: "power3.out"
+                    }, 8.5)
+                    .to(".cta-buttons", {
+                        autoAlpha: 1, y: 0, scale: 1,
+                        duration: 1.2, ease: "back.out(1.3)"
+                    }, 8.7)
+                    .to({}, { duration: 2 });
+                return () => scene.classList.remove('mobile-hero-scroll');
+            });
+        }
 
     } else {
         console.warn('GSAP not loaded - cinematic animations disabled');
@@ -4118,13 +4154,12 @@
 
                         // Start hero animations after dust effect
                         setTimeout(() => {
+                            // Unlock before measuring the hero's scroll position and pin size.
+                            document.body.classList.remove('no-scroll');
+                            removeScrollPrevention();
                             if (typeof startHeroAnimations === 'function') {
                                 startHeroAnimations();
                             }
-
-                            // Unlock scroll after everything is ready
-                            document.body.classList.remove('no-scroll');
-                            removeScrollPrevention();
                             window.dispatchEvent(new Event('portfolioReady'));
                             console.log('🎭 Smooth transition complete - scroll unlocked');
                         }, 800);
