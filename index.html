@@ -4371,6 +4371,7 @@
         let isExpanded = false;
         let playerPinned = false;
         let hasStarted = false;
+        let playbackRequested = false;
         let audioContext = null;
         let loudnessGain = null;
 
@@ -4399,9 +4400,12 @@
                 loudnessGain.connect(audioContext.destination);
             }
             applyTrackVolume();
-            if (audioContext && audioContext.state === 'suspended') {
-                audioContext.resume().catch(err => console.warn('Audio context could not resume:', err));
+            // Safari may report interrupted as well as suspended. Resume inside
+            // the same user gesture as play(), without awaiting either first.
+            if (audioContext && audioContext.state !== 'running') {
+                return audioContext.resume();
             }
+            return Promise.resolve();
         }
 
         // Initialize
@@ -4427,68 +4431,35 @@
             musicPlayer.classList.add('show');
             console.log('🎵 Player is now visible', musicPlayer.style.display, musicPlayer.style.opacity);
 
-            // Start music on ANY valid user interaction
-            let musicStarted = false;
+            // Touch-down is not an audio activation gesture on every mobile browser.
+            // Keep retries available until both the media and its audio context start.
+            const launchEvents = ['click', 'touchend', 'keydown'];
+            let launchRequested = false;
+            const startMusicDirectly = (event) => {
+                if (!window.loaderIsComplete || event.repeat) return;
+                // Player buttons manage their own playback; never undo a manual pause.
+                if (musicPlayer.contains(event.target)) return;
+                if (launchRequested && !playbackRequested) return;
 
-            const startMusicDirectly = (e) => {
-                console.log(`🎹 KEY PRESSED: ${e.type}, loaderIsComplete=${window.loaderIsComplete}, musicStarted=${musicStarted}`);
-
-                // CRITICAL: Check if loader is complete
-                if (!window.loaderIsComplete) {
-                    console.log('⏸️ BLOCKED: Loader not complete yet');
-                    return;
+                const started = playAudio();
+                if (!launchRequested) {
+                    launchRequested = true;
+                    window.dismissLanding?.();
                 }
-
-                if (musicStarted) {
-                    console.log('⏸️ BLOCKED: Music already started');
-                    return;
-                }
-
-                musicStarted = true;
-                console.log(`🎵 TRIGGERING: ${e.type}`);
-
-                // Remove all event listeners immediately
-                document.removeEventListener('click', startMusicDirectly);
-                document.removeEventListener('mousedown', startMusicDirectly);
-                document.removeEventListener('keydown', startMusicDirectly);
-                document.removeEventListener('keypress', startMusicDirectly);
-                document.removeEventListener('keyup', startMusicDirectly);
-                document.removeEventListener('touchstart', startMusicDirectly);
-
-                // Dismiss landing overlay FIRST
-                if (window.dismissLanding) {
-                    console.log('🚀 CALLING dismissLanding()');
-                    window.dismissLanding();
-                } else {
-                    console.error('❌ ERROR: window.dismissLanding NOT DEFINED!');
-                }
-
-                // Initialize audio gain within the launch gesture, including on mobile.
-                prepareAudio();
-                audio.play().then(() => {
-                    console.log('✅ MUSIC STARTED');
-                    updatePlayPauseIcon(false);
-                    albumArt.classList.add('spinning');
-                    hasStarted = true;
-                }).catch(err => {
-                    console.error('❌ MUSIC FAILED:', err);
+                started.then(() => {
+                    launchEvents.forEach(type => document.removeEventListener(type, startMusicDirectly));
+                }).catch(() => {
+                    // A later valid gesture can retry the same opening track.
                 });
             };
+            launchEvents.forEach(type => document.addEventListener(type, startMusicDirectly));
 
-            // Set up listeners
-            document.addEventListener('click', startMusicDirectly);
-            document.addEventListener('mousedown', startMusicDirectly);
-            document.addEventListener('keydown', startMusicDirectly);
-            document.addEventListener('keypress', startMusicDirectly);
-            document.addEventListener('keyup', startMusicDirectly);
-            document.addEventListener('touchstart', startMusicDirectly);
-
-            console.log('🎵 MUSIC: Listeners installed');
-
-            // Listen for loader completion
-            window.addEventListener('loaderComplete', () => {
-                console.log('📢 MUSIC: Received loaderComplete - keyboard enabled!');
-                console.log(`🔓 MUSIC: window.loaderIsComplete = ${window.loaderIsComplete}`);
+            // A mobile audio session can be interrupted by the transition sound.
+            // Recover only music the user requested, never music they paused.
+            window.addEventListener('portfolioReady', () => {
+                if (playbackRequested && (audio.paused || (audioContext && audioContext.state !== 'running'))) {
+                    playAudio().catch(() => {});
+                }
             }, { once: true });
         }
 
@@ -4517,19 +4488,32 @@
         }
 
         function playAudio() {
-            prepareAudio();
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    updatePlayPauseIcon(false); // false = playing, show pause
-                    albumArt.classList.add('spinning');
-                    hasStarted = true;
-                }).catch(err => {
-                    console.warn('Playback prevented:', err);
-                    // Keep play icon visible so user knows they can click
-                });
+            playbackRequested = true;
+            let ready;
+            try {
+                const contextReady = prepareAudio();
+                const mediaReady = audio.play();
+                ready = Promise.all([contextReady, mediaReady]);
+            } catch (error) {
+                ready = Promise.reject(error);
             }
-            return playPromise;
+            const started = ready.then(() => {
+                if (audioContext && audioContext.state !== 'running') {
+                    throw new Error('Audio context is not running');
+                }
+                if (!playbackRequested) return;
+                if (audio.paused) throw new Error('Media playback was interrupted');
+                updatePlayPauseIcon(false);
+                albumArt.classList.add('spinning');
+                hasStarted = true;
+            });
+            // Attach a handler for controls that do not consume the returned promise.
+            started.catch(err => {
+                updatePlayPauseIcon(true);
+                albumArt.classList.remove('spinning');
+                console.warn('Playback prevented; tap to retry:', err);
+            });
+            return started;
         }
 
         function updatePlayPauseIcon(isPaused) {
@@ -4544,13 +4528,14 @@
         }
 
         function pauseAudio() {
+            playbackRequested = false;
             audio.pause();
             updatePlayPauseIcon(true); // true = paused, show play
             albumArt.classList.remove('spinning');
         }
 
         function togglePlayPause() {
-            if (audio.paused) {
+            if (audio.paused || (audioContext && audioContext.state !== 'running')) {
                 playAudio();
             } else {
                 pauseAudio();
