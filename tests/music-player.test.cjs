@@ -67,10 +67,10 @@ test('launch uses tap release and retries a rejected first attempt', async () =>
     assert.equal(t.doc.listeners.click.size, 0); assert(spinning(t));
     assert(t.e('audio-player').src.includes('1.02%20Opening.mp3'));
 });
-test('background silences immediately; foreground resumes same track and position', async () => {
+test('OS interruption recovers on return at the same track and position', async () => {
     const t = setup(); await launch(t); const audio = t.e('audio-player'), src = audio.src;
     audio.currentTime = 12; t.doc.hidden = true; t.doc.fire('visibilitychange');
-    assert(audio.paused); assert(audio.muted); assert.equal(t.context().gain, 0); assert(!spinning(t));
+    audio.pause(); // Simulate an OS interruption, not a website-requested pause.
     t.context().state = 'interrupted'; t.doc.hidden = false; t.doc.fire('visibilitychange');
     t.win.fire('focus'); await flush();
     assert.equal(audio.calls, 2); assert(!audio.paused); assert(!audio.muted);
@@ -122,4 +122,19 @@ test('native file playback and loader gate remain supported', async () => {
     const t = setup('file:'); t.win.loaderIsComplete = false; await launch(t);
     assert.equal(t.e('audio-player').calls, 0); t.win.loaderIsComplete = true; await launch(t);
     assert.equal(t.context(), undefined); assert(spinning(t));
+});
+
+test('tab switching leaves music playing without restarting it on return', async () => {
+    const t = setup(); await launch(t); const audio = t.e('audio-player');
+    const gain = t.context().gain;
+    t.doc.hidden = true; t.doc.fire('visibilitychange'); audio.fire('playing');
+    assert(!audio.paused); assert(!audio.muted); assert.equal(t.context().gain, gain);
+    t.doc.hidden = false; t.doc.fire('visibilitychange'); t.win.fire('focus'); await flush();
+    assert.equal(audio.calls, 1); assert(spinning(t));
+});
+test('playlist advances while the tab is hidden', async () => {
+    const t = setup(); await launch(t); const audio = t.e('audio-player'), opening = audio.src;
+    t.doc.hidden = true; t.doc.fire('visibilitychange'); audio.fire('ended'); await flush();
+    assert.notEqual(audio.src, opening); assert(!audio.paused); assert(!audio.muted);
+    assert(t.context().gain > 0); assert.equal(audio.calls, 2);
 });

@@ -4418,7 +4418,7 @@
             const gain = (trackGains[track?.file] ?? 1) * (Number(volumeSlider.value) / 100);
             if (loudnessGain) {
                 audio.volume = 1;
-                loudnessGain.gain.setValueAtTime(playbackRequested && !document.hidden ? gain : 0, audioContext.currentTime);
+                loudnessGain.gain.setValueAtTime(playbackRequested ? gain : 0, audioContext.currentTime);
             } else {
                 // Older browsers can still attenuate loud tracks without Web Audio.
                 audio.volume = Math.min(1, gain);
@@ -4531,7 +4531,7 @@
         }
 
         function syncPlaybackUI() {
-            const audible = playbackRequested && !document.hidden && !playbackBlocked &&
+            const audible = playbackRequested && !playbackBlocked &&
                 mediaPlaying && !audio.paused && (!audioContext || audioContext.state === 'running');
             updatePlayPauseIcon(!audible);
             albumArt.classList.toggle('spinning', audible);
@@ -4556,7 +4556,6 @@
         function playAudio() {
             playbackRequested = true;
             playbackBlocked = false;
-            if (document.hidden) return Promise.resolve();
             const generation = ++playbackGeneration;
             playbackPending = true;
             audio.muted = false;
@@ -4594,17 +4593,16 @@
             }
         }
 
-        // Preserve the user's intent and track position while the OS backgrounds the page.
-        // Explicitly stop before suspension so mobile cannot retain a looping audio buffer.
+        // Keep music playing in other tabs. If the OS interrupts audio while hidden,
+        // recover on return without overriding an explicit pause.
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) stopOutput();
-            else recoverPlayback();
+            if (!document.hidden) recoverPlayback();
         });
         window.addEventListener('pagehide', stopOutput);
         window.addEventListener('pageshow', recoverPlayback);
         window.addEventListener('focus', recoverPlayback);
         audio.addEventListener('playing', () => {
-            if (!playbackRequested || document.hidden) { stopOutput(); return; }
+            if (!playbackRequested) { stopOutput(); return; }
             mediaPlaying = true;
             syncPlaybackUI();
         });
