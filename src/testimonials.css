@@ -124,3 +124,14 @@
 .school-card-hit.school-card-warm .school-coverflow-card {--accent:235,180,91;}
 .school-card-hit.school-card-cool .school-coverflow-card {--accent:116,165,236;}
 .school-coverflow .school-card-hit:focus-visible {outline:2px solid rgb(var(--accent));outline-offset:5px;border-radius:20px;}
+
+/* Long-form letters stay comfortably readable on phones and larger screens. */
+.testimonial-body blockquote {font-size:17px;line-height:1.85;color:#c8d6df;}
+.testimonial-letter-subtitle {font-size:16px;line-height:1.75;color:#a8bdc8;}
+.testimonial-source p,.testimonial-document-label,.testimonial-body footer {font-size:14px;line-height:1.65;}
+@media(max-width:700px) {
+ .testimonial-body blockquote {font-size:16px;line-height:1.85;}
+ .testimonial-body {padding-left:22px;padding-right:22px;}
+}
+
+.school-card-meta {font-size:14px;line-height:1.6;color:#acc2ce;}

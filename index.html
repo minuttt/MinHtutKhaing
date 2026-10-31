@@ -20,7 +20,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="assets/testimonials.css?v=readability-20261004">
+    <link rel="stylesheet" href="assets/testimonials.css?v=readability-20261031">
     <link rel="stylesheet" href="assets/motion.css?v=20261030">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -422,6 +422,44 @@
             font-size: 12px;
             line-height: 1.5;
         }
+        /* Comfortable reading size for muted descriptions, including nested lists. */
+        section:not(#hero) .text-slate-400 {
+            font-size: 16px;
+            line-height: 1.8;
+            font-weight: 400;
+            color: #b4c1d2;
+        }
+        section:not(#hero) .text-slate-500 {
+            font-size: 14px;
+            line-height: 1.65;
+            color: #9aaec3;
+        }
+        section:not(#hero) p.text-slate-400 { max-width: 72ch; }
+        section:not(#hero) ul.text-slate-400 > li + li { margin-top: .65rem; }
+        .copy-emphasis {
+            --emphasis-start: #a5f3fc;
+            --emphasis-end: #6ee7b7;
+            color: var(--emphasis-start);
+            font-weight: 600;
+        }
+        .emphasis-orange { --emphasis-start: #fed7aa; --emphasis-end: #fbbf24; }
+        .emphasis-violet { --emphasis-start: #e9d5ff; --emphasis-end: #c4b5fd; }
+        .emphasis-blue { --emphasis-start: #bfdbfe; --emphasis-end: #a5f3fc; }
+        .emphasis-emerald { --emphasis-start: #a7f3d0; --emphasis-end: #5eead4; }
+        @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+            .copy-emphasis {
+                background: linear-gradient(100deg, var(--emphasis-start), var(--emphasis-end));
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                -webkit-box-decoration-break: clone;
+                box-decoration-break: clone;
+            }
+        }
+        @media (forced-colors: active) {
+            .copy-emphasis { background: none; color: CanvasText; }
+        }
+        #music-player .text-xs { font-size: 14px; line-height: 1.5; }
         #hobbies dl dd { flex-shrink: 0; }
         #awards .flex-1 > div { min-width: 0; }
 
@@ -2018,7 +2056,7 @@
                         <h3 class="text-base font-semibold mt-1">ICDL National Digital Explorer 2025–2026</h3>
                     </div>
                 </div>
-                <p class="text-sm text-slate-400 font-light mb-3">National Digital Explorer is a nationwide digital literacy initiative jointly organised by Crescent Girls' School and ICDL Asia. Completed all 3 ICDL eLearning modules and certification tests — Spreadsheets, Presentation, and Big Data — earning internationally recognised ICDL Profile Certificates and eBadges.</p>
+                <p class="text-sm text-slate-400 font-light mb-3">National Digital Explorer is a nationwide digital literacy initiative jointly organised by Crescent Girls' School and ICDL Asia. Completed <strong class="copy-emphasis emphasis-blue">all 3 ICDL eLearning modules and certification tests</strong> — Spreadsheets, Presentation, and Big Data — earning <strong class="copy-emphasis emphasis-blue">internationally recognised ICDL Profile Certificates and eBadges</strong>.</p>
                 <div class="flex items-end gap-1.5 h-10">
                     <div class="w-6 rounded-t bg-rose-500/50 chart-rise" style="height:60%; animation-delay:0.2s;"></div>
                     <div class="w-6 rounded-t bg-rose-500/60 chart-rise" style="height:80%; animation-delay:0.4s;"></div>
@@ -2128,7 +2166,7 @@
                                 <span class="px-2 py-0.5 rounded-md bg-emerald-400/20 border border-emerald-400/30 text-[9px] font-bold text-emerald-200">TEAM LEADER</span>
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2 tracking-tight">Nee Soon AI & Innovation Challenge 2026 — Winner</h3>
-                            <p class="text-sm text-slate-400 font-light leading-relaxed mb-3">Led team to victory in Nee Soon GRC's inaugural AI innovation challenge — one of Singapore's first large-scale community-led AI festivals with 55 exhibitors, graced by senior government ministers. Presented Cognivis, our Intel OpenVINO-powered student burnout prediction system, to grassroots leaders and community members.</p>
+                            <p class="text-sm text-slate-400 font-light leading-relaxed mb-3"><strong class="copy-emphasis emphasis-orange">Led team to victory</strong> in Nee Soon GRC's inaugural AI innovation challenge — one of Singapore's first large-scale community-led AI festivals with 55 exhibitors, graced by senior government ministers. Presented Cognivis, our <strong class="copy-emphasis emphasis-orange">Intel OpenVINO-powered student burnout prediction system</strong>, to grassroots leaders and community members.</p>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
                                 <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Champion team — awarded $700 prize for best AI innovation</span></li>
                                 <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Group leader: coordinated research, development & final pitch</span></li>
@@ -2477,7 +2515,7 @@
                     <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03]">
                         <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">2025 – 2026</span>
                         <h3 class="text-xl font-bold mt-2">Yishun Innova Junior College</h3>
-                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Proactive, self-motivated learner with strong aptitude for technology and analytical thinking. Engaged in thoughtful discussions, synthesizing complex ideas and offering creative solutions. Currently preparing for GCE A-Level Examination 2026.</p>
+                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Proactive, self-motivated learner with strong aptitude for <strong class="copy-emphasis emphasis-blue">technology and analytical thinking</strong>. Engaged in thoughtful discussions, synthesizing complex ideas and offering <strong class="copy-emphasis emphasis-blue">creative solutions</strong>. Currently preparing for GCE A-Level Examination 2026.</p>
                         <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-violet-500/5 border border-cyan-500/20 text-left">
                             <h4 class="text-xs font-semibold tracking-widest uppercase text-cyan-300 mb-3">Achievements &amp; Enrichment</h4>
                             <ul class="space-y-3 text-sm text-slate-400 leading-relaxed">
@@ -2544,7 +2582,8 @@
                 </div>
                 <div class="flex-1">
                     <h3 class="text-2xl font-bold">Basketball</h3>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Represented school basketball teams for eight consecutive years (2017–2024), competing in the National School Games (NSG) – West Zone Championships throughout. Began at Jurong West Primary School (2017–2020), then continued at Yuan Ching Secondary School (2021–2024) — playing in the C Division as a Junior (2021–2022) and the B Division as a Senior (2023–2024), alongside friendly matches against other schools. Served as Upper-Executive Exco within the secondary school CCA, mentoring juniors and instilling "Scholar Sportsman" values.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Represented school basketball teams for <strong class="copy-emphasis emphasis-orange">eight consecutive years (2017–2024)</strong>, competing in the <strong class="copy-emphasis emphasis-orange">National School Games (NSG) – West Zone Championships</strong> throughout. Began at Jurong West Primary School (2017–2020), then continued at Yuan Ching Secondary School (2021–2024) — playing in the C Division as a Junior (2021–2022) and the B Division as a Senior (2023–2024), alongside friendly matches against other schools.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Served as <strong class="copy-emphasis emphasis-orange">Upper-Executive Exco</strong> within the secondary school CCA, <strong class="copy-emphasis emphasis-orange">mentoring juniors</strong> and instilling <strong class="copy-emphasis emphasis-orange">"Scholar Sportsman" values</strong>.</p>
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
                             <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2017 – 2020</div>
@@ -2574,7 +2613,8 @@
                 <div class="flex-1 min-w-0">
                     <div class="text-xs font-semibold tracking-widest uppercase text-cyan-400 mb-2">Yishun Innova Junior College · 2025 – 2026</div>
                     <h3 class="text-2xl font-bold">Makers’ Academy: App Development Unit</h3>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">YIJC’s Makers’ Academy develops digital literacies and technological competencies, giving students opportunities to experiment with emerging technologies and hone their media, computational and innovation skills. In the App Development Unit (ADU), we learn programming fundamentals and apply them to game development, web development and other creative projects. External workshops offer opportunities to explore cybersecurity, data science and machine learning, culminating in a final project that addresses a problem we care about.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">YIJC’s Makers’ Academy develops <strong class="copy-emphasis">digital literacies and technological competencies</strong>, giving students opportunities to experiment with emerging technologies and hone their media, computational and innovation skills. In the App Development Unit (ADU), we learn <strong class="copy-emphasis">programming fundamentals</strong> and apply them to <strong class="copy-emphasis">game development, web development</strong> and other creative projects.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">External workshops offer opportunities to explore <strong class="copy-emphasis">cybersecurity, data science and machine learning</strong>, culminating in a <strong class="copy-emphasis">final project</strong> that addresses a problem we care about.</p>
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
                             <h4 class="text-sm font-semibold text-cyan-300 mb-2">App Development Course</h4>
@@ -2586,12 +2626,12 @@
                         </div>
                         <div class="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10">
                             <h4 class="text-sm font-semibold text-cyan-300 mb-2">YI Orientation: College Race</h4>
-                            <p class="text-sm text-slate-400 leading-relaxed">Spent 13 hours organising my part of the Digital Literacies Station and introducing juniors to our CCA through a game-show-style activity.</p>
+                            <p class="text-sm text-slate-400 leading-relaxed">Spent <strong class="copy-emphasis">13 hours</strong> organising my part of the <strong class="copy-emphasis">Digital Literacies Station</strong> and introducing juniors to our CCA through a game-show-style activity.</p>
                         </div>
                     </div>
                     <div class="mt-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
                         <h4 class="text-sm font-semibold text-emerald-300 mb-2">Values in Action · Coding &amp; AI Outreach</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed">As part of our CCA’s VIA project, introduced primary school students to coding with Scratch and explored AI tools with them, including Suno AI and prompting with Gemini.</p>
+                        <p class="text-sm text-slate-400 leading-relaxed">As part of our CCA’s VIA project, introduced primary school students to <strong class="copy-emphasis emphasis-emerald">coding with Scratch</strong> and explored AI tools with them, including <strong class="copy-emphasis emphasis-emerald">Suno AI</strong> and <strong class="copy-emphasis emphasis-emerald">prompting with Gemini</strong>.</p>
                     </div>
                 </div>
             </div>
@@ -2623,7 +2663,7 @@
                         <h3 class="text-lg font-bold mt-1">Upper-Executive Exco · Basketball CCA</h3>
                     </div>
                 </div>
-                <p class="text-sm text-slate-400 font-light leading-relaxed mb-3">Led and mentored junior basketball team members at Yuan Ching Secondary School, fostering "Scholar Sportsman" values and building team cohesion. Coordinated training schedules, organized friendly matches, and served as a bridge between coaches and team members.</p>
+                <p class="text-sm text-slate-400 font-light leading-relaxed mb-3"><strong class="copy-emphasis emphasis-violet">Led and mentored junior basketball team members</strong> at Yuan Ching Secondary School, fostering "Scholar Sportsman" values and <strong class="copy-emphasis emphasis-violet">building team cohesion</strong>. Coordinated training schedules, organized friendly matches, and served as a bridge between coaches and team members.</p>
                 <div class="mt-4 flex flex-wrap gap-2">
                     <span class="px-2 py-1 rounded-md bg-orange-500/10 border border-orange-500/20 text-[10px] font-semibold text-orange-400">Team Leadership</span>
                     <span class="px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-[10px] font-semibold text-red-400">Mentorship</span>
@@ -2767,7 +2807,7 @@
                             Presentation Video
                         </a>
                     </div>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">AI-powered student burnout prediction system using Intel OpenVINO for on-device inference. Predicts burnout 3-7 days in advance with explainable AI, processing sensitive data locally while delivering sub-10ms predictions. Features adaptive behavioral intelligence, continuous feedback learning, and real-time pattern analysis.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">AI-powered student burnout prediction system using Intel OpenVINO for on-device inference. Predicts burnout <strong class="copy-emphasis emphasis-blue">3-7 days in advance</strong> with explainable AI, <strong class="copy-emphasis emphasis-blue">processing sensitive data locally</strong> while delivering <strong class="copy-emphasis emphasis-blue">sub-10ms predictions</strong>. Features adaptive behavioral intelligence, continuous feedback learning, and real-time pattern analysis.</p>
 
                     <!-- Video Embed -->
                     <div class="mt-6 rounded-xl overflow-hidden border border-purple-500/20 bg-black/20" style="position: relative; padding-bottom: 56.25%; height: 0;">
@@ -2904,7 +2944,7 @@
                 <div class="flex-1">
                     <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">MINDEF · 2024 onwards</span>
                     <h3 class="text-xl font-bold mt-1">Cyber Specialist (CySpec) Track</h3>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Part of the Cyber & Digital Work-Learn Schemes, providing NSFs with advanced operational roles in cybersecurity, software development, AI, and data science — while equipping participants with academic credits toward relevant university degrees.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Part of the Cyber & Digital Work-Learn Schemes, providing NSFs with advanced operational roles in <strong class="copy-emphasis">cybersecurity, software development, AI, and data science</strong> — while equipping participants with <strong class="copy-emphasis">academic credits</strong> toward relevant university degrees.</p>
                     <div class="mt-6 flex flex-wrap gap-2">
                         <span class="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400">Cybersecurity</span>
                         <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">Software Development</span>
