@@ -84,7 +84,7 @@ function startPortfolioMotion() {
     const cleanups: Array<() => void> = [];
     if (desktop && !reduced) {
       document.querySelectorAll<HTMLElement>('.tilt-3d, section:not(#awards) .glow-hover').forEach(card => {
-        if (card.querySelector('iframe')) return;
+        if (card.querySelector('iframe, #basketball-gallery-root')) return;
         // The same 3D treatment as before, with retargetable easing and a reliable return to rest.
         const x = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3.out' });
         const y = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3.out' });

@@ -1,3 +1,4 @@
+import AccordionModal from '@/components/ui/gallery-modal-accordion';
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Skiper49 } from '@/components/ui/skiper49';
@@ -57,3 +58,6 @@ function Testimonials() {
 
 const root = document.getElementById('testimonials-root');
 if (root) createRoot(root).render(<Testimonials />);
+
+const basketballRoot = document.getElementById('basketball-gallery-root');
+if (basketballRoot) createRoot(basketballRoot).render(<AccordionModal />);

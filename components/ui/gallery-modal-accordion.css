@@ -1,0 +1,37 @@
+.basketball-gallery {margin-top:28px;min-width:0;width:100%;}
+.basketball-accordion {display:flex;gap:10px;width:100%;height:340px;}
+.basketball-photo {position:relative;display:block;flex:1 1 0;min-width:44px;overflow:hidden;border:1px solid rgba(251,146,60,.22);border-radius:16px;background:#10191d;cursor:pointer;padding:0;transition:flex-grow .5s cubic-bezier(.22,1,.36,1),border-color .25s;isolation:isolate;}
+.basketball-photo.is-active {flex-grow:5;border-color:rgba(251,146,60,.65);}
+.basketball-photo img {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.basketball-photo::after {content:'';position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(6,12,17,.82));pointer-events:none;}
+.basketball-photo-caption {position:absolute;z-index:1;bottom:17px;left:18px;right:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff2df;font-size:15px;font-weight:600;opacity:0;transition:opacity .2s;white-space:nowrap;}
+.basketball-photo.is-active .basketball-photo-caption {opacity:1;transition-delay:.15s;}
+.basketball-photo-number {position:absolute;z-index:1;bottom:18px;left:0;right:0;text-align:center;color:#ffe4c8;font-size:13px;letter-spacing:.06em;transition:opacity .15s;}
+.basketball-photo.is-active .basketball-photo-number {opacity:0;}
+.basketball-photo:focus-visible {outline:2px solid #fdba74;outline-offset:3px;}
+.basketball-gallery-hint {font-size:14px;line-height:1.6;color:#a5b5c5;margin:12px 0 0;}
+.basketball-lightbox {position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:24px;border:0;background:transparent;color:#edf3f6;overflow:auto;}
+.basketball-lightbox[open] {display:grid;place-items:center;}
+.basketball-lightbox::backdrop {background:rgba(2,6,11,.92);backdrop-filter:blur(12px);}
+.basketball-viewer {position:relative;width:min(960px,100%);background:#0b131b;border:1px solid rgba(251,146,60,.3);border-radius:20px;overflow:hidden;box-shadow:0 24px 100px rgba(0,0,0,.45);}
+.basketball-full-photo {display:block;width:100%;height:min(72dvh,760px);object-fit:contain;background:#070e14;}
+.basketball-viewer-close {position:absolute;z-index:2;right:12px;top:12px;}
+.basketball-viewer button {display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;border:1px solid rgba(253,186,116,.35);border-radius:50%;background:#12202b;color:#ffe4c8;cursor:pointer;}
+.basketball-viewer button:hover {background:#263542;}
+.basketball-viewer button:focus-visible {outline:2px solid #fdba74;outline-offset:3px;}
+.basketball-viewer-footer {display:flex;align-items:center;gap:16px;justify-content:space-between;padding:14px 20px;}
+.basketball-viewer-footer p {margin:0;text-align:center;font-size:16px;line-height:1.5;}
+.basketball-viewer-footer p span {display:block;}
+.basketball-viewer-footer p span+span {font-size:13px;color:#a6b8c5;}
+@media(max-width:700px) {
+ .basketball-accordion {height:280px;gap:6px;}
+ .basketball-photo {min-width:32px;border-radius:12px;}
+ .basketball-photo.is-active {flex-grow:6;}
+ .basketball-photo-caption {left:10px;right:10px;bottom:14px;font-size:13px;white-space:normal;}
+ .basketball-photo-caption svg {display:none;}
+ .basketball-lightbox {padding:12px;}
+ .basketball-full-photo {height:72dvh;}
+ .basketball-viewer-footer {padding:12px;gap:8px;}
+ .basketball-viewer-footer p {font-size:14px;}
+}
+@media(prefers-reduced-motion:reduce) {.basketball-photo,.basketball-photo-caption,.basketball-photo-number {transition:none!important;}}
