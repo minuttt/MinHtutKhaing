@@ -447,6 +447,36 @@
             }
         }
 
+        /* Anchor content to the viewport centre: only the shell changes width. */
+        @media (min-width: 901px) {
+            #nav-pill { transition: width .5s cubic-bezier(.22,1,.36,1), box-shadow .3s ease; }
+            #nav-pill.collapsed { transition: width .42s cubic-bezier(.65,0,.35,1) .12s, box-shadow .3s ease; }
+            #nav-pill.collapsed:hover { transform:translateX(-50%); }
+            #nav-pill .nav-logo {
+                position:absolute; left:calc(50% - var(--expanded-width, 812px) / 2);
+                margin-left:-4px; opacity:1; transform:scale(1);
+                transition:opacity .25s ease .22s, transform .4s cubic-bezier(.22,1,.36,1) .18s, visibility 0s;
+            }
+            #nav-pill.collapsed .nav-logo {
+                opacity:0; transform:scale(.9); visibility:hidden;
+                transition:opacity .12s ease, transform .2s ease, visibility 0s .15s;
+            }
+            #nav-pill .nav-links, #nav-pill.collapsed .nav-links {
+                position:absolute; width:max-content; left:50%;
+                transform:translateX(calc(-50% + 30px)); opacity:1;
+                transition:visibility 0s; visibility:visible;
+            }
+            #nav-pill .nav-link {
+                opacity:1; transform:translateY(0);
+                transition:opacity .28s ease, transform .38s cubic-bezier(.22,1,.36,1), color .2s, background .2s;
+                transition-delay:calc(.2s + var(--nav-order, 0) * .018s), calc(.2s + var(--nav-order, 0) * .018s), 0s, 0s;
+            }
+            #nav-pill.collapsed .nav-links { visibility:hidden; transition:visibility 0s .15s; }
+            #nav-pill.collapsed .nav-link { opacity:0; transform:translateY(4px); transition-delay:0s; transition-duration:.12s; }
+            #nav-pill .nav-collapsed-icon { transition:opacity .12s ease, transform .2s ease; }
+            #nav-pill.collapsed .nav-collapsed-icon { transition-delay:.32s; }
+        }
+
         .hobby-discovery { display:flex; flex-direction:column; min-height:350px; }
         .hobby-illustration { margin-top:auto; padding-top:20px; overflow:hidden; }
         .hobby-illustration svg { display:block; width:100%; height:100px; }
@@ -458,6 +488,33 @@
         @keyframes climbing-flow { to { stroke-dashoffset:-44; } }
         @keyframes summit-glow { 50% { opacity:.35; } }
         @keyframes explorer-turn { 0%,100% { transform:rotate(-35deg); } 50% { transform:rotate(65deg); } }
+        #hobbies > div > .grid > .shine-card { display:flex; flex-direction:column; }
+        .hobby-illustration { flex-shrink:0; }
+        .piano-note { animation:key-press 4s ease-in-out infinite; }
+        .code-line { stroke-dasharray:250; animation:code-type 5s ease-in-out infinite; }
+        .code-caret { animation:caret-blink 1.2s steps(2,end) infinite; }
+        .broadcast-wave { animation:broadcast-pulse 3s ease-in-out infinite; }
+        .playback-progress { stroke-dasharray:125; animation:playback-run 6s ease-in-out infinite; }
+        .martial-sweep { stroke-dasharray:200; animation:martial-arc 4s ease-in-out infinite; }
+        .timeline-playhead { animation:timeline-scan 7s ease-in-out infinite; }
+        .record-spin { transform-origin:80px 55px; animation:record-turn 10s linear infinite; }
+        .audio-column { transform-box:fill-box; transform-origin:center; animation:audio-pulse 1.8s ease-in-out infinite alternate; }
+        .basketball-flight { animation:basketball-shot 4s linear infinite; }
+        .knight-route { animation:climbing-flow 4s linear infinite; }
+        .chess-knight { animation:knight-lift 4s ease-in-out infinite; }
+        @keyframes key-press { 0%,15%,45%,100% { fill-opacity:.14; } 25%,35% { fill-opacity:.65; } }
+        @keyframes code-type { 0%,100% { stroke-dashoffset:250; opacity:.3; } 40%,80% { stroke-dashoffset:0; opacity:1; } }
+        @keyframes caret-blink { 50% { opacity:0; } }
+        @keyframes broadcast-pulse { 50% { opacity:.25; } }
+        @keyframes playback-run { 0% { stroke-dashoffset:125; } 85%,100% { stroke-dashoffset:0; } }
+        @keyframes martial-arc { 0%,100% { stroke-dashoffset:200; opacity:0; } 35%,70% { stroke-dashoffset:0; opacity:.7; } }
+        @keyframes timeline-scan { 0%,100% { transform:translateX(40px); } 80% { transform:translateX(260px); } }
+        @keyframes record-turn { to { transform:rotate(360deg); } }
+        @keyframes audio-pulse { to { transform:scaleY(.3); opacity:.3; } }
+        @keyframes basketball-shot { 0%,10% { transform:translate(48px,80px); opacity:0; } 15% { opacity:1; } 30% { transform:translate(100px,31px); } 45% { transform:translate(152px,15px); } 60% { transform:translate(204px,20px); } 75% { transform:translate(255px,46px); opacity:1; } 95%,100% { transform:translate(255px,88px); opacity:0; } }
+        @keyframes knight-lift { 50% { transform:translateY(-5px); } }
+        .hobby-illustration * { animation-play-state:paused; }
+        .hobby-illustration.is-in-view * { animation-play-state:running; }
         @media(prefers-reduced-motion:reduce) {
             .hobby-illustration *, #nav-pill, #nav-pill * { animation:none!important; transition:none!important; }
         }
@@ -3137,6 +3194,7 @@
                 <div class="mt-3">
                     <span class="px-2 py-1 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/20 text-[10px] font-semibold text-fuchsia-400">🎹 Student Recital 2024</span>
                 </div>
+                <div class="hobby-illustration text-fuchsia-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><rect x="15" y="16" width="270" height="80" rx="10" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".25"/><rect class="piano-note" style="animation-delay:0.0s" x="23" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:0.22s" x="55" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:0.44s" x="87" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:0.66s" x="119" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:0.88s" x="151" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:1.1s" x="183" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:1.32s" x="215" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect class="piano-note" style="animation-delay:1.54s" x="247" y="24" width="29" height="62" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-opacity=".28"/><rect x="45" y="23" width="15" height="39" rx="2" fill="#11141e" stroke="currentColor" stroke-opacity=".45"/><rect x="77" y="23" width="15" height="39" rx="2" fill="#11141e" stroke="currentColor" stroke-opacity=".45"/><rect x="141" y="23" width="15" height="39" rx="2" fill="#11141e" stroke="currentColor" stroke-opacity=".45"/><rect x="173" y="23" width="15" height="39" rx="2" fill="#11141e" stroke="currentColor" stroke-opacity=".45"/><rect x="205" y="23" width="15" height="39" rx="2" fill="#11141e" stroke="currentColor" stroke-opacity=".45"/></svg></div>
             </div>
  
             <!-- Programming -->
@@ -3152,6 +3210,7 @@
                 </div>
                 <p class="text-sm text-slate-400 font-light mb-3">I build projects in Python, Lua, JavaScript, and TypeScript, alongside HTML and CSS. From games to websites, my projects range from fun experiments to practical tools.</p>
                 <p class="text-sm text-slate-400 font-light">My games have over <span class="text-red-300 font-semibold">1,000 total visits</span>, and my websites have received <span class="text-red-300 font-semibold">1,000+ visits combined</span>.</p>
+                <div class="hobby-illustration text-red-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><rect x="18" y="7" width="264" height="94" rx="10" stroke="currentColor" stroke-opacity=".3" fill="currentColor" fill-opacity=".025"/><path d="M18 27h264" stroke="currentColor" stroke-opacity=".2"/><g fill="currentColor" fill-opacity=".5"><circle cx="31" cy="17" r="2"/><circle cx="40" cy="17" r="2"/><circle cx="49" cy="17" r="2"/></g><g stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M37 42l-6 6 6 6m15-12l6 6-6 6m-6-15l-3 18"/><path class="code-line" d="M76 45h95m-95 15h143m-126 15h104" stroke-opacity=".4"/></g><rect class="code-caret" x="206" y="71" width="5" height="10" rx="1" fill="currentColor"/></svg></div>
             </div>
  
             <!-- Content Creation -->
@@ -3169,6 +3228,7 @@
                 <div class="mt-3">
                     <span class="px-2 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-semibold text-indigo-400">📊 100K+ Views</span>
                 </div>
+                <div class="hobby-illustration text-indigo-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><rect x="70" y="12" width="160" height="83" rx="12" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".35"/><path d="M137 35l28 18-28 18z" fill="currentColor" fill-opacity=".75"/><path d="M87 83h125" stroke="currentColor" stroke-opacity=".2"/><path class="playback-progress" d="M87 83h125" stroke="currentColor" stroke-width="2"/><g class="broadcast-wave" stroke="currentColor" stroke-opacity=".5"><path d="M51 33q-17 20 0 40m-14-49q-25 29 0 58m212-49q17 20 0 40m14-49q25 29 0 58"/></g></svg></div>
             </div>
  
             <!-- Taekwondo -->
@@ -3184,6 +3244,7 @@
                 </div>
                 <p class="text-sm text-slate-400 font-light mb-3">Practiced for 3 years, achieving Red Belt (2nd Geup).</p>
                 <div class="h-2 rounded-full belt-shimmer w-2/3"></div>
+                <div class="hobby-illustration text-red-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><ellipse cx="150" cy="62" rx="111" ry="34" stroke="currentColor" stroke-opacity=".1"/><path class="martial-sweep" d="M45 55Q97 0 208 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M45 49l96 5 12 20-109-9zM255 49l-96 5-12 20 109-9z" fill="currentColor" fill-opacity=".3" stroke="currentColor" stroke-opacity=".5"/><path d="M139 60l-16 40 23-8 10-28m4-4l25 34-24-3-14-27" fill="currentColor" fill-opacity=".5"/><path d="M140 51l20 2 6 16-21 3-9-13z" fill="currentColor" fill-opacity=".85"/></svg></div>
             </div>
  
             <!-- Editing & Cinematography -->
@@ -3198,6 +3259,7 @@
                     </div>
                 </div>
                 <p class="text-sm text-slate-400 font-light">Edited and produced the cinematic presentation video for the Intel Global AI Impact Festival 2026.</p>
+                <div class="hobby-illustration text-purple-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><rect x="20" y="10" width="260" height="88" rx="8" stroke="currentColor" stroke-opacity=".22"/><path d="M35 24h230" stroke="currentColor" stroke-dasharray="1 9" stroke-opacity=".5"/><rect x="35" y="34" width="67" height="14" rx="3" fill="currentColor" fill-opacity="0.45"/><rect x="106" y="34" width="94" height="14" rx="3" fill="currentColor" fill-opacity="0.2"/><rect x="204" y="34" width="61" height="14" rx="3" fill="currentColor" fill-opacity="0.4"/><rect x="35" y="54" width="109" height="14" rx="3" fill="currentColor" fill-opacity="0.15"/><rect x="148" y="54" width="117" height="14" rx="3" fill="currentColor" fill-opacity="0.3"/><rect x="35" y="74" width="51" height="14" rx="3" fill="currentColor" fill-opacity="0.3"/><rect x="90" y="74" width="175" height="14" rx="3" fill="currentColor" fill-opacity="0.17"/><g class="timeline-playhead"><path d="M0 26v66" stroke="currentColor" stroke-width="2"/><path d="M-5 18h10l-5 8z" fill="currentColor"/></g></svg></div>
             </div>
  
             <!-- Producing Music -->
@@ -3212,13 +3274,8 @@
                     </div>
                 </div>
                 <p class="text-sm text-slate-400 font-light mb-3">Created original local beats and grew a social media following of 100 people in one month.</p>
-                <div class="flex items-end gap-1 h-6">
-                    <div class="w-1.5 rounded-full bg-teal-400/60 signal-bar" style="height:40%; animation-delay:0s;"></div>
-                    <div class="w-1.5 rounded-full bg-teal-400/70 signal-bar" style="height:70%; animation-delay:0.2s;"></div>
-                    <div class="w-1.5 rounded-full bg-teal-400/80 signal-bar" style="height:100%; animation-delay:0.4s;"></div>
-                    <div class="w-1.5 rounded-full bg-teal-400/70 signal-bar" style="height:60%; animation-delay:0.6s;"></div>
-                    <div class="w-1.5 rounded-full bg-teal-400/60 signal-bar" style="height:80%; animation-delay:0.8s;"></div>
-                </div>
+
+                <div class="hobby-illustration text-teal-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><g class="record-spin"><circle cx="80" cy="55" r="43" fill="currentColor" fill-opacity=".05" stroke="currentColor" stroke-opacity=".3"/><g stroke="currentColor" stroke-opacity=".13"><circle cx="80" cy="55" r="35"/><circle cx="80" cy="55" r="29"/><circle cx="80" cy="55" r="23"/></g><circle cx="80" cy="55" r="15" fill="currentColor" fill-opacity=".4"/><circle cx="80" cy="55" r="3" fill="#09161b"/><path d="M80 16a39 39 0 0 1 34 20" stroke="currentColor" stroke-opacity=".6"/></g><rect class="audio-column" style="animation-delay:0.0s" x="151" y="46.0" width="5" height="18" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.13s" x="163" y="36.0" width="5" height="38" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.26s" x="175" y="26.0" width="5" height="58" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.39s" x="187" y="39.0" width="5" height="32" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.52s" x="199" y="17.0" width="5" height="76" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.65s" x="211" y="31.0" width="5" height="48" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.78s" x="223" y="23.0" width="5" height="64" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:0.91s" x="235" y="41.0" width="5" height="28" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:1.04s" x="247" y="33.0" width="5" height="44" rx="2.5" fill="currentColor" fill-opacity=".55"/><rect class="audio-column" style="animation-delay:1.17s" x="259" y="45.0" width="5" height="20" rx="2.5" fill="currentColor" fill-opacity=".55"/></svg></div>
             </div>
  
 
@@ -3238,6 +3295,7 @@
                     <div><dt class="text-xs font-semibold text-orange-300 mb-1">School teams</dt><dd>Jurong West Primary School<br>Yuan Ching Secondary School</dd></div>
                     <div><dt class="text-xs font-semibold text-orange-300 mb-1">Club</dt><dd>South Pier Hoopers</dd></div>
                 </dl>
+                <div class="hobby-illustration text-orange-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><path d="M25 96h250M30 96V26h245v70M150 26v70" stroke="currentColor" stroke-opacity=".16"/><ellipse cx="150" cy="65" rx="25" ry="15" stroke="currentColor" stroke-opacity=".16"/><path d="M239 12v35h36V12z" stroke="currentColor" stroke-opacity=".45"/><path d="M242 46h28m-25 0l4 18h14l4-18m-22 0l18 18m4-18l-18 18" stroke="currentColor" stroke-opacity=".65"/><path d="M48 80Q145-40 255 46" stroke="currentColor" stroke-opacity=".12" stroke-dasharray="3 6"/><g class="basketball-flight"><circle r="9" fill="currentColor" fill-opacity=".8"/><path d="M-9 0h18M0-9V9M-6-6Q5 0 6 6M-6 6Q5 0 6-6" stroke="#402310" stroke-width="1"/></g></svg></div>
             </div>
 
             <!-- Chess -->
@@ -3259,6 +3317,7 @@
                     <div class="flex justify-between gap-4"><dt>Rapid</dt><dd class="text-emerald-300 font-semibold tabular-nums">1575</dd></div>
                 </dl>
                 <a href="https://www.chess.com/member/yuanchinger" target="_blank" rel="noopener" class="animated-underline text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors mt-5 inline-flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-400">My chess profile <i data-lucide="arrow-up-right" class="w-4 h-4" aria-hidden="true"></i></a>
+                <div class="hobby-illustration text-emerald-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><rect x="48" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="73" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="98" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="123" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="148" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="173" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="198" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="223" y="8" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="48" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="73" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="98" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="123" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="148" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="173" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="198" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="223" y="33" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="48" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="73" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="98" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="123" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="148" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="173" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="198" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="223" y="58" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="48" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="73" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="98" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="123" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="148" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="173" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><rect x="198" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.035"/><rect x="223" y="83" width="25" height="25" rx="2" fill="currentColor" fill-opacity="0.13"/><path class="knight-route" d="M85 71V21h50" stroke="currentColor" stroke-width="2" stroke-dasharray="3 5"/><g class="chess-knight" fill="currentColor"><path d="M122 72h30l-3-7h-24zm5-10h20q-4-15 1-25l-8-12-6 5-10 16 8 4 7-6-8 18z" fill-opacity=".85"/><circle cx="137" cy="37" r="1.5" fill="#0a2018"/></g></svg></div>
             </div>
 
             <!-- Gaming -->
@@ -3654,6 +3713,16 @@
     }
     // ===== END CINEMATIC ANIMATION =====
 
+    // Decorative hobby scenes only animate while visible.
+    (() => {
+        const scenes = document.querySelectorAll('.hobby-illustration');
+        if (!('IntersectionObserver' in window)) return;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => entry.target.classList.toggle('is-in-view', entry.isIntersecting));
+        }, { threshold: .05 });
+        scenes.forEach(scene => observer.observe(scene));
+    })();
+
     // Animated Nav Pill - collapse on scroll down, expand on scroll up, auto-collapse after idle
     (function() {
         const navPill = document.getElementById('nav-pill');
@@ -3679,6 +3748,8 @@
             }
         });
         let lastScrollY = window.scrollY;
+        let scrollTravel = 0;
+        let scrollDirection = 0;
         let collapsed = false;
         let collapseTimer = null;
         const AUTO_COLLAPSE_DELAY = 2500;
@@ -3688,9 +3759,12 @@
             if (!collapsed) {
                 const logo = navPill.querySelector('.nav-logo');
                 const links = navPill.querySelector('.nav-links');
-                navPill.style.width = (logo.offsetWidth + links.scrollWidth - 4 + 2) + 'px';
+                const width = (logo.offsetWidth + links.scrollWidth - 4 + 2) + 'px';
+                navPill.style.setProperty('--expanded-width', width);
+                navPill.style.width = width;
             }
         }
+        navPill.querySelectorAll('.nav-link').forEach((link, index) => link.style.setProperty('--nav-order', index));
         measureWidth();
         window.addEventListener('resize', measureWidth);
         document.fonts.ready.then(measureWidth);
@@ -3731,14 +3805,20 @@
         window.addEventListener('scroll', () => {
             const y = window.scrollY;
             const delta = y - lastScrollY;
+            const direction = Math.sign(delta);
+            if (direction && direction !== scrollDirection) scrollTravel = 0;
+            if (direction) scrollDirection = direction;
+            scrollTravel += Math.abs(delta);
 
             if (y <= 100) {
                 expand();
                 clearTimeout(collapseTimer);
-            } else if (delta > 5) {
+            } else if (direction > 0 && scrollTravel > 36) {
                 collapse();
-            } else if (delta < -5) {
+                scrollTravel = 0;
+            } else if (direction < 0 && scrollTravel > 18) {
                 expand();
+                scrollTravel = 0;
             }
 
             lastScrollY = y;
