@@ -438,14 +438,18 @@
         section:not(#hero) ul.text-slate-400 > li + li { margin-top: .65rem; }
         .copy-emphasis {
             --emphasis-start: #a5f3fc;
-            --emphasis-end: #6ee7b7;
+            --emphasis-end: #67e8f9;
             color: var(--emphasis-start);
             font-weight: 600;
         }
-        .emphasis-orange { --emphasis-start: #fed7aa; --emphasis-end: #fbbf24; }
-        .emphasis-violet { --emphasis-start: #e9d5ff; --emphasis-end: #c4b5fd; }
-        .emphasis-blue { --emphasis-start: #bfdbfe; --emphasis-end: #a5f3fc; }
-        .emphasis-emerald { --emphasis-start: #a7f3d0; --emphasis-end: #5eead4; }
+        .emphasis-orange { --emphasis-start: #fed7aa; --emphasis-end: #fdba74; }
+        .emphasis-violet { --emphasis-start: #e9d5ff; --emphasis-end: #c084fc; }
+        .emphasis-blue { --emphasis-start: #bfdbfe; --emphasis-end: #93c5fd; }
+        .emphasis-emerald { --emphasis-start: #a7f3d0; --emphasis-end: #6ee7b7; }
+        .emphasis-amber { --emphasis-start: #fde68a; --emphasis-end: #fcd34d; }
+        .emphasis-rose { --emphasis-start: #fecdd3; --emphasis-end: #fda4af; }
+        .emphasis-sky { --emphasis-start: #bae6fd; --emphasis-end: #7dd3fc; }
+        #awards ul.text-slate-300 { font-size: 16px; line-height: 1.8; font-weight: 400; }
         @supports ((background-clip: text) or (-webkit-background-clip: text)) {
             .copy-emphasis {
                 background: linear-gradient(100deg, var(--emphasis-start), var(--emphasis-end));
@@ -2056,7 +2060,7 @@
                         <h3 class="text-base font-semibold mt-1">ICDL National Digital Explorer 2025–2026</h3>
                     </div>
                 </div>
-                <p class="text-sm text-slate-400 font-light mb-3">National Digital Explorer is a nationwide digital literacy initiative jointly organised by Crescent Girls' School and ICDL Asia. Completed <strong class="copy-emphasis emphasis-blue">all 3 ICDL eLearning modules and certification tests</strong> — Spreadsheets, Presentation, and Big Data — earning <strong class="copy-emphasis emphasis-blue">internationally recognised ICDL Profile Certificates and eBadges</strong>.</p>
+                <p class="text-sm text-slate-400 font-light mb-3">National Digital Explorer is a nationwide digital literacy initiative jointly organised by Crescent Girls' School and ICDL Asia. Completed <strong class="copy-emphasis emphasis-rose">all 3 ICDL eLearning modules and certification tests</strong> — Spreadsheets, Presentation, and Big Data — earning <strong class="copy-emphasis emphasis-rose">internationally recognised ICDL Profile Certificates and eBadges</strong>.</p>
                 <div class="flex items-end gap-1.5 h-10">
                     <div class="w-6 rounded-t bg-rose-500/50 chart-rise" style="height:60%; animation-delay:0.2s;"></div>
                     <div class="w-6 rounded-t bg-rose-500/60 chart-rise" style="height:80%; animation-delay:0.4s;"></div>
@@ -2138,9 +2142,9 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2 tracking-tight">CCC - CDC Education Merit Award</h3>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Awarded in Secondary 2 for outstanding academic excellence</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Awarded in Secondary 2 for <strong class="copy-emphasis emphasis-amber">outstanding academic excellence</strong></span></li>
                                 <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Recognition by Citizens' Consultative Committee & Community Development Council</span></li>
-                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Distinguished achievement in academics and character</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Distinguished achievement in <strong class="copy-emphasis emphasis-amber">academics and character</strong></span></li>
                             </ul>
                         </div>
                     </div>
@@ -2166,12 +2170,12 @@
                                 <span class="px-2 py-0.5 rounded-md bg-emerald-400/20 border border-emerald-400/30 text-[9px] font-bold text-emerald-200">TEAM LEADER</span>
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2 tracking-tight">Nee Soon AI & Innovation Challenge 2026 — Winner</h3>
-                            <p class="text-sm text-slate-400 font-light leading-relaxed mb-3"><strong class="copy-emphasis emphasis-orange">Led team to victory</strong> in Nee Soon GRC's inaugural AI innovation challenge — one of Singapore's first large-scale community-led AI festivals with 55 exhibitors, graced by senior government ministers. Presented Cognivis, our <strong class="copy-emphasis emphasis-orange">Intel OpenVINO-powered student burnout prediction system</strong>, to grassroots leaders and community members.</p>
+                            <p class="text-sm text-slate-400 font-light leading-relaxed mb-3"><strong class="copy-emphasis emphasis-amber">Led a team of three to victory</strong> in Nee Soon GRC's inaugural AI innovation challenge — one of Singapore's first large-scale community-led AI festivals with 55 exhibitors, graced by senior government ministers. Presented Cognivis, our <strong class="copy-emphasis emphasis-amber">Intel OpenVINO-powered student burnout prediction system</strong>, to grassroots leaders and community members.</p>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Champion team — awarded $700 prize for best AI innovation</span></li>
-                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Group leader: coordinated research, development & final pitch</span></li>
-                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Cognivis: AI-powered burnout prediction with on-device inference & explainable AI</span></li>
-                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Portion of prize donated to community causes</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span><strong class="copy-emphasis emphasis-amber">Champion team</strong> — <strong class="copy-emphasis emphasis-amber">awarded $700 prize</strong> for best AI innovation</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span><strong class="copy-emphasis emphasis-amber">Team leader of three</strong>: coordinated research, development & final pitch</span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Cognivis: AI-powered burnout prediction with <strong class="copy-emphasis emphasis-amber">on-device inference & explainable AI</strong></span></li>
+                                <li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5 font-bold">✓</span><span>Portion of prize <strong class="copy-emphasis emphasis-amber">donated to community causes</strong></span></li>
                             </ul>
                             <div class="flex flex-wrap gap-4 mt-4">
                                 <a href="https://nee-soon-ai-fest.vercel.app/" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-amber-400 hover:text-amber-300 transition-colors inline-flex items-center gap-2">
@@ -2209,10 +2213,10 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2">Google AI Professional Certificate</h3>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Completed 7-course specialization by Google</span></li>
-                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Built 20+ AI-assisted artifacts portfolio</span></li>
-                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Custom AI solution development ("vibe-coded")</span></li>
-                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Advanced prompting, AI evaluation & responsible AI usage</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Completed <strong class="copy-emphasis emphasis-blue">7-course specialization by Google</strong></span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Built <strong class="copy-emphasis emphasis-blue">20+ AI-assisted artifacts</strong> portfolio</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span><strong class="copy-emphasis emphasis-blue">Custom AI solution development</strong> ("vibe-coded")</span></li>
+                                <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5 font-bold">✓</span><span>Advanced prompting, <strong class="copy-emphasis emphasis-blue">AI evaluation & responsible AI usage</strong></span></li>
                             </ul>
                             <a href="https://coursera.org/share/657c14ff35e14610afc7705017bc31d9" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-blue-400 hover:text-blue-300 transition-colors mt-4 inline-flex items-center gap-2">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
@@ -2247,10 +2251,10 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2">Google Cybersecurity Professional Certificate</h3>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Completed 9-course specialization developed by Google: Foundations of Cybersecurity, Manage Security Risks, Networks and Network Security, Linux and SQL, Assets/Threats/Vulnerabilities, Detection and Response, Automate Tasks with Python, Prepare for Cybersecurity Jobs, and Accelerate Job Search with AI</span></li>
-                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Hands-on, practice-based assessments building competency in beginner-level Python, Linux, SQL, SIEM tools, and Intrusion Detection Systems (IDS)</span></li>
-                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Trained to identify common cybersecurity risks, threats, and vulnerabilities, as well as techniques to mitigate them</span></li>
-                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Industry-recognized credential preparing for entry-level roles in cybersecurity operations and defense</span></li>
+                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Completed <strong class="copy-emphasis emphasis-emerald">9-course specialization developed by Google</strong>: Foundations of Cybersecurity, Manage Security Risks, Networks and Network Security, Linux and SQL, Assets/Threats/Vulnerabilities, Detection and Response, Automate Tasks with Python, Prepare for Cybersecurity Jobs, and Accelerate Job Search with AI</span></li>
+                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Hands-on, practice-based assessments building competency in beginner-level <strong class="copy-emphasis emphasis-emerald">Python, Linux, SQL, SIEM tools</strong>, and <strong class="copy-emphasis emphasis-emerald">Intrusion Detection Systems (IDS)</strong></span></li>
+                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Trained to <strong class="copy-emphasis emphasis-emerald">identify common cybersecurity risks, threats, and vulnerabilities</strong>, as well as techniques to mitigate them</span></li>
+                                <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5 font-bold">✓</span><span>Industry-recognized credential preparing for entry-level roles in <strong class="copy-emphasis emphasis-emerald">cybersecurity operations and defense</strong></span></li>
                             </ul>
                             <a href="https://coursera.org/share/e0740062b370962eb3b12773d3fd1f80" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-emerald-400 hover:text-emerald-300 transition-colors mt-4 inline-flex items-center gap-2">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
@@ -2285,10 +2289,10 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2">Digital Marketing Certified – HubSpot Academy</h3>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Awarded by HubSpot Academy, recognizing proficiency in applying digital marketing practices with an inbound mindset</span></li>
-                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Expertise across SEO, Content Strategy, Social Media Marketing, Video Marketing, Advertising Amplification, and Analytics & Measurement</span></li>
-                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Demonstrated core values: Inbound Mindset, Customer-Centricity, Strategic Alignment, Innovation & Adaptability, and Integrity in Marketing</span></li>
-                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Creating search engine-friendly content, optimizing websites, designing engaging campaigns, and tracking performance metrics for ROI-driven decision-making</span></li>
+                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Awarded by <strong class="copy-emphasis emphasis-orange">HubSpot Academy</strong>, recognizing proficiency in applying digital marketing practices with an inbound mindset</span></li>
+                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Expertise across <strong class="copy-emphasis emphasis-orange">SEO, Content Strategy, Social Media Marketing</strong>, Video Marketing, Advertising Amplification, and <strong class="copy-emphasis emphasis-orange">Analytics & Measurement</strong></span></li>
+                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Demonstrated core values: Inbound Mindset, <strong class="copy-emphasis emphasis-orange">Customer-Centricity</strong>, Strategic Alignment, Innovation & Adaptability, and Integrity in Marketing</span></li>
+                                <li class="flex items-start gap-2"><span class="text-orange-400 mt-0.5 font-bold">✓</span><span>Creating search engine-friendly content, optimizing websites, designing engaging campaigns, and tracking performance metrics for <strong class="copy-emphasis emphasis-orange">ROI-driven decision-making</strong></span></li>
                             </ul>
                             <a href="https://app-na2.hubspot.com/academy/achievements/w7stbmz2/en/1/min-khaing/digital-marketing-certified" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-orange-400 hover:text-orange-300 transition-colors mt-4 inline-flex items-center gap-2">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
@@ -2323,10 +2327,10 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2">Claude Code 101 – Claude Academy (Anthropic)</h3>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Completed Anthropic's official Claude Academy course on agentic coding with Claude Code — the AI-powered CLI for software engineering</span></li>
-                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Mastered agentic workflow patterns: task decomposition, multi-file editing, codebase exploration, test-driven development, and iterative debugging with AI</span></li>
-                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Learned effective prompting for code generation, context management with CLAUDE.md files, permission models, and CI/CD integration with headless mode</span></li>
-                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Demonstrates proficiency in leveraging AI-assisted development tools for real-world software engineering — from prototyping to production-ready code</span></li>
+                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Completed <strong class="copy-emphasis emphasis-rose">Anthropic's official Claude Academy course</strong> on <strong class="copy-emphasis emphasis-rose">agentic coding with Claude Code</strong> — the AI-powered CLI for software engineering</span></li>
+                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Mastered agentic workflow patterns: task decomposition, multi-file editing, codebase exploration, <strong class="copy-emphasis emphasis-rose">test-driven development</strong>, and iterative debugging with AI</span></li>
+                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Learned <strong class="copy-emphasis emphasis-rose">effective prompting for code generation</strong>, context management with CLAUDE.md files, permission models, and CI/CD integration with headless mode</span></li>
+                                <li class="flex items-start gap-2"><span class="text-rose-400 mt-0.5 font-bold">✓</span><span>Demonstrates proficiency in leveraging <strong class="copy-emphasis emphasis-rose">AI-assisted development tools</strong> for real-world software engineering — from prototyping to production-ready code</span></li>
                             </ul>
                             <a href="https://academy.claude.com/verify/7acc5b50471c374208e3caf86f7aaa25" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-rose-400 hover:text-rose-300 transition-colors mt-4 inline-flex items-center gap-2">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
@@ -2361,10 +2365,10 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mt-1 mb-2">AI Fundamentals: Foundations for Understanding AI – IBM SkillsBuild</h3>
                             <ul class="text-sm text-slate-300 font-light space-y-2 mt-3">
-                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Completed IBM SkillsBuild's intermediate-level credential demonstrating foundational knowledge of artificial intelligence and its core technologies</span></li>
-                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Proficiency in differentiating human learning from machine learning, describing types of ML algorithms, and explaining how neural networks and deep learning function</span></li>
-                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Trained to identify forms of AI including generative AI and computer vision, consider AI ethics implications, and detect and mitigate bias in AI systems</span></li>
-                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Demonstrated ability to use AI tools responsibly — writing effective prompts, evaluating outputs critically, and refining AI-generated solutions for real-world applications</span></li>
+                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Completed <strong class="copy-emphasis emphasis-sky">IBM SkillsBuild</strong>'s intermediate-level credential demonstrating foundational knowledge of <strong class="copy-emphasis emphasis-sky">artificial intelligence and its core technologies</strong></span></li>
+                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Proficiency in differentiating human learning from machine learning, describing types of ML algorithms, and explaining how <strong class="copy-emphasis emphasis-sky">neural networks and deep learning</strong> function</span></li>
+                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Trained to identify forms of AI including <strong class="copy-emphasis emphasis-sky">generative AI and computer vision</strong>, consider AI ethics implications, and <strong class="copy-emphasis emphasis-sky">detect and mitigate bias</strong> in AI systems</span></li>
+                                <li class="flex items-start gap-2"><span class="text-sky-400 mt-0.5 font-bold">✓</span><span>Demonstrated ability to <strong class="copy-emphasis emphasis-sky">use AI tools responsibly</strong> — writing effective prompts, evaluating outputs critically, and refining AI-generated solutions for real-world applications</span></li>
                             </ul>
                             <a href="https://www.credly.com/earner/earned/badge/ae03259f-d817-4163-97a9-4a18b949ff9b" target="_blank" rel="noopener" class="animated-underline text-base font-medium text-sky-400 hover:text-sky-300 transition-colors mt-4 inline-flex items-center gap-2">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
@@ -2515,7 +2519,7 @@
                     <div class="shine-card glow-hover rounded-2xl p-8 bg-white/[0.03]">
                         <span class="text-[10px] font-semibold tracking-widest uppercase text-cyan-400">2025 – 2026</span>
                         <h3 class="text-xl font-bold mt-2">Yishun Innova Junior College</h3>
-                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Proactive, self-motivated learner with strong aptitude for <strong class="copy-emphasis emphasis-blue">technology and analytical thinking</strong>. Engaged in thoughtful discussions, synthesizing complex ideas and offering <strong class="copy-emphasis emphasis-blue">creative solutions</strong>. Currently preparing for GCE A-Level Examination 2026.</p>
+                        <p class="text-sm text-slate-400 font-light mt-3 leading-relaxed">Proactive, self-motivated learner with strong aptitude for <strong class="copy-emphasis">technology and analytical thinking</strong>. Engaged in thoughtful discussions, synthesizing complex ideas and offering <strong class="copy-emphasis">creative solutions</strong>. Currently preparing for GCE A-Level Examination 2026.</p>
                         <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-violet-500/5 border border-cyan-500/20 text-left">
                             <h4 class="text-xs font-semibold tracking-widest uppercase text-cyan-300 mb-3">Achievements &amp; Enrichment</h4>
                             <ul class="space-y-3 text-sm text-slate-400 leading-relaxed">
@@ -2581,13 +2585,18 @@
                     </svg>
                 </div>
                 <div class="flex-1">
+                    <div class="text-xs font-semibold tracking-widest uppercase text-orange-400 mb-2">Jurong West Primary School, Yuan Ching Secondary School · 2017–2024</div>
                     <h3 class="text-2xl font-bold">Basketball</h3>
                     <p class="text-slate-400 font-light mt-3 leading-relaxed">Represented school basketball teams for <strong class="copy-emphasis emphasis-orange">eight consecutive years (2017–2024)</strong>, competing in the <strong class="copy-emphasis emphasis-orange">National School Games (NSG) – West Zone Championships</strong> throughout. Began at Jurong West Primary School (2017–2020), then continued at Yuan Ching Secondary School (2021–2024) — playing in the C Division as a Junior (2021–2022) and the B Division as a Senior (2023–2024), alongside friendly matches against other schools.</p>
                     <p class="text-slate-400 font-light mt-3 leading-relaxed">Served as <strong class="copy-emphasis emphasis-orange">Upper-Executive Exco</strong> within the secondary school CCA, <strong class="copy-emphasis emphasis-orange">mentoring juniors</strong> and instilling <strong class="copy-emphasis emphasis-orange">"Scholar Sportsman" values</strong>.</p>
-                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
                             <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2017 – 2020</div>
                             <div class="text-sm font-medium">Jurong West Primary · NSG – West Zone</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
+                            <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2021 – 2024</div>
+                            <div class="text-sm font-medium">Yuan Ching Secondary School · NSG – West Zone</div>
                         </div>
                         <div class="p-4 rounded-xl bg-orange-500/5 border border-orange-500/10">
                             <div class="text-[10px] font-semibold tracking-widest uppercase text-orange-400 mb-1">2021 – 2022 · Junior</div>
@@ -2663,7 +2672,7 @@
                         <h3 class="text-lg font-bold mt-1">Upper-Executive Exco · Basketball CCA</h3>
                     </div>
                 </div>
-                <p class="text-sm text-slate-400 font-light leading-relaxed mb-3"><strong class="copy-emphasis emphasis-violet">Led and mentored junior basketball team members</strong> at Yuan Ching Secondary School, fostering "Scholar Sportsman" values and <strong class="copy-emphasis emphasis-violet">building team cohesion</strong>. Coordinated training schedules, organized friendly matches, and served as a bridge between coaches and team members.</p>
+                <p class="text-sm text-slate-400 font-light leading-relaxed mb-3"><strong class="copy-emphasis emphasis-orange">Led and mentored junior basketball team members</strong> at Yuan Ching Secondary School, fostering "Scholar Sportsman" values and <strong class="copy-emphasis emphasis-orange">building team cohesion</strong>. Coordinated training schedules, organized friendly matches, and served as a bridge between coaches and team members.</p>
                 <div class="mt-4 flex flex-wrap gap-2">
                     <span class="px-2 py-1 rounded-md bg-orange-500/10 border border-orange-500/20 text-[10px] font-semibold text-orange-400">Team Leadership</span>
                     <span class="px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-[10px] font-semibold text-red-400">Mentorship</span>
@@ -2807,7 +2816,7 @@
                             Presentation Video
                         </a>
                     </div>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">AI-powered student burnout prediction system using Intel OpenVINO for on-device inference. Predicts burnout <strong class="copy-emphasis emphasis-blue">3-7 days in advance</strong> with explainable AI, <strong class="copy-emphasis emphasis-blue">processing sensitive data locally</strong> while delivering <strong class="copy-emphasis emphasis-blue">sub-10ms predictions</strong>. Features adaptive behavioral intelligence, continuous feedback learning, and real-time pattern analysis.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">AI-powered student burnout prediction system using Intel OpenVINO for on-device inference. Predicts burnout <strong class="copy-emphasis emphasis-violet">3-7 days in advance</strong> with explainable AI, <strong class="copy-emphasis emphasis-violet">processing sensitive data locally</strong> while delivering <strong class="copy-emphasis emphasis-violet">sub-10ms predictions</strong>. Features adaptive behavioral intelligence, continuous feedback learning, and real-time pattern analysis.</p>
 
                     <!-- Video Embed -->
                     <div class="mt-6 rounded-xl overflow-hidden border border-purple-500/20 bg-black/20" style="position: relative; padding-bottom: 56.25%; height: 0;">
@@ -2944,7 +2953,7 @@
                 <div class="flex-1">
                     <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">MINDEF · 2024 onwards</span>
                     <h3 class="text-xl font-bold mt-1">Cyber Specialist (CySpec) Track</h3>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Part of the Cyber & Digital Work-Learn Schemes, providing NSFs with advanced operational roles in <strong class="copy-emphasis">cybersecurity, software development, AI, and data science</strong> — while equipping participants with <strong class="copy-emphasis">academic credits</strong> toward relevant university degrees.</p>
+                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Part of the Cyber & Digital Work-Learn Schemes, providing NSFs with advanced operational roles in <strong class="copy-emphasis emphasis-emerald">cybersecurity, software development, AI, and data science</strong> — while equipping participants with <strong class="copy-emphasis emphasis-emerald">academic credits</strong> toward relevant university degrees.</p>
                     <div class="mt-6 flex flex-wrap gap-2">
                         <span class="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400">Cybersecurity</span>
                         <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">Software Development</span>
