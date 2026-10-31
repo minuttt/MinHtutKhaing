@@ -9,13 +9,13 @@ import './gallery-modal-accordion.css';
 const photos = [
   { file: 'basketball1.jpeg', title: 'On the court', alt: 'Basketball player on an indoor court wearing a MIN number 0 jersey', position: '50% 45%' },
   { file: 'basketball2.jpeg', title: 'Preparing the shot', alt: 'Basketball player holding the ball and preparing to shoot', position: '50% 50%' },
-  { file: 'basketball3.jpeg', title: 'Yuan Ching team', alt: 'Yuan Ching basketball team posing together on the court', position: '50% 50%' },
-  { file: 'basketball4.png', title: 'Yuan Ching team result', alt: 'Yuan Ching Secondary School basketball team with a 47 to 25 score against Juying Secondary School', position: '50% 50%' }
+  { file: 'basketball3.png', title: 'Yuan Ching team result', alt: 'Yuan Ching Secondary School basketball team with a 47 to 25 score against Juying Secondary School', position: '50% 50%' },
+  { file: 'basketball4.jpeg', title: 'At the rim', alt: 'Basketball player jumping towards the hoop for a layup', position: '60% 48%' }
 ];
 const source = (index: number) => `assets/basketball/${photos[index].file}`;
 
 export default function AccordionModal() {
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(3);
   const [selected, setSelected] = useState<number | null>(null);
   const [closing, setClosing] = useState(false);
   const reduced = useReducedMotion();

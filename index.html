@@ -20,7 +20,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="assets/testimonials.css?v=basketball-gallery-2">
+    <link rel="stylesheet" href="assets/testimonials.css?v=basketball-gallery-3">
     <link rel="stylesheet" href="assets/motion.css?v=20261030">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -411,6 +411,34 @@
             #nav-pill.mobile-open .nav-links { display: grid; }
             #nav-pill .nav-link { min-height: 44px; display: flex; align-items: center; padding: 10px 12px; font-size: 13px; }
             #nav-pill .nav-link.active { background: rgba(34,211,238,.08); }
+        }
+
+        /* Portrait floats beyond the pill without clipping the mobile menu. */
+        .profile-avatar {
+            display: block; width: 64px; height: 64px; flex-shrink: 0;
+            padding: 3px; border-radius: 50%;
+            background: linear-gradient(135deg, #67e8f9, #10b981);
+            box-shadow: 0 0 0 4px #071116, 0 5px 20px rgba(16,185,129,.18);
+        }
+        .profile-avatar img {
+            display: block; width: 100%; height: 100%; border-radius: 50%;
+            object-fit: cover; object-position: 50% 40%;
+        }
+        #nav-pill { overflow: visible; }
+        #nav-pill .nav-logo { position: relative; z-index: 1; height: 46px; padding: 0; margin-left: -4px; }
+        #nav-pill .nav-logo a:focus-visible { outline: 2px solid #a5f3fc; outline-offset: 6px; border-radius: 50%; }
+        #nav-pill.collapsed .nav-logo, #nav-pill.collapsed .nav-links { visibility: hidden; }
+        footer .profile-avatar { width: 52px; height: 52px; }
+        @media (max-width: 900px) {
+            #nav-pill, #nav-pill.collapsed { overflow: visible; }
+            #nav-pill .nav-logo, #nav-pill.collapsed .nav-logo {
+                height: 50px; padding: 0; margin-left: 2px; visibility: visible;
+            }
+            #nav-pill .profile-avatar { width: 60px; height: 60px; }
+            #nav-pill .nav-links, #nav-pill.collapsed .nav-links {
+                visibility: visible; max-height: calc(100dvh - 100px - env(safe-area-inset-top));
+                overflow-y: auto; overscroll-behavior: contain; border-radius: 0 0 22px 22px;
+            }
         }
 
         /* Readable supporting copy and labels throughout the portfolio cards. */
@@ -1725,9 +1753,8 @@
 <!-- Animated Navigation Pill -->
 <nav id="nav-pill" aria-label="Main navigation">
     <div class="nav-logo">
-        <a href="#hero" class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
-                 style="background: linear-gradient(to bottom right, #22d3ee, #10b981);">MK</div>
+        <a href="#hero" class="flex items-center gap-2" aria-label="Back to top">
+            <span class="profile-avatar"><img src="assets/profile-avatar.png" alt="Min Htut Khaing with his dog" width="64" height="64" decoding="async"></span>
         </a>
     </div>
     <button type="button" class="nav-mobile-toggle" aria-expanded="false" aria-controls="portfolio-nav-links" aria-label="Open navigation menu">
@@ -3292,8 +3319,7 @@
 <footer class="border-t border-white/5 py-10 px-6">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="flex items-center gap-3">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
-                 style="background: linear-gradient(to bottom right, #22d3ee, #10b981);">MK</div>
+            <span class="profile-avatar"><img src="assets/profile-avatar.png" alt="Min Htut Khaing with his dog" width="64" height="64" decoding="async"></span>
             <span class="text-sm text-slate-500 font-light">© 2025 Min Htut Khaing. All rights reserved.</span>
         </div>
         <div class="flex items-center gap-5">
@@ -3606,11 +3632,13 @@
         function measureWidth() {
             if (mobileNav.matches) { navPill.style.removeProperty('width'); return; }
             if (!collapsed) {
-                navPill.style.width = navPill.scrollWidth + 'px';
+                navPill.style.width = 'max-content';
+                navPill.style.width = navPill.getBoundingClientRect().width + 'px';
             }
         }
         measureWidth();
         window.addEventListener('resize', measureWidth);
+        document.fonts.ready.then(measureWidth);
         mobileNav.addEventListener('change', () => {
             clearTimeout(collapseTimer);
             closeMobileMenu();
@@ -5107,8 +5135,8 @@
 
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js"></script>
-<script src="assets/motion.js?v=basketball-gallery-2" defer></script>
-<script src="assets/testimonials.js?v=basketball-gallery-2" defer></script>
+<script src="assets/motion.js?v=basketball-gallery-3" defer></script>
+<script src="assets/testimonials.js?v=basketball-gallery-3" defer></script>
 <script src="assets/portfolio-meteors.js?v=comets-2" defer></script>
 
 </body>
