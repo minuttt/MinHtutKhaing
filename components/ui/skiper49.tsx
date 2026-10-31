@@ -9,6 +9,7 @@ import { EffectCoverflow, A11y } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
+import Magnet from "@/components/react-bits/Magnet";
 import { cn } from "@/lib/utils";
 
 type School = { title: string; level: string; years: string; logo: string };
@@ -93,12 +94,16 @@ export function Carousel_003({ items, onRead, className }: Props) {
       </SwiperSlide>)}
     </Swiper>
     <div className="school-coverflow-controls">
-      <button type="button" className="school-coverflow-arrow" aria-label="Previous school" onClick={() => swiper.current?.slidePrev()}><ChevronLeftIcon size={19} /></button>
+      <Magnet padding={16} magnetStrength={6} maxOffset={5} disabled={!!reduced} spring={{ stiffness: 170, damping: 26 }}>
+<button type="button" className="school-coverflow-arrow" aria-label="Previous school" onClick={() => swiper.current?.slidePrev()}><ChevronLeftIcon size={19} /></button>
+      </Magnet>
       <div className="school-coverflow-dots" aria-label="Choose a school">
         {items.map((school, index) => <button type="button" key={school.title} aria-label={`Show ${school.title}`}
           aria-pressed={active === index} onClick={() => { if (active !== index) swiper.current?.slideNext(); }} />)}
       </div>
-      <button type="button" className="school-coverflow-arrow" aria-label="Next school" onClick={() => swiper.current?.slideNext()}><ChevronRightIcon size={19} /></button>
+      <Magnet padding={16} magnetStrength={6} maxOffset={5} disabled={!!reduced} spring={{ stiffness: 170, damping: 26 }}>
+<button type="button" className="school-coverflow-arrow" aria-label="Next school" onClick={() => swiper.current?.slideNext()}><ChevronRightIcon size={19} /></button>
+      </Magnet>
     </div>
     <p className="school-coverflow-status" aria-live="polite">{String(active + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")} <span>Drag to explore</span></p>
   </motion.div>;

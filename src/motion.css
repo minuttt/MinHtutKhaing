@@ -1,0 +1,8 @@
+/* Lenis owns desktop easing; touch retains the browser's normal scrolling. */
+html.lenis { scroll-behavior: auto !important; }
+html.motion-ready .reveal:not(.active),
+html.motion-ready .reveal-bounce:not(.active) { opacity: 0; transform: translateY(24px); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  .reveal, .reveal-bounce { opacity: 1 !important; transform: none !important; animation: none !important; }
+}

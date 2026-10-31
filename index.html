@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <script src="assets/vendor/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script>
         tailwind.config = {
@@ -21,6 +21,7 @@
         }
     </script>
     <link rel="stylesheet" href="assets/testimonials.css?v=readability-20261004">
+    <link rel="stylesheet" href="assets/motion.css?v=20261030">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html {
@@ -75,20 +76,16 @@
         }
  
         /* Scroll Reveal */
-        .reveal {
-            opacity: 0; transform: translateY(40px);
-        }
+        .reveal { opacity: 1; }
         .reveal.active {
-            animation: revealUp 0.6s ease forwards;
+            animation: none;
         }
         @keyframes revealUp {
             to { opacity: 1; transform: translateY(0); }
         }
-        .reveal-bounce {
-            opacity: 0; transform: translateY(40px) scale(0.97);
-        }
+        .reveal-bounce { opacity: 1; }
         .reveal-bounce.active {
-            animation: revealBounce 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+            animation: none;
         }
         @keyframes revealBounce {
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -3606,88 +3603,7 @@
         }
     })();
  
-    // Scroll Reveal (Intersection Observer) - Instant trigger
-    const observerOptions = {
-        threshold: 0.01,
-        rootMargin: '100px 0px 0px 0px'
-    };
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.reveal, .reveal-bounce').forEach(el => {
-        observer.observe(el);
-        el.addEventListener('animationend', () => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0) scale(1)';
-            el.style.animation = 'none';
-        });
-    });
-
-    // 3D Tilt Effect on cards (big awards + all other sections except small profile cards)
-    (function() {
-        const cards = document.querySelectorAll('.tilt-3d, section:not(#awards) .glow-hover');
-        const MAX_TILT = 8;
-
-        cards.forEach(card => {
-            if (card.querySelector('iframe')) return;
-
-            let rafId = null;
-            let targetX = 0, targetY = 0;
-            let currentX = 0, currentY = 0;
-
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width - 0.5;
-                const y = (e.clientY - rect.top) / rect.height - 0.5;
-                targetX = x;
-                targetY = y;
-
-                if (!rafId) {
-                    rafId = requestAnimationFrame(function animate() {
-                        currentX += (targetX - currentX) * 0.15;
-                        currentY += (targetY - currentY) * 0.15;
-
-                        const rotY = currentX * MAX_TILT;
-                        const rotX = -currentY * MAX_TILT;
-                        card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02, 1.02, 1.02)`;
-
-                        if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
-                            rafId = requestAnimationFrame(animate);
-                        } else {
-                            rafId = null;
-                        }
-                    });
-                }
-            });
-
-            card.addEventListener('mouseleave', () => {
-                targetX = 0;
-                targetY = 0;
-                if (!rafId) {
-                    rafId = requestAnimationFrame(function reset() {
-                        currentX += (0 - currentX) * 0.1;
-                        currentY += (0 - currentY) * 0.1;
-
-                        const rotY = currentX * MAX_TILT;
-                        const rotX = -currentY * MAX_TILT;
-
-                        if (Math.abs(currentX) > 0.001 || Math.abs(currentY) > 0.001) {
-                            card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1, 1, 1)`;
-                            rafId = requestAnimationFrame(reset);
-                        } else {
-                            card.style.transform = 'translateY(0) scale(1)';
-                            rafId = null;
-                        }
-                    });
-                }
-            });
-        });
-    })();
+    // Section reveals and card tilt are coordinated in src/motion.ts.
 
     // Timeline dot animation + scroll-driven glow line
     const timelineDots = document.querySelectorAll('.timeline-dot');
@@ -5097,7 +5013,8 @@
 
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js"></script>
-<script src="assets/testimonials.js" defer></script>
+<script src="assets/motion.js?v=20261030" defer></script>
+<script src="assets/testimonials.js?v=20261030" defer></script>
 <script src="assets/portfolio-meteors.js?v=comets-2" defer></script>
 
 </body>

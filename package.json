@@ -2,13 +2,14 @@
   "name": "min-portfolio",
   "private": true,
   "scripts": {
-    "build": "esbuild src/testimonials.tsx --bundle --loader:.png=dataurl --minify --format=iife --target=es2020 --outfile=assets/testimonials.js",
+    "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "framer-motion": "^13.4.6",
     "gsap": "3.12.5",
+    "lenis": "1.3.27",
     "lucide-react": "^1.49.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
