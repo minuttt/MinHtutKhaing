@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Expand, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import './gallery-modal-accordion.css';
 
 // Adapted from the user's gallery-modal-accordion: hover expansion + full-photo modal.
@@ -10,7 +10,7 @@ const photos = [
   { file: 'basketball1.jpeg', title: 'On the court', alt: 'Basketball player on an indoor court wearing a MIN number 0 jersey', position: '50% 45%' },
   { file: 'basketball2.jpeg', title: 'Preparing the shot', alt: 'Basketball player holding the ball and preparing to shoot', position: '50% 50%' },
   { file: 'basketball3.jpeg', title: 'Yuan Ching team', alt: 'Yuan Ching basketball team posing together on the court', position: '50% 50%' },
-  { file: 'basketball4.jpeg', title: 'At the rim', alt: 'Basketball player jumping towards the hoop for a layup', position: '60% 48%' }
+  { file: 'basketball4.png', title: 'Yuan Ching team result', alt: 'Yuan Ching Secondary School basketball team with a 47 to 25 score against Juying Secondary School', position: '50% 50%' }
 ];
 const source = (index: number) => `assets/basketball/${photos[index].file}`;
 
@@ -51,8 +51,6 @@ export default function AccordionModal() {
         onFocus={() => setActive(index)}
         onClick={event => { opener.current = event.currentTarget; setActive(index); setSelected(index); }}>
         <img src={source(index)} alt={photo.alt} loading="lazy" decoding="async" draggable={false} style={{ objectPosition: photo.position }} />
-        <span className="basketball-photo-caption"><span>{photo.title}</span><Expand size={17} aria-hidden="true" /></span>
-        <span className="basketball-photo-number" aria-hidden="true">0{index + 1}</span>
       </button>)}
     </div>
     <p className="basketball-gallery-hint">Select a photo to view it in full.</p>
@@ -70,7 +68,7 @@ export default function AccordionModal() {
         <img className="basketball-full-photo" src={source(selected)} alt={photos[selected].alt} />
         <div className="basketball-viewer-footer">
           <button type="button" aria-label="Previous basketball photo" onClick={() => step(-1)}><ChevronLeft size={22} /></button>
-          <p aria-live="polite"><span>{photos[selected].title}</span><span>{selected + 1} / {photos.length}</span></p>
+          <p aria-live="polite"><span>{selected + 1} / {photos.length}</span></p>
           <button type="button" aria-label="Next basketball photo" onClick={() => step(1)}><ChevronRight size={22} /></button>
         </div>
       </motion.div>}
