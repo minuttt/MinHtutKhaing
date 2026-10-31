@@ -30,8 +30,14 @@ export default function AccordionModal() {
     const element = dialog.current!;
     const previous = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('photo-viewer-open');
+    document.dispatchEvent(new Event('photoViewerChange'));
     if (!element.open) element.showModal();
-    return () => { document.body.style.overflow = previous; };
+    return () => {
+      document.body.style.overflow = previous;
+      document.body.classList.remove('photo-viewer-open');
+      document.dispatchEvent(new Event('photoViewerChange'));
+    };
   }, [selected !== null]);
   useEffect(() => {
     if (!closing) return;
@@ -62,10 +68,10 @@ export default function AccordionModal() {
         if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
         if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
       }}>
-      {selected !== null && <motion.div className="basketball-viewer" initial={reduced ? false : { opacity: 0, scale: .97 }}
-        animate={{ opacity: closing ? 0 : 1, scale: closing && !reduced ? .97 : 1 }} transition={{ duration: reduced ? 0 : .2 }}>
+      {selected !== null && <motion.div className="basketball-viewer" initial={reduced ? false : { opacity: 0 }}
+        animate={{ opacity: closing ? 0 : 1 }} transition={{ duration: reduced ? 0 : .2 }}>
         <button type="button" className="basketball-viewer-close" aria-label="Close basketball photo" onClick={close} autoFocus><X size={22} /></button>
-        <img className="basketball-full-photo" src={source(selected)} alt={photos[selected].alt} />
+        <img className="basketball-full-photo" src={source(selected)} alt={photos[selected].alt} decoding="async" />
         <div className="basketball-viewer-footer">
           <button type="button" aria-label="Previous basketball photo" onClick={() => step(-1)}><ChevronLeft size={22} /></button>
           <p aria-live="polite"><span>{selected + 1} / {photos.length}</span></p>

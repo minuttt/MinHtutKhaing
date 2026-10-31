@@ -6,7 +6,7 @@
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let width = 0, height = 0, frame = 0, timer = 0, meteor = null, ready = false;
     const random = (min, max) => min + Math.random() * (max - min);
-    const allowed = () => ready && !document.hidden && !reducedMotion.matches;
+    const allowed = () => ready && !document.hidden && !reducedMotion.matches && !document.body.classList.contains('photo-viewer-open');
 
     function resize() {
         width = innerWidth;
@@ -152,6 +152,7 @@
     }
     window.addEventListener('portfolioReady', start, { once: true });
     document.addEventListener('visibilitychange', sync);
+    document.addEventListener('photoViewerChange', sync);
     reducedMotion.addEventListener('change', sync);
     window.addEventListener('resize', () => { resize(); sync(); }, { passive: true });
     window.addEventListener('pagehide', stop);

@@ -20,7 +20,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="assets/testimonials.css?v=basketball-gallery-3">
+    <link rel="stylesheet" href="assets/testimonials.css?v=mobile-gallery-hobbies-1">
     <link rel="stylesheet" href="assets/motion.css?v=20261030">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -305,7 +305,7 @@
             box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(34,211,238,0.05);
             overflow: hidden;
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                        box-shadow 0.3s ease;
+                        box-shadow 0.3s ease, transform 0.3s ease;
             white-space: nowrap;
         }
         #nav-pill:hover {
@@ -427,7 +427,13 @@
         #nav-pill { overflow: visible; }
         #nav-pill .nav-logo { position: relative; z-index: 1; height: 46px; padding: 0; margin-left: -4px; }
         #nav-pill .nav-logo a:focus-visible { outline: 2px solid #a5f3fc; outline-offset: 6px; border-radius: 50%; }
-        #nav-pill.collapsed .nav-logo, #nav-pill.collapsed .nav-links { visibility: hidden; }
+        #nav-pill .nav-logo, #nav-pill .nav-links {
+            transition: opacity .25s ease, transform .4s ease, visibility 0s;
+        }
+        #nav-pill .nav-links { flex-shrink: 0; }
+        #nav-pill.collapsed .nav-logo, #nav-pill.collapsed .nav-links {
+            visibility: hidden; transition: opacity .2s ease, transform .4s ease, visibility 0s .4s;
+        }
         footer .profile-avatar { width: 52px; height: 52px; }
         @media (max-width: 900px) {
             #nav-pill, #nav-pill.collapsed { overflow: visible; }
@@ -439,6 +445,21 @@
                 visibility: visible; max-height: calc(100dvh - 100px - env(safe-area-inset-top));
                 overflow-y: auto; overscroll-behavior: contain; border-radius: 0 0 22px 22px;
             }
+        }
+
+        .hobby-discovery { display:flex; flex-direction:column; min-height:350px; }
+        .hobby-illustration { margin-top:auto; padding-top:20px; overflow:hidden; }
+        .hobby-illustration svg { display:block; width:100%; height:100px; }
+        .cinema-frames { animation:cinema-drift 12s linear infinite; }
+        .climbing-route { animation:climbing-flow 4s linear infinite; }
+        .summit-hold { animation:summit-glow 3s ease-in-out infinite; }
+        .explorer-needle { transform-origin:150px 45px; animation:explorer-turn 8s ease-in-out infinite; }
+        @keyframes cinema-drift { to { transform:translateX(-90px); } }
+        @keyframes climbing-flow { to { stroke-dashoffset:-44; } }
+        @keyframes summit-glow { 50% { opacity:.35; } }
+        @keyframes explorer-turn { 0%,100% { transform:rotate(-35deg); } 50% { transform:rotate(65deg); } }
+        @media(prefers-reduced-motion:reduce) {
+            .hobby-illustration *, #nav-pill, #nav-pill * { animation:none!important; transition:none!important; }
         }
 
         /* Readable supporting copy and labels throughout the portfolio cards. */
@@ -3129,8 +3150,8 @@
                         <h3 class="text-base font-semibold mt-1">Programming</h3>
                     </div>
                 </div>
-                <p class="text-sm text-slate-400 font-light mb-3">I build projects in Python, Lua, JavaScript, and TypeScript, alongside HTML and CSS. From Roblox games to websites, my projects range from fun experiments to practical tools.</p>
-                <p class="text-sm text-slate-400 font-light">My Roblox games have over <span class="text-red-300 font-semibold">1,000 total visits</span>, and my websites have received <span class="text-red-300 font-semibold">1,000+ visits combined</span>.</p>
+                <p class="text-sm text-slate-400 font-light mb-3">I build projects in Python, Lua, JavaScript, and TypeScript, alongside HTML and CSS. From games to websites, my projects range from fun experiments to practical tools.</p>
+                <p class="text-sm text-slate-400 font-light">My games have over <span class="text-red-300 font-semibold">1,000 total visits</span>, and my websites have received <span class="text-red-300 font-semibold">1,000+ visits combined</span>.</p>
             </div>
  
             <!-- Content Creation -->
@@ -3231,9 +3252,8 @@
                     </div>
                 </div>
                 <p class="text-sm text-slate-400 font-light mb-3">5 years of playing, learning, and solving. My Chess.com ratings:</p>
-                <p class="text-sm font-semibold text-emerald-300 mb-3">Top 0.9% &middot; Elite</p>
                 <dl class="text-xs text-slate-400 space-y-2">
-                    <div class="flex justify-between gap-4"><dt>Blitz &amp; Live960</dt><dd class="text-emerald-300 font-semibold tabular-nums">1899</dd></div>
+                    <div class="flex justify-between gap-4"><dt>Blitz &amp; Live960</dt><dd class="text-emerald-300 font-semibold tabular-nums">1968</dd></div>
                     <div class="flex justify-between gap-4"><dt>Puzzles</dt><dd class="text-emerald-300 font-semibold tabular-nums">1663</dd></div>
                     <div class="flex justify-between gap-4"><dt>Daily, Bullet &amp; Daily960</dt><dd class="text-emerald-300 font-semibold tabular-nums">1600</dd></div>
                     <div class="flex justify-between gap-4"><dt>Rapid</dt><dd class="text-emerald-300 font-semibold tabular-nums">1575</dd></div>
@@ -3262,6 +3282,40 @@
                     <div class="gaming-character"><img src="omoriviolin.gif" alt="Omori playing the violin" width="1120" height="1365" loading="lazy" decoding="async"></div>
                     <div class="gaming-character"><img src="zeldaplayingocarina.gif" alt="Link playing the ocarina" width="540" height="350" loading="lazy" decoding="async"></div>
                 </div>
+            </div>
+
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce hobby-discovery" data-hobby-theme="cinema">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="film" class="w-6 h-6 text-rose-400" aria-hidden="true"></i>
+                    </div>
+                    <div><span class="text-[10px] font-semibold tracking-widest uppercase text-rose-400">Stories</span><h3 class="text-base font-semibold mt-1">Media &amp; Cinema</h3></div>
+                </div>
+                <p class="text-sm text-slate-400 font-light">I’ve watched countless shows, movies, and animations, exploring stories across all kinds of genres.</p>
+
+                <div class="hobby-illustration text-rose-400" aria-hidden="true"><svg viewBox="0 0 300 90" fill="none"><g class="cinema-frames"><path d="M0 8H600M0 82H600" stroke="currentColor" stroke-width="5" stroke-dasharray="8 10"/><rect x="0" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M29 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/><rect x="90" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M119 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/><rect x="180" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M209 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/><rect x="270" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M299 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/><rect x="360" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M389 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/><rect x="450" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M479 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/><rect x="540" y="21" width="72" height="48" rx="7" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-opacity=".45"/><path d="M569 34l19 11-19 11z" fill="currentColor" fill-opacity=".6"/></g></svg></div>
+            </div>
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce hobby-discovery" data-hobby-theme="bouldering">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="mountain" class="w-6 h-6 text-lime-400" aria-hidden="true"></i>
+                    </div>
+                    <div><span class="text-[10px] font-semibold tracking-widest uppercase text-lime-400">Movement</span><h3 class="text-base font-semibold mt-1">Bouldering &amp; Fitness</h3></div>
+                </div>
+                <p class="text-sm text-slate-400 font-light">I enjoy bouldering and staying active, and have climbed at many places around Singapore.</p>
+
+                <div class="hobby-illustration text-lime-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><path d="M35 97L87 15l46 47 44-55 86 90" stroke="currentColor" stroke-opacity=".16"/><path class="climbing-route" d="M65 95Q135 95 112 62T167 43T211 15" stroke="currentColor" stroke-width="2" stroke-dasharray="4 7"/><g fill="currentColor"><path d="M57 89l12-5 9 8-6 9-15-3z"/><path d="M102 56l13-5 9 9-6 7-15-2z"/><path d="M155 39l14-6 9 10-8 8-15-4z"/><path class="summit-hold" d="M201 10l12-5 10 9-5 9-15-3z"/></g></svg></div>
+            </div>
+            <div class="shine-card glow-hover rounded-2xl p-6 bg-white/[0.03] reveal-bounce hobby-discovery" data-hobby-theme="explorer">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="compass" class="w-6 h-6 text-amber-400" aria-hidden="true"></i>
+                    </div>
+                    <div><span class="text-[10px] font-semibold tracking-widest uppercase text-amber-400">Curiosity</span><h3 class="text-base font-semibold mt-1">Trying New Things</h3></div>
+                </div>
+                <p class="text-sm text-slate-400 font-light">A total experientialist. I love picking up a new hobby, trying something different, or learning a random skill with friends.</p>
+                <p class="text-sm text-slate-400 font-light mt-3">Ice skating, inline skating, table tennis, badminton, singing, volleyball, and floorball.</p>
+                <div class="hobby-illustration text-amber-400" aria-hidden="true"><svg viewBox="0 0 300 90" fill="none"><path d="M45 45h72m66 0h72" stroke="currentColor" stroke-opacity=".2" stroke-dasharray="3 6"/><circle cx="150" cy="45" r="34" stroke="currentColor" stroke-opacity=".3"/><circle cx="150" cy="45" r="26" stroke="currentColor" stroke-opacity=".15"/><g class="explorer-needle"><path d="M150 20l9 25-9 25-9-25z" fill="currentColor" fill-opacity=".15" stroke="currentColor"/><path d="M150 20l9 25h-18z" fill="currentColor"/></g><circle cx="150" cy="45" r="3" fill="currentColor"/></svg></div>
             </div>
 
         </div>
@@ -3632,8 +3686,9 @@
         function measureWidth() {
             if (mobileNav.matches) { navPill.style.removeProperty('width'); return; }
             if (!collapsed) {
-                navPill.style.width = 'max-content';
-                navPill.style.width = navPill.getBoundingClientRect().width + 'px';
+                const logo = navPill.querySelector('.nav-logo');
+                const links = navPill.querySelector('.nav-links');
+                navPill.style.width = (logo.offsetWidth + links.scrollWidth - 4 + 2) + 'px';
             }
         }
         measureWidth();
@@ -3650,7 +3705,7 @@
         });
 
         function collapse() {
-            if (mobileNav.matches) return;
+            if (mobileNav.matches || navPill.matches(':hover, :focus-within')) return;
             if (!collapsed && window.scrollY > 100) {
                 collapsed = true;
                 navPill.classList.add('collapsed');
@@ -3662,7 +3717,6 @@
             if (collapsed) {
                 collapsed = false;
                 navPill.classList.remove('collapsed');
-                measureWidth();
             }
             resetAutoCollapse();
         }
@@ -3700,6 +3754,9 @@
                 expand();
             }
         });
+
+        navPill.addEventListener('pointerleave', resetAutoCollapse);
+        navPill.addEventListener('focusout', resetAutoCollapse);
 
         // Active link highlight
         const sections = document.querySelectorAll('section[id]');
@@ -4995,7 +5052,7 @@
             cancelAnimationFrame(frame);
             frame = 0;
             lastTime = 0;
-            if (inView && !document.hidden && hero.classList.contains('visible')) {
+            if (inView && !document.hidden && !document.body.classList.contains('photo-viewer-open') && hero.classList.contains('visible')) {
                 render();
                 if (!reducedMotion.matches) frame = requestAnimationFrame(animate);
             }
@@ -5020,12 +5077,14 @@
         }).observe(hero);
         new MutationObserver(sync).observe(hero, { attributes: true, attributeFilter: ['class'] });
         document.addEventListener('visibilitychange', sync);
+        document.addEventListener('photoViewerChange', sync);
         reducedMotion.addEventListener('change', sync);
     })();
 
 
     // ===== CURSOR SPOTLIGHT =====
     (function() {
+        if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         const canvas = document.getElementById('cursor-spotlight');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -5057,6 +5116,7 @@
 
     // ===== STAR TRAIL =====
     (function() {
+        if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         const canvas = document.getElementById('star-trail');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -5135,9 +5195,9 @@
 
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js"></script>
-<script src="assets/motion.js?v=basketball-gallery-3" defer></script>
-<script src="assets/testimonials.js?v=basketball-gallery-3" defer></script>
-<script src="assets/portfolio-meteors.js?v=comets-2" defer></script>
+<script src="assets/motion.js?v=mobile-gallery-hobbies-1" defer></script>
+<script src="assets/testimonials.js?v=mobile-gallery-hobbies-1" defer></script>
+<script src="assets/portfolio-meteors.js?v=comets-modal-3" defer></script>
 
 </body>
 </html>
