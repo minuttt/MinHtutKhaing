@@ -1738,10 +1738,18 @@
             margin-bottom: 0.5rem;
         }
         /* Lightweight orbital motion and a luminous, real progress indicator. */
-        .loader-orbit { position:relative; width:58px; height:58px; margin:0 auto 18px; }
-        .loader-orbit span { position:absolute; inset:0; border:1px solid rgba(94,234,212,.15); border-top-color:#5eead4; border-radius:50%; animation:loader-orbit-turn 5s linear infinite; }
-        .loader-orbit span:nth-child(2) { inset:8px; border-top-color:#67e8f9; animation-direction:reverse; animation-duration:3.5s; }
-        .loader-orbit i { position:absolute; inset:23px; border-radius:50%; background:#99f6e4; box-shadow:0 0 18px rgba(94,234,212,.6); animation:loader-core-pulse 2.4s ease-in-out infinite; }
+        .loader-squares { position:relative; width:72px; height:72px; margin:10px auto 28px; transform:rotate(45deg); }
+        .loader-squares span { position:absolute; top:0; left:0; width:21px; height:21px; margin:1.5px; background:#ecfdf5; border-radius:2px; animation:loader-square 10s ease-in-out infinite both; animation-delay:calc(var(--square) * -1.4285714286s); }
+        @keyframes loader-square {
+            0%,10.5%,100% { transform:translate(0,0); }
+            12.5%,23% { transform:translate(24px,0); }
+            25%,35.5% { transform:translate(48px,0); }
+            37.5%,48% { transform:translate(48px,24px); }
+            50%,60.5% { transform:translate(24px,24px); }
+            62.5%,73% { transform:translate(24px,48px); }
+            75%,85.5% { transform:translate(0,48px); }
+            87.5%,98% { transform:translate(0,24px); }
+        }
         .loader-eyebrow { color:#6fc9c2; font-size:11px; font-weight:600; letter-spacing:.16em; margin-bottom:12px; }
         .loading-title { color:#ecfdf5; letter-spacing:-.035em; font-size:clamp(1.4rem,4vw,1.9rem); margin-bottom:8px; }
         .loading-subtitle { color:#a7bdc7; font-size:14px; margin-bottom:18px; }
@@ -1756,12 +1764,11 @@
         .progress-percentage { color:#99f6e4; font-size:20px; font-variant-numeric:tabular-nums; }
         .progress-eta { font-size:12px; line-height:1.6; text-align:right; color:#a7bdc7; padding-top:3px; }
         .enjoy-text { color:#8fa8b5; font-size:13px; line-height:1.7; font-style:normal; }
-        @keyframes loader-orbit-turn { to { transform:rotate(360deg); } }
-        @keyframes loader-core-pulse { 50% { opacity:.5; transform:scale(.75); } }
         @keyframes loader-progress-sheen { from { transform:translateX(-100%); } to { transform:translateX(100%); } }
         @media(prefers-reduced-motion:reduce) {
             .loading-info-overlay { animation:none; opacity:1; transition:none; }
-            .loader-orbit *, .progress-bar::after { animation:none; }
+            .loader-squares span { animation-play-state:paused; }
+            .progress-bar::after { animation:none; }
             .progress-bar { transition:none; }
         }
     </style>
@@ -1779,10 +1786,10 @@
 
     <!-- Loading Info Overlay -->
     <div class="loading-info-overlay" id="loading-info">
-        <div class="loader-orbit" aria-hidden="true"><span></span><span></span><i></i></div>
-        <div class="loader-eyebrow">MIN HTUT KHAING · PORTFOLIO</div>
+        <div class="loader-squares" aria-hidden="true"><span style="--square:0"></span><span style="--square:1"></span><span style="--square:2"></span><span style="--square:3"></span><span style="--square:4"></span><span style="--square:5"></span><span style="--square:6"></span></div>
+        <div class="loader-eyebrow">MIN HTUT KHAING'S PORTFOLIO</div>
         <h2 class="loading-title">A glimpse of my world</h2>
-        <p class="loading-subtitle">Preparing your portfolio experience.</p>
+        <p class="loading-subtitle">Hold on a sec!</p>
 
         <div class="connection-badge" id="connection-badge">
             Detecting connection...
@@ -5277,7 +5284,7 @@
 <script src="loader.js?v=20261106"></script>
 <script src="assets/motion.js?v=mobile-gallery-hobbies-1" defer></script>
 <script src="assets/testimonials.js?v=mobile-gallery-hobbies-1" defer></script>
-<script src="assets/portfolio-meteors.js?v=comets-modal-3" defer></script>
+<script src="assets/portfolio-meteors.js?v=starfall-1" defer></script>
 
 <!-- Cloudflare Web Analytics. Reports are available through the owner's Cloudflare account. -->
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "fcbf3ff00ba94a17ab8bde32b6ae83bc"}'></script>

@@ -5,6 +5,7 @@
     if (!ctx) return;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let width = 0, height = 0, frame = 0, timer = 0, meteor = null, ready = false;
+    let starTimer = 0, stars = [];
     const random = (min, max) => min + Math.random() * (max - min);
     const allowed = () => ready && !document.hidden && !reducedMotion.matches && !document.body.classList.contains('photo-viewer-open');
 
@@ -40,7 +41,7 @@
             }))
         };
         canvas.dataset.phase = 'entering';
-        frame = requestAnimationFrame(draw);
+        if (!frame) frame = requestAnimationFrame(draw);
         // Start-to-start spacing, rather than adding flight time to the interval.
         schedule();
     }
@@ -67,9 +68,7 @@
         ctx.closePath(); ctx.fill();
     }
 
-    function draw(now) {
-        frame = 0;
-        ctx.clearRect(0, 0, width, height);
+    function drawMeteor(now) {
         if (!meteor || !allowed()) return;
         const m = meteor;
         const progress = (now - m.start) / m.duration;
@@ -134,21 +133,82 @@
         ctx.lineTo(.75 * m.radius, .35 * m.radius);
         ctx.closePath(); ctx.fill();
         ctx.restore();
-        frame = requestAnimationFrame(draw);
+    }
+
+    // A loose shower of tiny star points, with the hero's cyan/teal light palette.
+    // Share one canvas and one animation loop with the comet; sleep between sightings.
+    function scheduleStars(delay = random(5000, 14000)) {
+        clearTimeout(starTimer);
+        if (allowed()) starTimer = setTimeout(launchStars, delay);
+    }
+    function launchStars() {
+        if (!allowed()) return;
+        const direction = Math.random() < .5 ? 1 : -1;
+        const slope = random(.15, .65);
+        const start = performance.now();
+        const band = random(height * .08, height * .5);
+        stars = Array.from({ length: width < 600 ? 14 : 24 }, () => ({
+            start: start + random(0, 1200), duration: random(1800, 3600),
+            x: direction > 0 ? -40 : width + 40,
+            y: band + random(-height * .18, height * .18),
+            dx: direction * (width + 120), dy: Math.min(height * .5, width * slope),
+            radius: random(.65, 1.6), tail: random(18, 60), phase: random(0, Math.PI * 2),
+            tint: Math.random() < .5 ? '153,246,228' : '186,230,253'
+        }));
+        if (!frame) frame = requestAnimationFrame(draw);
+        scheduleStars();
+    }
+    function drawStars(now) {
+        stars = stars.filter(star => now < star.start + star.duration);
+        canvas.dataset.starCount = String(stars.length);
+        for (const star of stars) {
+            const p = (now - star.start) / star.duration;
+            if (p < 0) continue;
+            const fade = Math.min(1, p * 10, (1 - p) * 7);
+            ctx.save();
+            ctx.translate(star.x + star.dx * p, star.y + star.dy * p);
+            ctx.rotate(Math.atan2(star.dy, star.dx));
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = fade * (.5 + .15 * Math.sin(now * .006 + star.phase));
+            const trail = ctx.createLinearGradient(-star.tail, 0, 0, 0);
+            trail.addColorStop(0, `rgba(${star.tint},0)`);
+            trail.addColorStop(1, `rgba(${star.tint},.65)`);
+            ctx.strokeStyle = trail; ctx.lineWidth = star.radius;
+            ctx.beginPath(); ctx.moveTo(-star.tail, 0); ctx.lineTo(0, 0); ctx.stroke();
+            const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, star.radius * 5);
+            glow.addColorStop(0, `rgba(${star.tint},.65)`);
+            glow.addColorStop(1, `rgba(${star.tint},0)`);
+            ctx.fillStyle = glow;
+            ctx.beginPath(); ctx.arc(0, 0, star.radius * 5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#e6fbfa';
+            ctx.beginPath(); ctx.arc(0, 0, star.radius, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+    }
+    function draw(now) {
+        frame = 0;
+        ctx.clearRect(0, 0, width, height);
+        if (!allowed()) return;
+        drawStars(now);
+        drawMeteor(now);
+        if (meteor || stars.length) frame = requestAnimationFrame(draw);
     }
 
     function stop() {
         clearTimeout(timer);
+        clearTimeout(starTimer);
+        stars = []; canvas.dataset.starCount = '0';
         cancelAnimationFrame(frame);
         frame = 0; meteor = null; canvas.dataset.phase = 'idle';
         ctx.clearRect(0, 0, width, height);
     }
-    function sync() { stop(); if (allowed()) schedule(); }
+    function sync() { stop(); if (allowed()) { schedule(); scheduleStars(); } }
     function start() {
         if (ready) return;
         ready = true;
         // One early sighting establishes the effect, then use the normal random cadence.
         schedule(900);
+        scheduleStars(2400);
     }
     window.addEventListener('portfolioReady', start, { once: true });
     document.addEventListener('visibilitychange', sync);
