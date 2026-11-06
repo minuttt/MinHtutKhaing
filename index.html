@@ -416,9 +416,9 @@
         /* Portrait floats beyond the pill without clipping the mobile menu. */
         .profile-avatar {
             display: block; width: 64px; height: 64px; flex-shrink: 0;
-            padding: 3px; border-radius: 50%;
-            background: linear-gradient(135deg, #67e8f9, #10b981);
-            box-shadow: 0 0 0 4px #071116, 0 5px 20px rgba(16,185,129,.18);
+            padding: 2px; border-radius: 50%;
+            background: #30383d;
+            box-shadow: 0 4px 16px rgba(0,0,0,.3);
         }
         .profile-avatar img {
             display: block; width: 100%; height: 100%; border-radius: 50%;
@@ -1609,15 +1609,15 @@
             z-index: 10002;
             text-align: center;
             padding: 2rem;
-            background: rgba(30, 30, 30, 0.95);
+            background: radial-gradient(ellipse at 50% 0%, rgba(20,184,166,.16), transparent 65%), rgba(7,17,23,.94);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 24px;
+            border: 1px solid rgba(94,234,212,.16);
+            box-shadow: 0 24px 80px rgba(0,0,0,.45), inset 0 1px rgba(165,243,252,.08);
             opacity: 0;
             animation: infoFadeIn 0.8s ease-out 0.5s forwards;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: top .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1);
             max-width: 90%;
             width: min(480px, 90vw);
             pointer-events: none;
@@ -1737,6 +1737,33 @@
             color: #ffffff;
             margin-bottom: 0.5rem;
         }
+        /* Lightweight orbital motion and a luminous, real progress indicator. */
+        .loader-orbit { position:relative; width:58px; height:58px; margin:0 auto 18px; }
+        .loader-orbit span { position:absolute; inset:0; border:1px solid rgba(94,234,212,.15); border-top-color:#5eead4; border-radius:50%; animation:loader-orbit-turn 5s linear infinite; }
+        .loader-orbit span:nth-child(2) { inset:8px; border-top-color:#67e8f9; animation-direction:reverse; animation-duration:3.5s; }
+        .loader-orbit i { position:absolute; inset:23px; border-radius:50%; background:#99f6e4; box-shadow:0 0 18px rgba(94,234,212,.6); animation:loader-core-pulse 2.4s ease-in-out infinite; }
+        .loader-eyebrow { color:#6fc9c2; font-size:11px; font-weight:600; letter-spacing:.16em; margin-bottom:12px; }
+        .loading-title { color:#ecfdf5; letter-spacing:-.035em; font-size:clamp(1.4rem,4vw,1.9rem); margin-bottom:8px; }
+        .loading-subtitle { color:#a7bdc7; font-size:14px; margin-bottom:18px; }
+        .connection-badge { font-size:11px; border-radius:999px; padding:6px 12px; margin-bottom:20px; }
+        .connection-fast { color:#99f6e4; background:rgba(20,184,166,.08); border-color:rgba(94,234,212,.2); }
+        .connection-medium { color:#bae6fd; border-color:rgba(125,211,252,.15); }
+        .connection-slow { color:#fde68a; border-color:rgba(252,211,77,.15); }
+        .progress-bar-container { height:5px; background:rgba(148,163,184,.12); border-radius:999px; }
+        .progress-bar { position:relative; background:linear-gradient(90deg,#0d9488,#5eead4,#a5f3fc); border-radius:999px; transition:width .5s cubic-bezier(.22,1,.36,1); overflow:hidden; }
+        .progress-bar::after { content:''; position:absolute; inset:0; background:linear-gradient(100deg,transparent,rgba(236,253,245,.65),transparent); animation:loader-progress-sheen 2.4s ease-in-out infinite; }
+        .progress-stats { gap:16px; align-items:flex-start; }
+        .progress-percentage { color:#99f6e4; font-size:20px; font-variant-numeric:tabular-nums; }
+        .progress-eta { font-size:12px; line-height:1.6; text-align:right; color:#a7bdc7; padding-top:3px; }
+        .enjoy-text { color:#8fa8b5; font-size:13px; line-height:1.7; font-style:normal; }
+        @keyframes loader-orbit-turn { to { transform:rotate(360deg); } }
+        @keyframes loader-core-pulse { 50% { opacity:.5; transform:scale(.75); } }
+        @keyframes loader-progress-sheen { from { transform:translateX(-100%); } to { transform:translateX(100%); } }
+        @media(prefers-reduced-motion:reduce) {
+            .loading-info-overlay { animation:none; opacity:1; transition:none; }
+            .loader-orbit *, .progress-bar::after { animation:none; }
+            .progress-bar { transition:none; }
+        }
     </style>
 </head>
 <body class="no-scrollbar">
@@ -1752,14 +1779,16 @@
 
     <!-- Loading Info Overlay -->
     <div class="loading-info-overlay" id="loading-info">
-        <h2 class="loading-title">Hold on a sec!</h2>
-        <p class="loading-subtitle">Loading content...</p>
+        <div class="loader-orbit" aria-hidden="true"><span></span><span></span><i></i></div>
+        <div class="loader-eyebrow">MIN HTUT KHAING · PORTFOLIO</div>
+        <h2 class="loading-title">A glimpse of my world</h2>
+        <p class="loading-subtitle">Preparing your portfolio experience.</p>
 
         <div class="connection-badge" id="connection-badge">
             Detecting connection...
         </div>
 
-        <div class="progress-bar-container">
+        <div class="progress-bar-container" role="progressbar" aria-label="Loading portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="progress-bar" id="loader-progress-bar"></div>
         </div>
 
@@ -2291,6 +2320,9 @@
                                     <i data-lucide="folder-open" class="w-4 h-4"></i>
                                     Learn More About Cognivis
                                 </a>
+                        <a href="https://www.instagram.com/reels/Dar7C1Hz_c9/" target="_blank" rel="noopener noreferrer" class="animated-underline text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors inline-flex items-center gap-1.5 self-start w-fit">
+                            <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i> Watch Instagram Reel
+                        </a>
                             </div>
                         </div>
                     </div>
@@ -2921,6 +2953,9 @@
                             <i data-lucide="play-circle" class="w-4 h-4"></i>
                             Presentation Video
                         </a>
+                        <a href="https://www.instagram.com/reels/Dar7C1Hz_c9/" target="_blank" rel="noopener noreferrer" class="animated-underline text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors inline-flex items-center gap-1.5 self-start w-fit">
+                            <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i> Watch Instagram Reel
+                        </a>
                     </div>
                     <p class="text-slate-400 font-light mt-3 leading-relaxed">AI-powered student burnout prediction system using Intel OpenVINO for on-device inference. Predicts burnout <strong class="copy-emphasis emphasis-violet">3-7 days in advance</strong> with explainable AI, <strong class="copy-emphasis emphasis-violet">processing sensitive data locally</strong> while delivering <strong class="copy-emphasis emphasis-violet">sub-10ms predictions</strong>. Features adaptive behavioral intelligence, continuous feedback learning, and real-time pattern analysis.</p>
 
@@ -3040,41 +3075,6 @@
 
 <div class="section-divider max-w-5xl mx-auto"></div>
 
-<!-- Work-Learn Scheme -->
-<section id="work-learn" class="relative py-24 px-6">
-    <div class="max-w-5xl mx-auto">
-        <div class="text-center mb-16 reveal">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-[10px] font-semibold tracking-widest uppercase text-emerald-400 mb-4">
-                <i data-lucide="shield" class="w-3 h-3"></i> Work-Learn Scheme
-            </div>
-            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Cyber & Digital <span class="gradient-text">Work-Learn Scheme</span></h2>
-        </div>
- 
-        <div class="shine-card glow-hover rounded-2xl p-8 md:p-10 bg-white/[0.03] reveal-bounce">
-            <div class="scan-line"></div>
-            <div class="flex flex-col md:flex-row items-start gap-8 relative z-10">
-                <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="shield-check" class="w-8 h-8 text-emerald-400"></i>
-                </div>
-                <div class="flex-1">
-                    <span class="text-[10px] font-semibold tracking-widest uppercase text-emerald-400">MINDEF · 2024 onwards</span>
-                    <h3 class="text-xl font-bold mt-1">Cyber Specialist (CySpec) Track</h3>
-                    <p class="text-slate-400 font-light mt-3 leading-relaxed">Part of the Cyber & Digital Work-Learn Schemes, providing NSFs with advanced operational roles in <strong class="copy-emphasis emphasis-emerald">cybersecurity, software development, AI, and data science</strong> — while equipping participants with <strong class="copy-emphasis emphasis-emerald">academic credits</strong> toward relevant university degrees.</p>
-                    <div class="mt-6 flex flex-wrap gap-2">
-                        <span class="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-semibold text-emerald-400">Cybersecurity</span>
-                        <span class="px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-semibold text-cyan-400">Software Development</span>
-                        <span class="px-2 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 text-[10px] font-semibold text-purple-400">AI</span>
-                        <span class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-semibold text-blue-400">Data Science</span>
-                        <span class="px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10px] font-semibold text-amber-400">University Academic Credits</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
- 
-<div class="section-divider max-w-5xl mx-auto"></div>
- 
 <!-- Community Service -->
 <section id="community" class="relative py-24 px-6">
     <div class="max-w-5xl mx-auto">
@@ -3224,9 +3224,9 @@
                         <h3 class="text-base font-semibold mt-1">Content Creation</h3>
                     </div>
                 </div>
-                <p class="text-sm text-slate-400 font-light">Produced gaming content that amassed over <span class="text-indigo-300 font-semibold">100K views</span> across YouTube and TikTok, building an engaged audience through creative storytelling and editing.</p>
+                <p class="text-sm text-slate-400 font-light">Produced gaming content that amassed <span class="text-indigo-300 font-semibold">150K+ views</span> across YouTube and TikTok, building an engaged audience through creative storytelling and editing.</p>
                 <div class="mt-3">
-                    <span class="px-2 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-semibold text-indigo-400">📊 100K+ Views</span>
+                    <span class="px-2 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-semibold text-indigo-400">📊 150K+ Views</span>
                 </div>
                 <div class="hobby-illustration text-indigo-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><rect x="70" y="12" width="160" height="83" rx="12" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".35"/><path d="M137 35l28 18-28 18z" fill="currentColor" fill-opacity=".75"/><path d="M87 83h125" stroke="currentColor" stroke-opacity=".2"/><path class="playback-progress" d="M87 83h125" stroke="currentColor" stroke-width="2"/><g class="broadcast-wave" stroke="currentColor" stroke-opacity=".5"><path d="M51 33q-17 20 0 40m-14-49q-25 29 0 58m212-49q17 20 0 40m14-49q25 29 0 58"/></g></svg></div>
             </div>
@@ -3359,9 +3359,9 @@
                     <div class="w-12 h-12 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center flex-shrink-0">
                         <i data-lucide="mountain" class="w-6 h-6 text-lime-400" aria-hidden="true"></i>
                     </div>
-                    <div><span class="text-[10px] font-semibold tracking-widest uppercase text-lime-400">Movement</span><h3 class="text-base font-semibold mt-1">Bouldering &amp; Fitness</h3></div>
+                    <div><span class="text-[10px] font-semibold tracking-widest uppercase text-lime-400">Movement</span><h3 class="text-base font-semibold mt-1">Rock Climbing &amp; Bouldering</h3></div>
                 </div>
-                <p class="text-sm text-slate-400 font-light">I enjoy bouldering and staying active, and have climbed at many places around Singapore.</p>
+                <p class="text-sm text-slate-400 font-light">I enjoy rock climbing, bouldering, and staying active at bouldering gyms around Singapore.</p>
 
                 <div class="hobby-illustration text-lime-400" aria-hidden="true"><svg viewBox="0 0 300 110" fill="none"><path d="M35 97L87 15l46 47 44-55 86 90" stroke="currentColor" stroke-opacity=".16"/><path class="climbing-route" d="M65 95Q135 95 112 62T167 43T211 15" stroke="currentColor" stroke-width="2" stroke-dasharray="4 7"/><g fill="currentColor"><path d="M57 89l12-5 9 8-6 9-15-3z"/><path d="M102 56l13-5 9 9-6 7-15-2z"/><path d="M155 39l14-6 9 10-8 8-15-4z"/><path class="summit-hold" d="M201 10l12-5 10 9-5 9-15-3z"/></g></svg></div>
             </div>
@@ -5274,7 +5274,7 @@
 </script>
 
 <!-- Infinite Drag Gallery Loader -->
-<script src="loader.js"></script>
+<script src="loader.js?v=20261106"></script>
 <script src="assets/motion.js?v=mobile-gallery-hobbies-1" defer></script>
 <script src="assets/testimonials.js?v=mobile-gallery-hobbies-1" defer></script>
 <script src="assets/portfolio-meteors.js?v=comets-modal-3" defer></script>

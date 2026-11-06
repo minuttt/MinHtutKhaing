@@ -327,6 +327,7 @@
 
     function updateProgress(percent) {
         progressBar.style.width = percent + '%';
+        progressBar.parentElement.setAttribute('aria-valuenow', String(Math.floor(percent)));
         progressPercentage.textContent = Math.floor(percent) + '%';
 
         const elapsed = Date.now() - startTime;
