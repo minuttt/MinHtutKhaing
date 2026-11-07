@@ -20,7 +20,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="assets/testimonials.css?v=mobile-gallery-hobbies-1">
+    <link rel="stylesheet" href="assets/testimonials.css?v=readability-2-mobile-gallery-hobbies-1">
     <link rel="stylesheet" href="assets/motion.css?v=20261030">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -530,7 +530,7 @@
         }
         /* Comfortable reading size for muted descriptions, including nested lists. */
         section:not(#hero) .text-slate-400 {
-            font-size: 16px;
+            font-size: clamp(17px, 1.4vw, 18px);
             line-height: 1.8;
             font-weight: 400;
             color: #b4c1d2;
@@ -541,6 +541,14 @@
             color: #9aaec3;
         }
         section:not(#hero) p.text-slate-400 { max-width: 72ch; }
+        section:not(#hero) p.text-slate-300 {
+            font-size: clamp(17px, 1.4vw, 18px);
+            line-height: 1.8;
+        }
+        #qualities p.text-slate-400 {
+            font-size: clamp(18px, 1.5vw, 19px);
+            line-height: 1.85;
+        }
         section:not(#hero) ul.text-slate-400 > li + li { margin-top: .65rem; }
         .copy-emphasis {
             --emphasis-start: #a5f3fc;
@@ -555,7 +563,7 @@
         .emphasis-amber { --emphasis-start: #fde68a; --emphasis-end: #fcd34d; }
         .emphasis-rose { --emphasis-start: #fecdd3; --emphasis-end: #fda4af; }
         .emphasis-sky { --emphasis-start: #bae6fd; --emphasis-end: #7dd3fc; }
-        #awards ul.text-slate-300 { font-size: 16px; line-height: 1.8; font-weight: 400; }
+        #awards ul.text-slate-300 { font-size: clamp(17px, 1.4vw, 18px); line-height: 1.8; font-weight: 400; }
         @supports ((background-clip: text) or (-webkit-background-clip: text)) {
             .copy-emphasis {
                 background: linear-gradient(100deg, var(--emphasis-start), var(--emphasis-end));
@@ -5325,7 +5333,7 @@
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js?v=20261106"></script>
 <script src="assets/motion.js?v=starlytics-no-tilt-1" defer></script>
-<script src="assets/testimonials.js?v=mobile-gallery-hobbies-1" defer></script>
+<script src="assets/testimonials.js?v=readability-2" defer></script>
 <script src="assets/portfolio-meteors.js?v=starfall-2" defer></script>
 
 <!-- Cloudflare Web Analytics. Reports are available through the owner's Cloudflare account. -->
