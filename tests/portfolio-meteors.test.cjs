@@ -19,16 +19,27 @@ function setup(reduced=false){
   return {timers,frames,events,document,classes,canvas,run,tick};
 }
 test('comet and star shower share one frame loop and settle to idle',()=>{
- const s=setup();s.events.portfolioReady();s.run(900);s.run(2400);assert.equal(s.frames.size,1);
+ const s=setup();s.events.portfolioReady();s.run(900);s.run(8000);assert.equal(s.frames.size,1);
  s.tick(1300);assert.equal(s.canvas.dataset.starCount,'14');assert.equal(s.frames.size,1);
  s.tick(6000);assert.equal(s.frames.size,0);assert.equal(s.canvas.dataset.starCount,'0');
 });
 test('hidden page and photo viewer cancel both effects and their schedules',()=>{
- const s=setup();s.events.portfolioReady();s.run(2400);s.document.hidden=true;s.events.visibilitychange();
+ const s=setup();s.events.portfolioReady();s.run(8000);s.document.hidden=true;s.events.visibilitychange();
  assert.equal(s.frames.size,0);assert.equal(s.timers.size,0);
  s.document.hidden=false;s.events.visibilitychange();assert.equal(s.timers.size,2);
  s.classes.add('photo-viewer-open');s.events.photoViewerChange();assert.equal(s.timers.size,0);
 });
 test('reduced motion never schedules background effects',()=>{
  const s=setup(true);s.events.portfolioReady();assert.equal(s.timers.size,0);assert.equal(s.frames.size,0);
+});
+
+test('starfall cooldown starts after the final star and lasts at least eight seconds',()=>{
+ const s=setup();s.events.portfolioReady();s.run(8000);
+ // Only the initial comet timer remains while the shower is active.
+ assert.equal(s.timers.size,1);
+ s.tick(1300);assert.equal(s.timers.size,1);
+ s.tick(6000);
+ const cooldown=[...s.timers.values()].find(t=>t.delay!==900);
+ assert.ok(cooldown);assert.ok(cooldown.delay>=8000 && cooldown.delay<=16000);
+ s.tick(7000);assert.equal(s.timers.size,2);
 });

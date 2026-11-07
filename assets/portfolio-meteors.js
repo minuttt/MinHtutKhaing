@@ -137,7 +137,7 @@
 
     // A loose shower of tiny star points, with the hero's cyan/teal light palette.
     // Share one canvas and one animation loop with the comet; sleep between sightings.
-    function scheduleStars(delay = random(5000, 14000)) {
+    function scheduleStars(delay = random(8000, 16000)) {
         clearTimeout(starTimer);
         if (allowed()) starTimer = setTimeout(launchStars, delay);
     }
@@ -156,10 +156,12 @@
             tint: Math.random() < .5 ? '153,246,228' : '186,230,253'
         }));
         if (!frame) frame = requestAnimationFrame(draw);
-        scheduleStars();
     }
     function drawStars(now) {
+        const hadStars = stars.length > 0;
         stars = stars.filter(star => now < star.start + star.duration);
+        // Leave at least eight quiet seconds after the final star fades.
+        if (hadStars && !stars.length) scheduleStars();
         canvas.dataset.starCount = String(stars.length);
         for (const star of stars) {
             const p = (now - star.start) / star.duration;
@@ -208,7 +210,7 @@
         ready = true;
         // One early sighting establishes the effect, then use the normal random cadence.
         schedule(900);
-        scheduleStars(2400);
+        scheduleStars(8000);
     }
     window.addEventListener('portfolioReady', start, { once: true });
     document.addEventListener('visibilitychange', sync);
