@@ -35,8 +35,14 @@ test('mouse hover shows menu mode without expanding, click opens accessible link
  s.trigger.events.click();assert.equal(s.links.inert,false);assert.ok(s.item.focused);
  s.nav.events.keydown({key:'Escape',preventDefault(){}});assert.equal(s.links.inert,true);assert.ok(s.trigger.focused);
 });
-test('mobile tap and upward scroll open sections; selecting a link closes them',()=>{
+test('mobile scroll up shows closed bar; only tapping opens sections',()=>{
  const s=setup(true);s.scroll(2000);s.trigger.events.click();assert.ok(s.nav.classList.contains('mobile-open'));assert.equal(s.toggle.attrs['aria-expanded'],'true');
  s.nav.events.click({target:{closest:()=>s.item}});assert.equal(s.links.inert,true);
- s.scroll(1900);assert.ok(s.nav.classList.contains('mobile-open'));assert.equal(s.links.inert,false);
+ s.scroll(1900);assert.equal(s.nav.classList.contains('collapsed'),false);assert.equal(s.nav.classList.contains('mobile-open'),false);assert.equal(s.links.inert,true);assert.equal(s.toggle.attrs['aria-expanded'],'false');
+ s.toggle.events.click();assert.ok(s.nav.classList.contains('mobile-open'));assert.equal(s.links.inert,false);
+});
+
+test('hero island consistently uses Intro',()=>{
+ const s=setup();assert.equal(s.title.textContent,'Intro');s.scroll(500);
+ assert.equal(s.title.textContent,'Intro');assert.match(s.trigger.attrs['aria-label'],/^Intro,/);
 });

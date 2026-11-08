@@ -57,7 +57,7 @@
         }
         const id = current?.id || 'hero';
         const item = items.find(link => link.getAttribute('href') === `#${id}`);
-        const label = item?.textContent.trim() || current?.querySelector('h2')?.textContent.trim() || 'Explore';
+        const label = id === 'hero' ? 'Intro' : (item?.textContent.trim() || current?.querySelector('h2')?.textContent.trim() || 'Intro');
         const total = document.documentElement.scrollHeight - innerHeight;
         const progress = total > 0 ? Math.min(100, Math.max(0, scrollY / total * 100)) : 0;
         ring.style.strokeDashoffset = String(100 - progress);
@@ -84,7 +84,7 @@
         travel += Math.abs(delta);
         if (y <= 100) { expand(false); clearTimeout(timer); }
         else if (direction > 0 && travel > 36) { collapse(); travel = 0; }
-        else if (direction < 0 && travel > 18) { expand(); travel = 0; }
+        else if (direction < 0 && travel > 18) { expand(false); travel = 0; }
         lastY = y;
         updateContext();
     }
