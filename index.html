@@ -477,6 +477,36 @@
             #nav-pill.collapsed .nav-collapsed-icon { transition-delay:.32s; }
         }
 
+
+        /* One navigation surface: expanded links, section island, then hover menu. */
+        #nav-pill.collapsed { width:260px !important; transition:width .5s cubic-bezier(.22,1,.36,1), border-radius .5s cubic-bezier(.22,1,.36,1), box-shadow .3s; }
+        #nav-pill .nav-island-trigger { position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:inherit; background:transparent; color:#b9e6e7; opacity:0; visibility:hidden; pointer-events:none; cursor:pointer; transition:opacity .18s ease, visibility 0s .18s; }
+        #nav-pill.collapsed .nav-island-trigger { opacity:1; visibility:visible; pointer-events:auto; transition:opacity .25s ease .18s, visibility 0s; }
+        .nav-island-content { position:absolute; width:260px; height:48px; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; align-items:center; gap:13px; padding:0 18px; transition:opacity .15s ease, filter .2s ease; }
+        .nav-island-dot { width:6px; height:6px; border-radius:50%; background:#67e8d1; box-shadow:0 0 10px #5eead433; flex-shrink:0; }
+        .nav-island-title { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:left; font-size:13px; font-weight:600; letter-spacing:.01em; }
+        .nav-island-title.is-changing { animation:nav-label-in .35s cubic-bezier(.16,1,.3,1) both; }
+        .nav-island-progress { flex-shrink:0; color:#5eead4; transform:rotate(-90deg); }
+        .nav-progress-fill { transition:stroke-dashoffset .15s ease-out; }
+        .nav-island-menu { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.85); transition:opacity .15s ease, transform .25s cubic-bezier(.22,1,.36,1); }
+        #nav-pill .nav-island-trigger:focus-visible { outline:2px solid #67e8f9; outline-offset:4px; }
+        @keyframes nav-label-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @media (hover:hover) and (pointer:fine) {
+            #nav-pill.collapsed.island-hover { width:48px !important; }
+            /* Preserve the original hover target while the visible pill narrows. */
+            #nav-pill.collapsed::before { content:''; position:absolute; width:260px; height:52px; left:50%; top:50%; transform:translate(-50%,-50%); }
+            #nav-pill.collapsed.island-hover .nav-island-content { opacity:0; filter:blur(3px); }
+            #nav-pill.collapsed.island-hover .nav-island-menu { opacity:1; transform:scale(1); transition-delay:.16s; }
+        }
+        @media (max-width:900px) {
+            #nav-pill.collapsed { display:block; height:52px; min-height:52px; border-radius:26px; }
+            #nav-pill.collapsed .nav-logo, #nav-pill.collapsed .nav-mobile-toggle, #nav-pill.collapsed .nav-links { visibility:hidden; opacity:0; pointer-events:none; }
+            #nav-pill.collapsed .nav-links { display:none; }
+            #nav-pill:not(.collapsed) { transition:width .5s cubic-bezier(.22,1,.36,1), border-radius .5s; }
+            #nav-pill.mobile-open .nav-links { animation:nav-label-in .3s cubic-bezier(.16,1,.3,1) both; }
+        }
+        @media(prefers-reduced-motion:reduce) { #nav-pill .nav-island-title { animation:none; } }
+
         .hobby-discovery { display:flex; flex-direction:column; min-height:350px; }
         .hobby-illustration { margin-top:auto; padding-top:20px; overflow:hidden; }
         .hobby-illustration svg { display:block; width:100%; height:100px; }
@@ -1894,13 +1924,17 @@
         <a href="#hobbies" class="nav-link">Hobbies</a>
         <a href="#contact" class="nav-link">Contact</a>
     </div>
-    <div class="nav-collapsed-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="4" y1="12" x2="20" y2="12"></line>
-            <line x1="4" y1="18" x2="20" y2="18"></line>
-        </svg>
-    </div>
+    <button type="button" class="nav-island-trigger" aria-label="Open navigation menu" aria-controls="portfolio-nav-links" aria-expanded="false">
+        <span class="nav-island-content" aria-hidden="true">
+            <span class="nav-island-dot"></span>
+            <span class="nav-island-title">Explore</span>
+            <svg class="nav-island-progress" viewBox="0 0 24 24" width="24" height="24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="rgba(148,163,184,.18)" stroke-width="2"/>
+                <circle class="nav-progress-fill" cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span class="nav-island-menu" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span>
+    </button>
 </nav>
 
 <!-- Cursor Spotlight -->
@@ -3780,145 +3814,6 @@
         scenes.forEach(scene => observer.observe(scene));
     })();
 
-    // Animated Nav Pill - collapse on scroll down, expand on scroll up, auto-collapse after idle
-    (function() {
-        const navPill = document.getElementById('nav-pill');
-        if (!navPill) return;
-        const mobileNav = window.matchMedia('(max-width: 900px)');
-        const mobileToggle = navPill.querySelector('.nav-mobile-toggle');
-        function closeMobileMenu() {
-            navPill.classList.remove('mobile-open');
-            mobileToggle.setAttribute('aria-expanded', 'false');
-            mobileToggle.setAttribute('aria-label', 'Open navigation menu');
-        }
-        mobileToggle.addEventListener('click', () => {
-            const open = navPill.classList.toggle('mobile-open');
-            mobileToggle.setAttribute('aria-expanded', String(open));
-            mobileToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
-        });
-        document.addEventListener('pointerdown', event => {
-            if (mobileNav.matches && !navPill.contains(event.target)) closeMobileMenu();
-        });
-        navPill.addEventListener('keydown', event => {
-            if (mobileNav.matches && event.key === 'Escape') {
-                closeMobileMenu(); mobileToggle.focus();
-            }
-        });
-        let lastScrollY = window.scrollY;
-        let scrollTravel = 0;
-        let scrollDirection = 0;
-        let collapsed = false;
-        let collapseTimer = null;
-        const AUTO_COLLAPSE_DELAY = 2500;
-
-        function measureWidth() {
-            if (mobileNav.matches) { navPill.style.removeProperty('width'); return; }
-            if (!collapsed) {
-                const logo = navPill.querySelector('.nav-logo');
-                const links = navPill.querySelector('.nav-links');
-                const width = (logo.offsetWidth + links.scrollWidth - 4 + 2) + 'px';
-                navPill.style.setProperty('--expanded-width', width);
-                navPill.style.width = width;
-            }
-        }
-        navPill.querySelectorAll('.nav-link').forEach((link, index) => link.style.setProperty('--nav-order', index));
-        measureWidth();
-        window.addEventListener('resize', measureWidth);
-        document.fonts.ready.then(measureWidth);
-        mobileNav.addEventListener('change', () => {
-            clearTimeout(collapseTimer);
-            closeMobileMenu();
-            collapsed = false;
-            navPill.classList.remove('collapsed');
-            navPill.style.removeProperty('width');
-            lastScrollY = window.scrollY;
-            measureWidth();
-        });
-
-        function collapse() {
-            if (mobileNav.matches || navPill.matches(':hover, :focus-within')) return;
-            if (!collapsed && window.scrollY > 100) {
-                collapsed = true;
-                navPill.classList.add('collapsed');
-            }
-        }
-
-        function expand() {
-            if (mobileNav.matches) return;
-            if (collapsed) {
-                collapsed = false;
-                navPill.classList.remove('collapsed');
-            }
-            resetAutoCollapse();
-        }
-
-        function resetAutoCollapse() {
-            clearTimeout(collapseTimer);
-            if (!mobileNav.matches && window.scrollY > 100) {
-                collapseTimer = setTimeout(collapse, AUTO_COLLAPSE_DELAY);
-            }
-        }
-
-        window.addEventListener('scroll', () => {
-            const y = window.scrollY;
-            const delta = y - lastScrollY;
-            const direction = Math.sign(delta);
-            if (direction && direction !== scrollDirection) scrollTravel = 0;
-            if (direction) scrollDirection = direction;
-            scrollTravel += Math.abs(delta);
-
-            if (y <= 100) {
-                expand();
-                clearTimeout(collapseTimer);
-            } else if (direction > 0 && scrollTravel > 36) {
-                collapse();
-                scrollTravel = 0;
-            } else if (direction < 0 && scrollTravel > 18) {
-                expand();
-                scrollTravel = 0;
-            }
-
-            lastScrollY = y;
-        });
-
-        navPill.addEventListener('click', (e) => {
-            if (mobileNav.matches) {
-                if (e.target.closest('a')) closeMobileMenu();
-                return;
-            }
-            if (collapsed) {
-                e.preventDefault();
-                expand();
-            }
-        });
-
-        navPill.addEventListener('pointerleave', resetAutoCollapse);
-        navPill.addEventListener('focusout', resetAutoCollapse);
-
-        // Active link highlight
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = navPill.querySelectorAll('.nav-link');
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                if (window.scrollY >= section.offsetTop - 120) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Initial auto-collapse if page loaded scrolled
-        if (window.scrollY > 100) {
-            collapseTimer = setTimeout(collapse, AUTO_COLLAPSE_DELAY);
-        }
-    })();
- 
     // Section reveals and card tilt are coordinated in src/motion.ts.
 
     // Timeline dot animation + scroll-driven glow line
@@ -5332,6 +5227,7 @@
 
 <!-- Infinite Drag Gallery Loader -->
 <script src="loader.js?v=20261106"></script>
+<script src="assets/portfolio-navigation.js?v=island-1" defer></script>
 <script src="assets/motion.js?v=starlytics-no-tilt-1" defer></script>
 <script src="assets/testimonials.js?v=readability-2" defer></script>
 <script src="assets/portfolio-meteors.js?v=starfall-2" defer></script>
